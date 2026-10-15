@@ -15,9 +15,11 @@ def _scroll_done(ctx, args=None, **kw):
     scroll = (args or {}).get("scroll")
     position = (args or {}).get("position")
     current = scroll.cal_position(ctx.owner)
+    # Record before the in-threshold early return: on a confirm-wait tick the
+    # engine still evaluates the drag rule, and its click reads this value.
+    ctx.params["_scroll_current"] = current
     if abs(position - current) < scroll.drag_threshold:
         return True
-    ctx.params["_scroll_current"] = current
     if scroll.length:
         scroll.drag_timeout.reset()
         ctx.params["_scroll_skip"] = False
