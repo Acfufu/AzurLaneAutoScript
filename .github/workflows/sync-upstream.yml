@@ -29,6 +29,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Install assets merge driver
+        run: |
+          # .gitattributes routes module/*/assets.py to this driver; without
+          # the config the attribute is a no-op and every sync conflict-bombs
+          # (39 files on the first run).
+          git config merge.alas-assets.driver \
+            "python3 dev_tools/merge_assets_driver.py %O %A %B"
+
       - name: Fetch upstream
         run: |
           git remote add upstream https://github.com/LmeSzinc/AzurLaneAutoScript.git

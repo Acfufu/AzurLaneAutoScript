@@ -13,3 +13,6 @@
 *.yaml text eol=lf
 *.json text eol=lf
 *.html text eol=lf
+# Semantic merge driver for the asset registries: the integration line rewrote
+# them (compact format), upstream edits/appends entries — per-symbol AST merge.
+module/*/assets.py merge=alas-assets
