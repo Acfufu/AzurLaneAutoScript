@@ -8,6 +8,11 @@ on:
 jobs:
   test:
     runs-on: windows-latest
+    env:
+      # windows-latest defaults stdio to the cp1252 console codec; gates print
+      # box-drawing chars and read utf-8 trees. UTF-8 mode fixes the whole
+      # class instead of patching each dev_tool.
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
 
