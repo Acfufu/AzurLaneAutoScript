@@ -224,6 +224,8 @@ def run_desktop(args: WebArgs, key: str | None = None, tray: bool = False) -> No
         _install_tray_close_behavior(window, server)
         State.window = window
     else:
+        # pywebview types create_window as nullable; here it always exists.
+        assert window is not None
         window.events.closed += lambda: setattr(server, "should_exit", True)
     webview.start()
 

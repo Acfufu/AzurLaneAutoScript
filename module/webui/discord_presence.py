@@ -3,13 +3,13 @@ import time
 
 from pypresence import AioPresence
 
-RPC: AioPresence = None
+RPC: AioPresence | None = None
 
 
 async def run():
     assert RPC is not None
     await RPC.connect()
-    await RPC.update(state="Alas is playing Azurlane", start=time.time(), large_image="alas")
+    await RPC.update(state="Alas is playing Azurlane", start=int(time.time()), large_image="alas")
 
 
 def init_discord_rpc():
@@ -19,6 +19,9 @@ def init_discord_rpc():
 
 
 def close_discord_rpc():
-    if RPC:
-        RPC.send_data(2, {"v": 1, "client_id": RPC.client_id})
-        RPC.sock_writer.close()
+    # Local alias: pyright does not narrow module globals across statements,
+    # and sock_writer is nullable until connect() completes.
+    rpc = RPC
+    if rpc is not None and rpc.sock_writer is not None:
+        rpc.send_data(2, {"v": 1, "client_id": rpc.client_id})
+        rpc.sock_writer.close()
