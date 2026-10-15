@@ -40,8 +40,16 @@ from module.ui.assets_bridge import (
     RPG_LEAVE_CITY,
     WITHDRAW,
 )
-from module.ui.page import Page, page_academy, page_campaign, page_event, page_main, page_main_white, page_sp, \
-    page_tactical
+from module.ui.page import (
+    Page,
+    page_academy,
+    page_campaign,
+    page_event,
+    page_main,
+    page_main_white,
+    page_sp,
+    page_tactical,
+)
 from module.ui_white.assets import *  # noqa: F403  (data-bundle star import)
 
 # ---------------------------------------------------------------------------
@@ -94,50 +102,91 @@ def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
         # L500-501
         {"name": "story", "action": {"call_if": _story_skip}},
         # L506-509: game tips -> GOTO_MAIN
-        {"name": "game_tips", "check": {"button": GAME_TIPS, "interval": 2},
-         "action": {"click_and": [GOTO_MAIN]}},
+        {"name": "game_tips", "check": {"button": GAME_TIPS, "interval": 2}, "action": {"click_and": [GOTO_MAIN]}},
         # L512-518: dorm popups
-        {"name": "dorm_info", "check": {"button": DORM_INFO, "interval": 3, "similarity": 0.75},
-         "action": {"click": DORM_INFO}},
-        {"name": "dorm_feed_cancel", "check": {"button": DORM_FEED_CANCEL, "interval": 3},
-         "action": {"click": DORM_FEED_CANCEL}},
-        {"name": "dorm_trophy_confirm", "check": {"button": DORM_TROPHY_CONFIRM, "interval": 3},
-         "action": {"click": DORM_TROPHY_CONFIRM}},
+        {
+            "name": "dorm_info",
+            "check": {"button": DORM_INFO, "interval": 3, "similarity": 0.75},
+            "action": {"click": DORM_INFO},
+        },
+        {
+            "name": "dorm_feed_cancel",
+            "check": {"button": DORM_FEED_CANCEL, "interval": 3},
+            "action": {"click": DORM_FEED_CANCEL},
+        },
+        {
+            "name": "dorm_trophy_confirm",
+            "check": {"button": DORM_TROPHY_CONFIRM, "interval": 3},
+            "action": {"click": DORM_TROPHY_CONFIRM},
+        },
         # L521-528: meowfficer popups (both reset GET_SHIP interval after click)
-        {"name": "meowfficer_info", "check": {"button": MEOWFFICER_INFO, "interval": 3},
-         "action": {"click": MEOWFFICER_INFO, "reset_interval": [GET_SHIP]}},
-        {"name": "meowfficer_buy", "check": {"button": MEOWFFICER_BUY, "interval": 3},
-         "action": {"click_and": [BACK_ARROW], "reset_interval": [GET_SHIP]}},
+        {
+            "name": "meowfficer_info",
+            "check": {"button": MEOWFFICER_INFO, "interval": 3},
+            "action": {"click": MEOWFFICER_INFO, "reset_interval": [GET_SHIP]},
+        },
+        {
+            "name": "meowfficer_buy",
+            "check": {"button": MEOWFFICER_BUY, "interval": 3},
+            "action": {"click_and": [BACK_ARROW], "reset_interval": [GET_SHIP]},
+        },
         # L531-538: campaign preparation (any of the four) -> cancel
-        {"name": "campaign_preparation",
-         "check": {"or": [{"button": MAP_PREPARATION, "interval": 3},
-                          {"button": MAP_PREPARATION_HARD, "interval": 3},
-                          {"button": FLEET_PREPARATION, "interval": 3},
-                          {"button": RAID_FLEET_PREPARATION, "interval": 3}]},
-         "action": {"click": MAP_PREPARATION_CANCEL}},
+        {
+            "name": "campaign_preparation",
+            "check": {
+                "or": [
+                    {"button": MAP_PREPARATION, "interval": 3},
+                    {"button": MAP_PREPARATION_HARD, "interval": 3},
+                    {"button": FLEET_PREPARATION, "interval": 3},
+                    {"button": RAID_FLEET_PREPARATION, "interval": 3},
+                ]
+            },
+            "action": {"click": MAP_PREPARATION_CANCEL},
+        },
         # L539-542: auto-search exit/reward popups
-        {"name": "auto_search_exit", "check": {"button": AUTO_SEARCH_MENU_EXIT, "offset": (200, 30), "interval": 3},
-         "action": {"click": AUTO_SEARCH_MENU_EXIT}},
-        {"name": "auto_search_reward", "check": {"button": AUTO_SEARCH_REWARD, "offset": (50, 50), "interval": 3},
-         "action": {"click": AUTO_SEARCH_REWARD}},
+        {
+            "name": "auto_search_exit",
+            "check": {"button": AUTO_SEARCH_MENU_EXIT, "offset": (200, 30), "interval": 3},
+            "action": {"click": AUTO_SEARCH_MENU_EXIT},
+        },
+        {
+            "name": "auto_search_reward",
+            "check": {"button": AUTO_SEARCH_REWARD, "offset": (50, 50), "interval": 3},
+            "action": {"click": AUTO_SEARCH_REWARD},
+        },
         # L543-561: WITHDRAW client-bug double check (wrapper keeps its 2s wait)
         {"name": "withdraw", "action": {"call_if": _withdraw_double_check}},
         # L563-566: login/maintenance popups
-        {"name": "login_check", "check": {"button": LOGIN_CHECK, "offset": (30, 30), "interval": 3},
-         "action": {"click": LOGIN_CHECK}},
-        {"name": "maintenance", "check": {"button": MAINTENANCE_ANNOUNCE, "offset": (30, 30), "interval": 3},
-         "action": {"click": MAINTENANCE_ANNOUNCE}},
+        {
+            "name": "login_check",
+            "check": {"button": LOGIN_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": LOGIN_CHECK},
+        },
+        {
+            "name": "maintenance",
+            "check": {"button": MAINTENANCE_ANNOUNCE, "offset": (30, 30), "interval": 3},
+            "action": {"click": MAINTENANCE_ANNOUNCE},
+        },
         # rerun event select page (upstream 2026-10): back out to the shop map
-        {"name": "rerun_select", "check": {"button": RERUN_SELECT_CHECK, "offset": (30, 30), "interval": 3},
-         "action": {"click": SHOP_BACK_ARROW}},
+        {
+            "name": "rerun_select",
+            "check": {"button": RERUN_SELECT_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": SHOP_BACK_ARROW},
+        },
         # L569-572: mistaken click into exercise preparation -> GOTO_MAIN
-        {"name": "exercise_preparation", "check": {"button": EXERCISE_PREPARATION, "interval": 3},
-         "action": {"click_and": [GOTO_MAIN]}},
+        {
+            "name": "exercise_preparation",
+            "check": {"button": EXERCISE_PREPARATION, "interval": 3},
+            "action": {"click_and": [GOTO_MAIN]},
+        },
         # L592-594: idle page
         {"name": "idle", "action": {"call_if": _idle_page}},
         # L596-599: white-menu switch
-        {"name": "white_menu", "check": {"button": MAIN_GOTO_MEMORIES_WHITE, "interval": 3},
-         "action": {"click": MAIN_TAB_SWITCH_WHITE}},
+        {
+            "name": "white_menu",
+            "check": {"button": MAIN_GOTO_MEMORIES_WHITE, "interval": 3},
+            "action": {"click": MAIN_TAB_SWITCH_WHITE},
+        },
     ]
 
 
@@ -199,7 +248,6 @@ class UI(InfoHandler):
             self.device.click(button)
             return True
         return False
-
 
     def ui_click(
         self,
