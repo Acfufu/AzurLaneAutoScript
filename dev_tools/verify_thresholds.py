@@ -79,6 +79,7 @@ def sites(ref: str) -> dict[tuple[str, str, str, int], dict[str, str]]:
         listing = subprocess.run(
             ["git", "ls-tree", "-r", "--name-only", ref, "--", "module"],
             cwd=ROOT, capture_output=True, text=True, check=True,
+            encoding="utf-8", errors="replace",  # Windows default is cp1252 — utf-8 tree
         ).stdout.split()
         files = [n for n in listing if n.endswith(".py") and "assets" not in n]
         names = lambda n: n  # noqa: E731
@@ -87,7 +88,8 @@ def sites(ref: str) -> dict[tuple[str, str, str, int], dict[str, str]]:
         def read(n: str) -> str:
             if n not in cache:
                 cache[n] = subprocess.run(
-                    ["git", "show", f"{ref}:{n}"], cwd=ROOT, capture_output=True, text=True, check=True
+                    ["git", "show", f"{ref}:{n}"], cwd=ROOT, capture_output=True, text=True, check=True,
+                    encoding="utf-8", errors="replace",
                 ).stdout
             return cache[n]
 
