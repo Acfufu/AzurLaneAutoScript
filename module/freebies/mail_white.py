@@ -25,19 +25,26 @@ def _mail_enter_end(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> 
         ctx.params["_mail_enter_result"] = False
         return True
     if not ctx.params.get("_mail_has_mail") and owner.appear(GOTO_MAIN_WHITE, offset=(20, 20)):
+        # Started once and kept, like the original `timeout.start()` (which
+        # only starts): an empty mailbox that keeps showing GOTO_MAIN_WHITE
+        # must accumulate to 0.6s, not restart the wait on every frame.
         owner._mail_enter_timeout = owner._mail_enter_timeout or Timer(0.6, count=1).start()
         if owner._mail_enter_timeout.reached():
             logger.info("Mail empty, wait GOTO_MAIN_WHITE timeout")
             ctx.params["_mail_enter_result"] = False
             return True
-    owner._mail_enter_timeout = None
     return False
 
 
 def _mail_manage_click(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
-    if ctx.owner.appear_then_click(MAIL_MANAGE, offset=(30, 30), interval=3):
+    # Truthiness is "clicked", not "evaluated": the `goto_mail` rule below is
+    # what enters the mail page from page_main_white, and a handled `call_if`
+    # rule stops the frame's remaining rules (the original `if ...: continue`).
+    # Returning True without a click starves the entry click on every frame.
+    clicked = ctx.owner.appear_then_click(MAIL_MANAGE, offset=(30, 30), interval=3)
+    if clicked:
         ctx.params["_mail_has_mail"] = True
-    return True
+    return clicked
 
 
 def _mail_goto(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
