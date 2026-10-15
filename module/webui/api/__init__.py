@@ -148,6 +148,28 @@ def _add_password_gate(app: FastAPI):
     app.add_middleware(PasswordGate)
 
 
+def _add_html_no_cache(app: FastAPI):
+    """Serve text/html responses with Cache-Control: no-cache.
+
+    index.html keeps one stable URL across installs while the /assets names
+    it references are content-hashed, so the shell itself is the only cache
+    hazard: with just etag/last-modified, clients fall back to heuristic
+    caching, and a same-origin webview shared across app re-installs (the
+    desktop launcher keeps one WKWebView store keyed by bundle id) can keep
+    loading a stale shell that references a bundle the new payload no longer
+    ships — the tab then renders a UI the backend no longer matches. no-cache
+    leaves the hashed assets cached but forces an etag revalidation of the
+    shell on every load.
+    """
+
+    @app.middleware("http")
+    async def html_no_cache(request, call_next):
+        response = await call_next(request)
+        if "text/html" in response.headers.get("content-type", ""):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 def create_api_app() -> FastAPI:
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
@@ -163,6 +185,7 @@ def create_api_app() -> FastAPI:
     _add_password_gate(app)
     _add_dev_cors(app)
     _add_home_redirect(app)
+    _add_html_no_cache(app)
 
     app.include_router(status.router)
     app.include_router(schema.router)
