@@ -191,11 +191,20 @@ def resolve(base_text, ours_text, theirs_text):
         else:
             _entry_line(key, base, ours, theirs, stats, out)
 
-    # brand-new upstream symbols, appended in upstream's own order
+    # brand-new upstream symbols, appended in upstream's own order —
+    # canonicalized to our compact form (identical per-server dicts collapse;
+    # the dedup gate rejects raw upstream dict-form lines)
     seen = set(ours)
     for kind, key in theirs_order:
         if kind == "entry" and key not in seen and key not in base:
-            out.append(theirs[key][2])
+            tnode, _tdump, tline = theirs[key]
+            compact = None
+            if isinstance(tnode, ast.Call) and not tnode.args:
+                vals = {kw.arg: _normalize(kw.value) for kw in tnode.keywords if kw.arg}
+                if len(vals) == len(tnode.keywords):
+                    parts = ", ".join(f"{name}={ast.unparse(v)}" for name, v in vals.items())
+                    compact = f"{key} = {tnode.func.id}({parts})\n"
+            out.append(compact or tline)
             stats["added"] += 1
 
     return "".join(out), stats
@@ -242,6 +251,17 @@ def selftest():
             0,
             ["B = X(2)"],
             [],
+        ),
+        (
+            "upstream-new-symbol-appended-compact",
+            # upstream's new entries arrive in verbose dict form; they must
+            # land collapsed or the dedup gate rejects the file
+            "A = X(1)\n",
+            "A = X(1)\n",
+            "A = X(1)\nB = Button(file={'cn': './b.png', 'en': './b.png', 'jp': './b.png', 'tw': './b.png'})\n",
+            0,
+            ["B = Button(file='./b.png')"],
+            ["'cn'"],
         ),
         (
             "upstream-deletion-respected",
