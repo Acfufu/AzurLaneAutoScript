@@ -166,7 +166,7 @@ class AmbushHandler(Combat):
         from module.flow.runtime import run_flow
 
         logger.info("Map air raid")
-        run_flow(_air_raid_flow())
+        run_flow(_air_raid_flow(), owner=self)
 
     def _handle_ambush_evade(self):
         from module.flow.runtime import run_flow
@@ -177,7 +177,7 @@ class AmbushHandler(Combat):
         self.handle_info_bar()
 
         # Click MAP_AMBUSH_EVADE, then OCR the result (success/failed/unrecognized)
-        run_flow(_ambush_evade_flow())
+        run_flow(_ambush_evade_flow(), owner=self)
 
     def _handle_ambush_attack(self):
         from module.flow.runtime import run_flow
@@ -187,7 +187,7 @@ class AmbushHandler(Combat):
         self.wait_until_appear(MAP_AMBUSH_ATTACK, offset=(30, 30))
 
         # Click MAP_AMBUSH_ATTACK
-        run_flow(_ambush_attack_flow())
+        run_flow(_ambush_attack_flow(), owner=self)
 
         # In battle
         logger.attr("Ambush_evade", "attack")

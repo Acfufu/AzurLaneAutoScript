@@ -144,7 +144,8 @@ class InfoHandler(ModuleBase):
         from module.flow.runtime import run_flow
 
         run_flow(
-            _simple_wait_flow("wait_until_info_bar_disappear", {"not": {"custom": _info_bar_count_g}})
+            _simple_wait_flow("wait_until_info_bar_disappear", {"not": {"custom": _info_bar_count_g}}),
+            owner=self,
         )
 
     def handle_info_bar(self):
@@ -159,7 +160,8 @@ class InfoHandler(ModuleBase):
 
         self._flow_once_handled = False
         run_flow(
-            _ensure_no_info_bar_flow(timeout)
+            _ensure_no_info_bar_flow(timeout),
+            owner=self,
         )
         return self._flow_once_handled
 
@@ -531,7 +533,8 @@ class InfoHandler(ModuleBase):
 
         logger.info("Ensure no story")
         run_flow(
-            _ensure_no_story_flow()
+            _ensure_no_story_flow(),
+            owner=self,
         )
 
 
@@ -587,7 +590,7 @@ class InfoHandler(ModuleBase):
         self.device.stuck_record_add("TEMPLATE_MANJUU")
         from module.flow.runtime import run_flow
 
-        run_flow(_wait_until_manjuu_disappear_flow())
+        run_flow(_wait_until_manjuu_disappear_flow(), owner=self)
 
     def handle_manjuu(self):
         """

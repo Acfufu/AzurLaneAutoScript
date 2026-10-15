@@ -245,7 +245,7 @@ class EnemySearchingHandler(InfoHandler):
 
         from module.flow.runtime import run_flow
 
-        run_flow(_enemy_searching_flow(drop))
+        run_flow(_enemy_searching_flow(drop), owner=self)
 
         return True
 
@@ -262,6 +262,6 @@ class EnemySearchingHandler(InfoHandler):
 
         from module.flow.runtime import run_flow
 
-        run_flow(_no_enemy_searching_flow(drop))
+        run_flow(_no_enemy_searching_flow(drop), owner=self)
 
         return True

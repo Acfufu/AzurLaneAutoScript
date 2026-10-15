@@ -58,7 +58,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "get_items", "check": {"button": GET_ITEMS_1, "offset": 5},
                      "action": {"click": GET_ITEMS_1}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def strategy_close(self, skip_first_screenshot=True):
@@ -73,7 +74,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "click_close", "check": {"button": STRATEGY_OPENED, "offset": 200, "interval": 5},
                      "action": {"click": STRATEGY_OPENED}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def strategy_set_execute(self, formation=None, sub_view=None, sub_hunt=None):
@@ -176,7 +178,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "click_enter", "check": {"button": SUBMARINE_MOVE_ENTER, "offset": 200, "interval": 5},
                      "action": {"click": SUBMARINE_MOVE_ENTER}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def strategy_submarine_move_confirm(self, skip_first_screenshot=True):
@@ -198,7 +201,8 @@ class StrategyHandler(InfoHandler):
                      "action": {"click": SUBMARINE_MOVE_CONFIRM}, "stop": False},
                     {"name": "popup_confirm", "action": {"call_if": _popup, "args": {"name": "SUBMARINE_MOVE"}}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def strategy_submarine_move_cancel(self, skip_first_screenshot=True):
@@ -219,7 +223,8 @@ class StrategyHandler(InfoHandler):
                      "action": {"click": SUBMARINE_MOVE_CANCEL}, "stop": False},
                     {"name": "popup_confirm", "action": {"call_if": _popup, "args": {"name": "SUBMARINE_MOVE"}}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def is_in_strategy_mob_move(self):
@@ -257,7 +262,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "click_enter", "check": {"button": MOB_MOVE_ENTER, "offset": MOB_MOVE_OFFSET, "interval": 5},
                      "action": {"click": MOB_MOVE_ENTER}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
 
@@ -292,7 +298,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "click_enter", "check": {"button": AIR_STRIKE_ENTER, "offset": (150, 200), "interval": 5},
                      "action": {"click": AIR_STRIKE_ENTER}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
     def strategy_air_strike_cancel(self, skip_first_screenshot=True):
@@ -312,7 +319,8 @@ class StrategyHandler(InfoHandler):
                     {"name": "click_cancel", "check": {"button": AIR_STRIKE_CANCEL, "offset": (20, 20), "interval": 5},
                      "action": {"click": AIR_STRIKE_CANCEL}},
                 ],
-            )
+            ),
+            owner=self,
         )
 
 

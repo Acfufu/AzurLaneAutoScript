@@ -208,7 +208,8 @@ class AutoSearchHandler(EnemySearchingHandler):
 
         return bool(
             run_flow(
-                make_auto_search_setting_ensure(setting)
+                make_auto_search_setting_ensure(setting),
+                owner=self,
             )
         )
 

@@ -159,7 +159,7 @@ class LoginHandler(UI):
         from module.flow.runtime import run_flow
 
         return bool(
-            run_flow(make_app_login())
+            run_flow(make_app_login(), owner=self)
         )
 
     _user_agreement_timer = Timer(1, count=2)
