@@ -1,12 +1,21 @@
-# AzurLaneAutoScript（Joxos fork）
+# AzurLaneAutoScript（Acfufu 发行线）
 
-本仓库是 [LmeSzinc/AzurLaneAutoScript](https://github.com/LmeSzinc/AzurLaneAutoScript) 的 fork。
-
-仓库地址：https://github.com/Joxos/AzurLaneAutoScript
+> **Lineage（2026-10-16 删库重建）**：本仓库由 Joxos/AzurLaneAutoScript master（`0cf50d3d8`）种子重建，
+> **保留完整 git 历史**——与上游的共同祖先（merge-base）是每周自动同步不出冲突地狱的前提。
+> 角色划分：
+>
+> - **内容/代码真上游**：[LmeSzinc/AzurLaneAutoScript](https://github.com/LmeSzinc/AzurLaneAutoScript)，
+>   由 `.github/workflows/sync-upstream.yml` 每周自动 merge（无冲突直推，冲突开 PR 留人工）；
+> - **集成线**：[Joxos/AzurLaneAutoScript](https://github.com/Joxos/AzurLaneAutoScript)，低频手动跟进；
+> - **部署方**：[Acfufu/alas-launcher](https://github.com/Acfufu/alas-launcher)（Tauri 壳，启动时向本仓
+>   注入本地 control API 补丁并执行 git 更新）。
+>
+> 本仓库不是 GitHub fork。`archive/codex-macos-packaging` 分支归档了 2026-07 的一次 macOS 打包修复
+> （原 LmeSzinc PR #5777，CLOSED 未合并）。
 
 ---
 
-# ⚠ 本 fork 自有改动（不属于上游，请勿混淆）
+# ⚠ 自有改动（继承自 Joxos 种子，不属于上游，请勿混淆）
 
 > 这一节只描述**我们相对上游的差异**。上游自己的功能请看下文与上游仓库。
 > 与上游 `master` 的差异规模：**745 个文件 / +382,976 −44,925**（不含 `campaign/`，
