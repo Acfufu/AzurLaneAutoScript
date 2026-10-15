@@ -78,6 +78,13 @@ jobs:
       # changed from a similarity floor to a tolerance). This compares every
       # call site against upstream and fails when one of ours kept the old
       # number - the silent "matches everything" class of bug.
+      - name: Fetch upstream for threshold comparison
+        run: |
+          # verify_thresholds.py diffs call sites against upstream/master;
+          # actions/checkout only creates origin, so wire the ref here.
+          git remote add upstream https://github.com/LmeSzinc/AzurLaneAutoScript.git
+          git fetch upstream master
+
       - name: Recognition arguments vs upstream
         run: uv run python dev_tools/verify_thresholds.py --check
 

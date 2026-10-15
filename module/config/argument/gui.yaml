@@ -110,6 +110,9 @@ Update:
   NoReleases:
   Refresh:
   InstallHint:
+  RestartUpdate:
+  Restarting:
+  NewCommits:
 
 Remote:
   Running:
