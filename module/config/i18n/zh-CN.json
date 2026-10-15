@@ -3090,7 +3090,10 @@
       "Installing": "安装中",
       "NoReleases": "尚未获取到版本列表，点击刷新",
       "Refresh": "刷新列表",
-      "InstallHint": "安装会替换桌面应用并自动重启"
+      "InstallHint": "安装会替换桌面应用并自动重启",
+      "RestartUpdate": "重启应用更新",
+      "Restarting": "正在重启更新…",
+      "NewCommits": "重启后将应用以下提交："
     },
     "Remote": {
       "Running": "运行中",

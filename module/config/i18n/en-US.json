@@ -3090,7 +3090,10 @@
       "Installing": "Installing",
       "NoReleases": "No releases loaded yet, click refresh",
       "Refresh": "Refresh list",
-      "InstallHint": "Installing replaces the desktop app and restarts it automatically"
+      "InstallHint": "Installing replaces the desktop app and restarts it automatically",
+      "RestartUpdate": "Restart to update",
+      "Restarting": "Restarting to update…",
+      "NewCommits": "These commits apply on restart:"
     },
     "Remote": {
       "Running": "Remote access on",

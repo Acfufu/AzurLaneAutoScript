@@ -1,14 +1,20 @@
-"""Release-based updater for the desktop app (single channel).
+"""Update surfaces, per build type.
 
-Installed builds update by whole-release replacement: the backend pulls the
-release list from the configured GitHub repository, downloads that release's
-NSIS setup exe and runs it silently. The installer asks the launcher to exit
-(`Alas.exe --quit`), replaces the program directory and relaunches the app
-(`/R`).
+Installed (frozen) builds update by whole-release replacement: the backend
+pulls the release list from the configured GitHub repository, downloads that
+release's NSIS setup exe and runs it silently. The installer asks the
+launcher to exit (`Alas.exe --quit`), replaces the program directory and
+relaunches the app (`/R`).
 
-Source checkouts are not special-cased (single UI by design): install reports
-an error because there is no installed build to replace. Developers update
-with git manually.
+Source checkouts update through git instead: this module fetches origin and
+lists the commits a restart would apply; the tab's restart button asks the
+launcher to pull + restart (POST /update/restart -> control_api request
+file -> src/update_restart.rs watcher). The launcher owns the repo and
+re-runs its startup setup (pull + sparse checkout + control patch) between
+stop and start, so the restart IS the update.
+
+The Update page branches on `mode` ("release" | "git") — both faces stay in
+one view, only one is ever active.
 """
 
 import os
@@ -17,17 +23,28 @@ import subprocess
 import sys
 import threading
 import time
+from pathlib import Path
 
 import requests
 
-from module.base.paths import get_resource_root
 from module.logger import logger
 
 GITHUB_API = "https://api.github.com"
-DEFAULT_REPO = "Joxos/AzurLaneAutoScript"
+DEFAULT_REPO = "Acfufu/AzurLaneAutoScript"
 # The installer must outlive this process: it replaces the files the backend
 # is running from, so it runs detached instead of as a child.
 _DETACHED = 0x0000_0008 | 0x0000_0200  # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+
+# Payload root (module/webui/updater.py -> module/webui -> module -> root).
+# Pinned explicitly so git calls work regardless of process cwd.
+_REPO_ROOT = str(Path(__file__).resolve().parents[2])
+
+
+def _run_git(args: list[str], timeout: int = 120) -> subprocess.CompletedProcess:
+    """Run git against the payload repo; captures output, never raises."""
+    return subprocess.run(
+        ["git", "-C", _REPO_ROOT, *args], capture_output=True, text=True, timeout=timeout
+    )
 
 
 class Updater:
@@ -36,6 +53,10 @@ class Updater:
         self.error: str | None = None
         self.releases: list[dict] = []
         self.install: dict | None = None  # {version, stage, progress}
+        # git updater (source checkouts)
+        self.git_state = "idle"  # idle | fetching | ready | failed
+        self.git_error: str | None = None
+        self.git_commits: list[dict] = []  # [{sha, date, message}] pending on restart
         self._lock = threading.Lock()
 
     # ---------- configuration ----------
@@ -44,17 +65,29 @@ class Updater:
     def repo(self) -> str:
         return (os.environ.get("ALAS_UPDATE_REPO") or DEFAULT_REPO).strip().strip("/")
 
+    @property
+    def branch(self) -> str:
+        try:
+            from module.webui.setting import State
+
+            return getattr(State.deploy_config, "Branch", None) or "master"
+        except Exception:  # deploy config unreadable — fall back to the default branch
+            return "master"
+
     @staticmethod
     def current_version() -> str:
-        """Version of the running build, from the bundled version.txt.
-
-        The file sits next to the sidecar executable (packaging writes it
-        into the onedir root), not under the _internal resource dir.
-        """
-        if getattr(sys, "frozen", False):
-            root = os.path.dirname(os.path.abspath(sys.executable))
-        else:
-            root = get_resource_root()
+        """Frozen builds: version.txt next to the sidecar executable.
+        Source checkouts: git HEAD (short sha + date) — the honest "version"
+        of a git-managed tree; "dev" only when even git fails."""
+        if not getattr(sys, "frozen", False):
+            try:
+                head = _run_git(["log", "-1", "--pretty=format:%h %ad", "--date=short"], timeout=10)
+                if head.returncode == 0 and head.stdout.strip():
+                    return head.stdout.strip()
+            except Exception:
+                logger.exception("git HEAD resolve failed")
+            return "dev"
+        root = os.path.dirname(os.path.abspath(sys.executable))
         path = os.path.join(root, "version.txt")
         try:
             with open(path, encoding="utf-8") as f:
@@ -66,9 +99,14 @@ class Updater:
     def is_installed_build() -> bool:
         return bool(getattr(sys, "frozen", False))
 
-    # ---------- release listing ----------
+    # ---------- update checks ----------
 
     def refresh(self):
+        """Dispatch by build type: git fetch for source checkouts, release
+        list for frozen installs. Runs on a router worker thread."""
+        if not self.is_installed_build():
+            self.git_refresh()
+            return
         with self._lock:
             if self.state == "installing":
                 return
@@ -109,14 +147,63 @@ class Updater:
                 self.error = str(e)
 
     def status(self) -> dict:
-        return {
-            "current": self.current_version(),
-            "repo": self.repo,
-            "state": self.state,
-            "error": self.error,
-            "releases": self.releases,
-            "installing": self.install,
-        }
+        with self._lock:
+            return {
+                "current": self.current_version(),
+                "repo": self.repo,
+                "mode": "release" if self.is_installed_build() else "git",
+                "state": self.state,
+                "error": self.error,
+                "releases": self.releases,
+                "installing": self.install,
+                "git": {
+                    "branch": self.branch,
+                    "state": self.git_state,
+                    "error": self.git_error,
+                    "commits": self.git_commits,
+                },
+            }
+
+    # ---------- git updater (source checkouts) ----------
+
+    def git_refresh(self):
+        """Fetch origin and list the commits a launcher restart would apply.
+        Read-only: this never touches the working tree — the launcher owns
+        all mutations (startup pull, restart-with-update)."""
+        with self._lock:
+            self.git_state = "fetching"
+            self.git_error = None
+        try:
+            branch = self.branch
+            fetch = _run_git(["fetch", "origin", branch])
+            if fetch.returncode != 0:
+                raise RuntimeError(fetch.stderr.strip() or "git fetch failed")
+            log = _run_git(
+                [
+                    "log",
+                    "--pretty=format:%h\x1f%ad\x1f%s",
+                    "--date=short",
+                    f"HEAD..origin/{branch}",
+                ]
+            )
+            if log.returncode != 0:
+                raise RuntimeError(log.stderr.strip() or "git log failed")
+            commits = []
+            for line in log.stdout.splitlines():
+                if not line.strip():
+                    continue
+                parts = line.split("\x1f", 2)
+                if len(parts) == 3:
+                    commits.append({"sha": parts[0], "date": parts[1], "message": parts[2]})
+            with self._lock:
+                self.git_commits = commits
+                self.git_state = "ready"
+            logger.info(f"git update check: {len(commits)} new commit(s) on origin/{branch}")
+        except Exception as e:
+            logger.exception("Git update check failed")
+            with self._lock:
+                self.git_state = "failed"
+                self.git_error = str(e)
 
     # ---------- install ----------
 

@@ -3090,7 +3090,10 @@
       "Installing": "インストール中",
       "NoReleases": "バージョン一覧が未取得です、更新を押してください",
       "Refresh": "一覧を更新",
-      "InstallHint": "インストールするとデスクトップアプリが置き換わり自動再起動します"
+      "InstallHint": "インストールするとデスクトップアプリが置き換わり自動再起動します",
+      "RestartUpdate": "再起動して更新",
+      "Restarting": "再起動して更新中…",
+      "NewCommits": "再起動後に適用されるコミット："
     },
     "Remote": {
       "Running": "実行中",

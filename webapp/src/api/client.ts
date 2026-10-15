@@ -92,6 +92,7 @@ export const api = {
     request<{
       current: string;
       repo: string;
+      mode: "release" | "git";
       state: string;
       error: string | null;
       releases: {
@@ -103,11 +104,20 @@ export const api = {
         assets: { name: string; size: number; url: string }[];
       }[];
       installing: { version: string; stage: string; progress: number } | null;
+      git: {
+        branch: string;
+        state: string;
+        error: string | null;
+        commits: { sha: string; date: string; message: string }[];
+      };
     }>("/update/status"),
 
   configs: () => request<{ name: string; modified: string }[]>("/configs"),
 
   updateRefresh: () => request<{ ok: boolean }>("/update/refresh", { method: "POST" }),
+
+  /** Ask the launcher to pull + restart the backend (git mode only). */
+  updateRestart: () => request<{ ok: boolean; error?: string }>("/update/restart", { method: "POST" }),
 
   updateInstall: (version: string) =>
     request<{ ok: boolean; error?: string }>("/update/install", {

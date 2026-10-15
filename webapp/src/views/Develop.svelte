@@ -29,6 +29,8 @@ const THEMES = [
 // release updater data
 type UpdStatus = Awaited<ReturnType<typeof api.updateStatus>>;
 let upd = $state<UpdStatus | null>(null);
+// git mode: set while the launcher is pulling + restarting the backend
+let restarting = $state(false);
 
 async function refreshUpdate() {
   try {
@@ -43,10 +45,33 @@ async function refreshReleases() {
   const timer = window.setInterval(async () => {
     const st = await api.updateStatus();
     upd = st;
-    if (st.state !== "refreshing") {
+    const busy = st.state === 'refreshing' || st.git?.state === 'fetching';
+    if (!busy) {
       window.clearInterval(timer);
     }
   }, 1500);
+}
+
+async function restartToUpdate() {
+  const res = await api.updateRestart();
+  if (!res.ok) {
+    if (upd) upd = { ...upd, git: { ...upd.git, state: 'failed', error: res.error ?? 'restart refused' } };
+    return;
+  }
+  restarting = true;
+  // The launcher stops this backend, pulls, and starts it again — poll until
+  // the webui answers once more (the shell also re-navigates to the webui,
+  // which simply reloads us).
+  const timer = window.setInterval(async () => {
+    try {
+      const st = await api.updateStatus();
+      upd = st;
+      restarting = false;
+      window.clearInterval(timer);
+    } catch {
+      // backend down mid-restart: keep polling
+    }
+  }, 2000);
 }
 
 async function installRelease(tag: string) {
@@ -82,6 +107,13 @@ function pickButtonClass(active: boolean): string {
   return active
     ? "btn-sm border-primary bg-primary text-white hover:bg-primary-hover"
     : "btn-sm border-line-control bg-transparent text-body hover:border-gray-500 hover:bg-gray-800";
+}
+
+/** Release notes are plain GitHub markdown; render the only construct that
+ * actually appears (**bold**) after escaping everything else. */
+function renderBody(body: string): string {
+  const escaped = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return escaped.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
 }
 
 function onAsideSelect(name: string) {
@@ -182,62 +214,101 @@ $effect(() => {
         <span class="text-muted">
           {t('Gui.Update.CurrentVersion')}: {upd?.current ?? '…'}
         </span>
-        <span class="text-muted text-[0.8rem]">({upd?.repo ?? ''})</span>
+        <span class="text-muted text-[0.8rem]">
+          ({upd?.mode === 'git' ? `${upd?.git?.branch ?? 'master'} ← ` : ''}{upd?.repo ?? ''})
+        </span>
         <button class="btn-sm border-info bg-info text-white hover:bg-info-hover" onclick={refreshReleases}>
           {t('Gui.Update.Refresh')}
         </button>
       </div>
 
-      {#if upd?.state === 'refreshing'}
-        <span
-          class="inline-block h-4 w-4 rounded-full border-[0.2em] border-solid border-r-transparent [animation:spinner-border_.75s_linear_infinite]"
-        ></span>
-        <span>{t('Gui.Update.UpdateChecking')}</span>
-      {:else if upd?.state === 'failed' && upd.error}
-        <p class="text-[var(--text-danger)]">{t('Gui.Update.UpdateFailed')}: {upd.error}</p>
-      {/if}
-
-      {#if upd?.installing}
-        <div class="panel mb-3 p-2.5">
-          <p>
-            {t('Gui.Update.Installing')}: {upd.installing.version} — {upd.installing.stage} ({upd.installing.progress}%)
-          </p>
-          <div class="h-2 w-full overflow-hidden bg-surface-hr">
-            <div class="h-full bg-accent" style:width="{upd.installing.progress}%"></div>
-          </div>
-        </div>
-      {/if}
-
-      {#if !upd?.releases?.length}
-        <p class="text-muted">{t('Gui.Update.NoReleases')}</p>
-      {:else}
-        {#each upd.releases as rel (rel.tag)}
-          <div class="panel mb-3 p-2.5">
-            <div class="flex items-center justify-between gap-2">
-              <span class="font-medium">
-                {rel.name}
-                <span class="text-muted text-[0.8rem]">({rel.tag})</span>
-                {#if rel.prerelease}
-                  <span class="text-muted text-[0.8rem]"> [pre-release]</span>
-                {/if}
-              </span>
-              <button
-                class="btn-sm border-success bg-success text-white hover:bg-success-hover disabled:opacity-50"
-                onclick={() => installRelease(rel.tag)}
-                disabled={upd?.installing != null}
-              >
-                {t('Gui.Update.Install')}
-              </button>
+      {#if upd?.mode === 'git'}
+        <!-- git checkout: content updates land on restart, the launcher pulls -->
+        {#if upd?.git?.state === 'fetching' || upd?.state === 'refreshing'}
+          <span
+            class="inline-block h-4 w-4 rounded-full border-[0.2em] border-solid border-r-transparent [animation:spinner-border_.75s_linear_infinite]"
+          ></span>
+          <span>{t('Gui.Update.UpdateChecking')}</span>
+        {:else if upd?.git?.state === 'failed'}
+          <p class="text-[var(--text-danger)]">{t('Gui.Update.UpdateFailed')}: {upd?.git?.error}</p>
+        {:else if upd?.git?.state === 'ready' && !upd?.git?.commits?.length}
+          <p class="text-muted">{t('Gui.Update.UpToDate')}</p>
+        {:else if upd?.git?.state === 'ready'}
+          <p class="text-muted">{t('Gui.Update.NewCommits')}</p>
+          {#each upd?.git?.commits ?? [] as c (c.sha)}
+            <div class="panel mb-1.5 flex items-baseline gap-2 p-2">
+              <span class="font-mono text-[0.8rem] text-muted">{c.sha}</span>
+              <span class="min-w-0 truncate">{c.message}</span>
+              <span class="ml-auto flex-shrink-0 text-[0.8rem] text-muted">{c.date}</span>
             </div>
-            {#if rel.date}
-              <p class="mt-0.5 text-[0.8rem] text-muted">{rel.date}</p>
-            {/if}
-            {#if rel.body}
-              <pre class="mt-1 max-h-40 overflow-y-auto whitespace-pre-wrap text-[0.85rem]">{rel.body}</pre>
-            {/if}
+          {/each}
+          <button
+            class="btn-sm mt-2 border-success bg-success text-white hover:bg-success-hover disabled:opacity-50"
+            onclick={restartToUpdate}
+            disabled={restarting}
+          >
+            {restarting ? t('Gui.Update.Restarting') : t('Gui.Update.RestartUpdate')}
+          </button>
+        {/if}
+        {#if restarting}
+          <p class="mt-2 text-muted">{t('Gui.Update.Restarting')}</p>
+        {/if}
+      {:else}
+        <!-- frozen install: whole-release replacement via the NSIS setup -->
+        {#if upd?.state === 'refreshing'}
+          <span
+            class="inline-block h-4 w-4 rounded-full border-[0.2em] border-solid border-r-transparent [animation:spinner-border_.75s_linear_infinite]"
+          ></span>
+          <span>{t('Gui.Update.UpdateChecking')}</span>
+        {:else if upd?.state === 'failed' && upd.error}
+          <p class="text-[var(--text-danger)]">{t('Gui.Update.UpdateFailed')}: {upd.error}</p>
+        {/if}
+
+        {#if upd?.installing}
+          <div class="panel mb-3 p-2.5">
+            <p>
+              {t('Gui.Update.Installing')}: {upd.installing.version} — {upd.installing.stage}
+              ({upd.installing.progress}%)
+            </p>
+            <div class="h-2 w-full overflow-hidden bg-surface-hr">
+              <div class="h-full bg-accent" style:width="{upd.installing.progress}%"></div>
+            </div>
           </div>
-        {/each}
-        <p class="text-muted text-[0.85rem]">{t('Gui.Update.InstallHint')}</p>
+        {/if}
+
+        {#if !upd?.releases?.length}
+          <p class="text-muted">{t('Gui.Update.NoReleases')}</p>
+        {:else}
+          {#each upd.releases as rel (rel.tag)}
+            <div class="panel mb-3 p-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-medium">
+                  {rel.name}
+                  {#if rel.name !== rel.tag}
+                    <span class="text-muted text-[0.8rem]">({rel.tag})</span>
+                  {/if}
+                  {#if rel.prerelease}
+                    <span class="text-muted text-[0.8rem]"> [pre-release]</span>
+                  {/if}
+                </span>
+                <button
+                  class="btn-sm border-success bg-success text-white hover:bg-success-hover disabled:opacity-50"
+                  onclick={() => installRelease(rel.tag)}
+                  disabled={upd?.installing != null}
+                >
+                  {t('Gui.Update.Install')}
+                </button>
+              </div>
+              {#if rel.date}
+                <p class="mt-0.5 text-[0.8rem] text-muted">{rel.date}</p>
+              {/if}
+              {#if rel.body}
+                <pre class="mt-1 max-h-40 overflow-y-auto whitespace-pre-wrap text-[0.85rem]">{@html renderBody(rel.body)}</pre>
+              {/if}
+            </div>
+          {/each}
+          <p class="text-muted text-[0.85rem]">{t('Gui.Update.InstallHint')}</p>
+        {/if}
       {/if}
     {:else if page === 'Remote'}
       <p class="mt-0 mb-4 text-muted">未支持</p>
