@@ -179,7 +179,7 @@ def _entry_line(sym, base, ours, theirs, stats, out):
 
 def resolve(base_text, ours_text, theirs_text):
     """Return (merged_text, stats_dict). Conflict markers bump 'conflicts'."""
-    base_order, base = parse(base_text)
+    _base_order, base = parse(base_text)
     ours_order, ours = parse(ours_text)
     theirs_order, theirs = parse(theirs_text)
 
