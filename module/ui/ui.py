@@ -40,7 +40,8 @@ from module.ui.assets_bridge import (
     RPG_LEAVE_CITY,
     WITHDRAW,
 )
-from module.ui.page import Page, page_academy, page_campaign, page_event, page_main, page_main_white, page_sp
+from module.ui.page import Page, page_academy, page_campaign, page_event, page_main, page_main_white, page_sp, \
+    page_tactical
 from module.ui_white.assets import *  # noqa: F403  (data-bundle star import)
 
 # ---------------------------------------------------------------------------
@@ -126,6 +127,9 @@ def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
          "action": {"click": LOGIN_CHECK}},
         {"name": "maintenance", "check": {"button": MAINTENANCE_ANNOUNCE, "offset": (30, 30), "interval": 3},
          "action": {"click": MAINTENANCE_ANNOUNCE}},
+        # rerun event select page (upstream 2026-10): back out to the shop map
+        {"name": "rerun_select", "check": {"button": RERUN_SELECT_CHECK, "offset": (30, 30), "interval": 3},
+         "action": {"click": SHOP_BACK_ARROW}},
         # L569-572: mistaken click into exercise preparation -> GOTO_MAIN
         {"name": "exercise_preparation", "check": {"button": EXERCISE_PREPARATION, "interval": 3},
          "action": {"click_and": [GOTO_MAIN]}},
@@ -162,10 +166,15 @@ class UI(InfoHandler):
                 return True
             return False
         # shitty EN localization changing font width of ACADEMY title,
-        # check other buttons also
-        if self.config.SERVER == "en" and page == page_academy:
-            if self.appear(ACADEMY_GOTO_MUNITIONS, offset=offset, interval=interval):
-                return True
+        # check other buttons also; TACTICAL_CHECK_2 is EN's fallback for the
+        # malformed tactical title font (upstream 2026-10)
+        if self.config.SERVER == "en":
+            if page == page_academy:
+                if self.appear(ACADEMY_GOTO_MUNITIONS, offset=offset, interval=interval):
+                    return True
+            if page == page_tactical:
+                if self.appear(TACTICAL_CHECK_2, offset=offset, interval=interval):
+                    return True
         return self.appear(page.check_button, offset=offset, interval=interval)
 
     def is_in_main(self, offset=(30, 30), interval=0):
@@ -586,6 +595,8 @@ class UI(InfoHandler):
         """
         # Single-shot evaluation of the popup rule group (design D9): same
         # first-match-wins semantics as the original if-chain, now data.
+        # Upstream 2026-10 added the rerun-select rule; it lives in the
+        # popups_main group below (same priority slot as the original chain).
         return bool(run_group(popups_main(get_ship), owner=self))
 
     def handle_idle_page(self):
