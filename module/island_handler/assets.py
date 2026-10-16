@@ -52,3 +52,4 @@ TEMPLATE_ISLAND_DOCK_GRADE_D = Template(file='./assets/cn/island_handler/TEMPLAT
 TEMPLATE_ISLAND_DOCK_GRADE_E = Template(file='./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_GRADE_E.png')
 TEMPLATE_ISLAND_DOCK_OCCUPIED = Template(file={'cn': './assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_OCCUPIED.png', 'en': './assets/en/island_handler/TEMPLATE_ISLAND_DOCK_OCCUPIED.png', 'jp': './assets/jp/island_handler/TEMPLATE_ISLAND_DOCK_OCCUPIED.png', 'tw': './assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_OCCUPIED.png'})
 TEMPLATE_ISLAND_RECIPE_ANCHOR = Template(file='./assets/cn/island_handler/TEMPLATE_ISLAND_RECIPE_ANCHOR.png')
+ISLAND_RESTAURANT_ANIMATION_CHECK = Button(area=(828, 567, 851, 590), color=(214, 199, 144), button=(828, 567, 851, 590), file='./assets/cn/island_handler/ISLAND_RESTAURANT_ANIMATION_CHECK.png')
