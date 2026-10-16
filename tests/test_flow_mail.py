@@ -47,13 +47,12 @@ import module.base.timer as timer_module
 from dev_tools.flow_replay import Frame, Replay
 from module.base.timer import Timer
 from module.combat.assets import GET_ITEMS_1, GET_ITEMS_2
+from module.flow.runtime import run_flow, set_runtime
 from module.freebies import mail_white
 from module.freebies.assets import MAIL_BATCH_CLAIM, MAIL_MANAGE, MAIL_WHITE_EMPTY
 from module.freebies.mail_white import _mail_enter_flow
-from module.flow.runtime import run_flow, set_runtime
 from module.ui.page import GOTO_MAIN_WHITE, page_mail
 from module.ui.ui import UI
-
 
 # --- the loop as it was before the migration ------------------------------
 
@@ -153,7 +152,7 @@ class ClockedReplay(MailReplay):
 def fake_clock(monkeypatch):
     monkeypatch.setattr(timer_module, "time", lambda: _Clock.now)
     _Clock.now = _CLOCK_START
-    yield
+    return
 
 
 # --- scenarios ------------------------------------------------------------
@@ -238,7 +237,8 @@ def test_mail_enter_migration_is_equivalent():
     old, old_result, new, new_result = _run_pair(MAIN_WHITE_THEN_MAIL)
     problems = _differences(old, old_result, new, new_result)
     assert problems == [], problems
-    assert old_result is True and new_result is True
+    assert old_result is True
+    assert new_result is True
     # The call the first regression starved: entering the mail page from
     # page_main_white. Without it the loop never leaves the main page.
     assert [(c.frame, c.kind, c.name) for c in new.calls if c.name == "MAIL_ENTER_WHITE"] == [
@@ -252,7 +252,8 @@ def test_mail_enter_empty_mailbox_is_equivalent():
     old, old_result, new, new_result = _run_pair(MAIN_WHITE_THEN_EMPTY_MAIL)
     problems = _differences(old, old_result, new, new_result)
     assert problems == [], problems
-    assert old_result is False and new_result is False
+    assert old_result is False
+    assert new_result is False
     assert any(c.kind == "click" and c.name == "MAIL_ENTER_WHITE" for c in new.calls)
 
 
@@ -261,7 +262,8 @@ def test_mail_enter_goto_main_white_timeout_is_equivalent():
     old, old_result, new, new_result = _run_pair(MAIN_WHITE_THEN_GOTO_TIMEOUT)
     problems = _differences(old, old_result, new, new_result)
     assert problems == [], problems
-    assert old_result is False and new_result is False
+    assert old_result is False
+    assert new_result is False
 
 
 def _manage_always_handled(ctx, args=None, **kw):
@@ -290,7 +292,7 @@ def _end_timer_rebuilt_every_frame(ctx, args=None, **kw):
 
 
 @pytest.mark.parametrize(
-    "attribute, broken",
+    ("attribute", "broken"),
     [
         ("_mail_manage_click", _manage_always_handled),
         ("_mail_enter_end", _end_timer_rebuilt_every_frame),
