@@ -182,7 +182,9 @@ class Replay:
 
     # --- owner surface ----------------------------------------------------
 
-    def appear(self, button, offset=0, interval=0, similarity=0.85, threshold=10) -> bool:
+    # `offset` mirrors the production surface: ALAS accepts both an int and an
+    # (x, y) crop offset, and call sites use both.
+    def appear(self, button, offset: int | tuple[int, int] = 0, interval=0, similarity=0.85, threshold=10) -> bool:
         # The legacy loops and the flows both gate on the interval timer, so the
         # timer is part of the replayed state and not an accident of timing.
         key = name_of(button)

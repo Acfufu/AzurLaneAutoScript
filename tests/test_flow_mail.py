@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -111,7 +112,9 @@ class MailReplay(Replay):
     """
 
     def ui_main_appear_then_click(self, page, offset=(30, 30), interval=3):
-        return UI.ui_main_appear_then_click(self, page, offset=offset, interval=interval)
+        # The harness duck-types the UI surface; this one method is the real
+        # production implementation, so the cast names the stand-in explicitly.
+        return UI.ui_main_appear_then_click(cast(UI, self), page, offset=offset, interval=interval)
 
     def _handle_mail_reward(self):
         """The legacy method, verbatim (MailWhite._handle_mail_reward)."""
