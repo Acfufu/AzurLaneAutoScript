@@ -17138,6 +17138,88 @@
         "tw": "./assets/tw/combat_ui/QUIT_YoRHa.png"
       }
     },
+    "PAUSE_Bullet": {
+      "area": {
+        "cn": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "en": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "jp": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "tw": [
+          1223,
+          34,
+          1242,
+          54
+        ]
+      },
+      "color": {
+        "cn": [
+          108,
+          91,
+          62
+        ],
+        "en": [
+          108,
+          91,
+          62
+        ],
+        "jp": [
+          108,
+          91,
+          62
+        ],
+        "tw": [
+          108,
+          91,
+          62
+        ]
+      },
+      "button": {
+        "cn": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "en": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "jp": [
+          1223,
+          34,
+          1242,
+          54
+        ],
+        "tw": [
+          1223,
+          34,
+          1242,
+          54
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/combat_ui/PAUSE_Bullet.png",
+        "en": "./assets/cn/combat_ui/PAUSE_Bullet.png",
+        "jp": "./assets/cn/combat_ui/PAUSE_Bullet.png",
+        "tw": "./assets/cn/combat_ui/PAUSE_Bullet.png"
+      }
+    },
     "COMMISSION_ADVICE": {
       "area": {
         "cn": [
@@ -49444,6 +49526,88 @@
         "en": "./assets/cn/island_handler/ISLAND_TECHNOLOGY_TAB1.png",
         "jp": "./assets/cn/island_handler/ISLAND_TECHNOLOGY_TAB1.png",
         "tw": "./assets/cn/island_handler/ISLAND_TECHNOLOGY_TAB1.png"
+      }
+    },
+    "ISLAND_RESTAURANT_ANIMATION_CHECK": {
+      "area": {
+        "cn": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "en": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "jp": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "tw": [
+          828,
+          567,
+          851,
+          590
+        ]
+      },
+      "color": {
+        "cn": [
+          214,
+          199,
+          144
+        ],
+        "en": [
+          214,
+          199,
+          144
+        ],
+        "jp": [
+          214,
+          199,
+          144
+        ],
+        "tw": [
+          214,
+          199,
+          144
+        ]
+      },
+      "button": {
+        "cn": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "en": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "jp": [
+          828,
+          567,
+          851,
+          590
+        ],
+        "tw": [
+          828,
+          567,
+          851,
+          590
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island_handler/ISLAND_RESTAURANT_ANIMATION_CHECK.png",
+        "en": "./assets/cn/island_handler/ISLAND_RESTAURANT_ANIMATION_CHECK.png",
+        "jp": "./assets/cn/island_handler/ISLAND_RESTAURANT_ANIMATION_CHECK.png",
+        "tw": "./assets/cn/island_handler/ISLAND_RESTAURANT_ANIMATION_CHECK.png"
       }
     },
     "FLEET_1_ADVICE": {
