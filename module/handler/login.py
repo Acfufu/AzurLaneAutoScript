@@ -39,7 +39,7 @@ def _cn_agreement_present(ctx: Any, args: dict[str, Any] | None = None, **kw: An
     """Original L102-118 detection: blue confirm button on the right half."""
     return (
         ctx.owner.image_color_button(
-            area=(640, 360, 1280, 720), color=(78, 189, 234), color_threshold=245, encourage=25,
+            area=(640, 360, 1280, 720), color=(78, 189, 234), threshold=10, encourage=25,
             name="AGREEMENT_CONFIRM",
         )
         is not None
