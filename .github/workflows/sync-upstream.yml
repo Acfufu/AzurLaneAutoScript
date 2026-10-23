@@ -1,9 +1,12 @@
 name: Sync upstream content
 
 # Daily auto-merge of LmeSzinc/master (content/code upstream) into master.
-# Clean merges push directly as github-actions[bot]; conflicts abort and open
-# a PR for manual resolution instead. Joxos integration updates are NOT
-# automated — follow them by hand (see README lineage).
+# A clean merge is necessary but NOT sufficient: before the bot pushes, the
+# job also runs the R1 campaign stub-drift red line and the python-side CI
+# gates (risk R2, mirroring ci.yml's environment step for step). Any failure
+# — merge conflict, R1 hit, or a red gate — lands as a PR for manual
+# follow-up instead of a silent push. Joxos integration updates are NOT
+# automated — follow them by hand (README lineage + docs/risk-register.md).
 
 on:
   schedule:
@@ -14,9 +17,18 @@ permissions:
   contents: write
   pull-requests: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    # windows + PYTHONUTF8 mirror ci.yml exactly: the pre-push gate chain
+    # must not disagree with CI over runner behavior, or healthy syncs would
+    # stall on platform-only failures.
+    runs-on: windows-latest
+    env:
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,39 +41,119 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python 3.13
+        run: uv python install 3.13
+
+      - name: Sync dependencies
+        # Warms the venv before the merge so the assets merge driver (uv run)
+        # doesn't pay the full install on its first conflicted file.
+        run: uv sync --frozen
+
       - name: Install assets merge driver
         run: |
           # .gitattributes routes module/*/assets.py to this driver; without
           # the config the attribute is a no-op and every sync conflict-bombs
           # (39 files on the first run).
           git config merge.alas-assets.driver \
-            "python3 dev_tools/merge_assets_driver.py %O %A %B"
+            "uv run --frozen python dev_tools/merge_assets_driver.py %O %A %B"
 
       - name: Fetch upstream
         run: |
           git remote add upstream https://github.com/LmeSzinc/AzurLaneAutoScript.git
           git fetch upstream master
 
-      - name: Merge upstream/master (auto-push when clean)
+      - name: Merge upstream/master
         id: merge
         run: |
           if git merge --no-edit upstream/master; then
-            git push origin master
             echo "conflict=false" >> "$GITHUB_OUTPUT"
           else
             git merge --abort
             echo "conflict=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Open PR on conflict
-        if: steps.merge.outputs.conflict == 'true'
+      - name: Campaign stub-drift red line (risk R1)
+        id: drift
+        if: steps.merge.outputs.conflict == 'false'
+        run: |
+          if uv run --frozen python dev_tools/check_campaign_stub_drift.py; then
+            echo "hit=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "hit=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pre-push gates (risk R2, python side of ci.yml)
+        # Collects failures instead of failing the step: the push below must
+        # not happen, but the job has to reach the PR step to hand the merge
+        # commit to a human. Mirrors ci.yml's gate set minus the frontend,
+        # log-align and packaging checks (not python-sync surfaces).
+        id: gates
+        if: steps.merge.outputs.conflict == 'false' && steps.drift.outputs.hit == 'false'
+        run: |
+          set +e
+          status=0
+          gate() {
+            local name="$1"; shift
+            echo "::group::$name"
+            "$@"
+            local rc=$?
+            echo "::endgroup::"
+            if [ "$rc" -ne 0 ]; then
+              echo "::error title=$name::pre-push gate failed (exit $rc)"
+              status=1
+            fi
+          }
+          gate "Lint" uv run --frozen ruff check .
+          gate "Type check" uv run --frozen pyright module/logger.py module/scheduler module/tasks module/webui module/cli module/config/utils.py module/flow deploy/packaging tests
+          gate "Import smoke" uv run --frozen python dev_tools/smoke_import_all.py
+          gate "Structure" uv run --frozen python dev_tools/verify_alas_structure.py
+          gate "Task registry" uv run --frozen python dev_tools/verify_task_registry.py
+          gate "Task record" uv run --frozen python dev_tools/verify_task_record.py
+          gate "Tests" uv run --frozen pytest tests -v
+          gate "Recognition arguments vs upstream" uv run --frozen python dev_tools/verify_thresholds.py --check
+          gate "Equivalence: config generated" uv run --frozen python dev_tools/verify_config_generated.py
+          gate "Equivalence: task families" uv run --frozen python dev_tools/verify_task_families.py
+          gate "Equivalence: stage meta" uv run --frozen python dev_tools/verify_stage_meta.py
+          gate "Equivalence: map data" uv run --frozen python dev_tools/verify_map_data.py --all
+          gate "Equivalence: log cell widths" uv run --frozen python dev_tools/gen_log_cell_widths.py --check
+          gate "Equivalence: assets baseline" uv run --frozen python dev_tools/verify_assets.py check dev_tools/baseline/assets_snapshot.json
+          gate "Equivalence: assets dedup form" uv run --frozen python dev_tools/dedup_assets.py --check
+          echo "ok=$([ "$status" -eq 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Push (clean merge, R1 clean, gates green)
+        id: push
+        if: steps.merge.outputs.conflict == 'false' && steps.drift.outputs.hit == 'false' && steps.gates.outputs.ok == 'true'
+        run: |
+          git push origin master
+          echo "done=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR when auto-push did not happen
+        if: steps.push.outputs.done != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           BRANCH=sync-upstream/upstream-master
-          git checkout -B "$BRANCH" upstream/master
+          if [ "${{ steps.merge.outputs.conflict }}" = "true" ]; then
+            git checkout -B "$BRANCH" upstream/master
+            TITLE="Sync upstream: LmeSzinc/master（冲突，需人工合并）"
+            BODY="每日自动同步在 merge 时遇到冲突，已把 upstream/master 推成本分支。请本地 merge 解决冲突后合并本 PR。"
+          else
+            # The merge itself is clean — hand over the merge commit as-is.
+            git checkout -B "$BRANCH" HEAD
+            if [ "${{ steps.drift.outputs.hit }}" = "true" ]; then
+              TITLE="Sync upstream: R1 红线命中——上游改动了已桩化的 campaign .py（需转换跟进）"
+              BODY="merge 干净，但 campaign 桩化漂移红线命中：上游本轮改动落在地图数据已迁往 YAML 的 .py 上（清单见 Actions 日志的 drift 步骤），自动推送已拦下。本分支即合并结果；请按 docs/upstream-sync.md 转换上游改动后合并本 PR。"
+            else
+              TITLE="Sync upstream: 预推送门禁未通过（需修复后合并）"
+              BODY="merge 干净、R1 未命中，但推前门禁（ruff / pyright / pytest / verify_*）有红项，清单见 Actions 日志的红色标注。本分支即合并结果；修复后合并本 PR。"
+            fi
+          fi
           git push origin "$BRANCH" --force
           gh pr create --base master --head "$BRANCH" \
-            --title "Sync upstream: LmeSzinc/master（冲突，需人工合并）" \
-            --body "每日自动同步在 merge 时遇到冲突，已把 upstream/master 推成本分支。请本地 merge 解决冲突后合并本 PR。" \
+            --title "$TITLE" \
+            --body "$BODY" \
             || echo "PR already open — nothing to do"

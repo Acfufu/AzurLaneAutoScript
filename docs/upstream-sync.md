@@ -1,14 +1,17 @@
 # 上游整合 SOP
 
-> 本仓库是 [LmeSzinc/AzurLaneAutoScript](https://github.com/LmeSzinc/AzurLaneAutoScript) 的 fork（经 Joxos）。
+> 本仓库是 [LmeSzinc/AzurLaneAutoScript](https://github.com/LmeSzinc/AzurLaneAutoScript)
+> 的独立发行仓（架构种子经 Joxos 植入，血缘声明见 README）。
 > 上游平均每周有 10–20 个提交，其中大部分是**资产更新与实机修复**——这是本 fork 存在的主要价值来源，不能拖。
-> 本文件是唯一的整合流程；不要凭记忆手工 merge。
+> 日常整合由 [`.github/workflows/sync-upstream.yml`](../.github/workflows/sync-upstream.yml)
+> 每日自动执行（含 R1 红线与推前门禁，见 [risk-register.md](risk-register.md)）；
+> 本文件描述的是同步开 PR 后的**人工解决流程**——不要凭记忆手工 merge。
 
 ## 0. 远端约定
 
 | 远端 | 指向 | 用途 |
 |---|---|---|
-| `origin` | `Joxos/AzurLaneAutoScript` | 我们的 fork，唯一可推送目标 |
+| `origin` | `Acfufu/AzurLaneAutoScript` | 本发行仓，唯一可推送目标 |
 | `upstream` | `LmeSzinc/AzurLaneAutoScript` | 只 fetch；push URL 指向 `DISABLED://`，物理上推不上去 |
 
 ```powershell
