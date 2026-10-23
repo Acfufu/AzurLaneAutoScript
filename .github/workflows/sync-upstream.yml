@@ -1,13 +1,13 @@
 name: Sync upstream content
 
-# Weekly auto-merge of LmeSzinc/master (content/code upstream) into master.
+# Daily auto-merge of LmeSzinc/master (content/code upstream) into master.
 # Clean merges push directly as github-actions[bot]; conflicts abort and open
 # a PR for manual resolution instead. Joxos integration updates are NOT
 # automated — follow them by hand (see README lineage).
 
 on:
   schedule:
-    - cron: "0 3 * * 1" # Mondays 03:00 UTC
+    - cron: "0 3 * * *" # Daily 03:00 UTC (11:00 UTC+8)
   workflow_dispatch:
 
 permissions:
@@ -63,5 +63,5 @@ jobs:
           git push origin "$BRANCH" --force
           gh pr create --base master --head "$BRANCH" \
             --title "Sync upstream: LmeSzinc/master（冲突，需人工合并）" \
-            --body "每周自动同步在 merge 时遇到冲突，已把 upstream/master 推成本分支。请本地 merge 解决冲突后合并本 PR。" \
+            --body "每日自动同步在 merge 时遇到冲突，已把 upstream/master 推成本分支。请本地 merge 解决冲突后合并本 PR。" \
             || echo "PR already open — nothing to do"

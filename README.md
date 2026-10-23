@@ -1,11 +1,11 @@
 # AzurLaneAutoScript（Acfufu 发行线）
 
 > **Lineage（2026-10-16 删库重建）**：本仓库由 Joxos/AzurLaneAutoScript master（`0cf50d3d8`）种子重建，
-> **保留完整 git 历史**——与上游的共同祖先（merge-base）是每周自动同步不出冲突地狱的前提。
+> **保留完整 git 历史**——与上游的共同祖先（merge-base）是每日自动同步不出冲突地狱的前提。
 > 角色划分：
 >
 > - **内容/代码真上游**：[LmeSzinc/AzurLaneAutoScript](https://github.com/LmeSzinc/AzurLaneAutoScript)，
->   由 `.github/workflows/sync-upstream.yml` 每周自动 merge（无冲突直推，冲突开 PR 留人工）；
+>   由 `.github/workflows/sync-upstream.yml` 每日自动 merge（无冲突直推，冲突开 PR 留人工）；
 > - **集成线**：[Joxos/AzurLaneAutoScript](https://github.com/Joxos/AzurLaneAutoScript)，低频手动跟进；
 > - **部署方**：[Acfufu/alas-launcher](https://github.com/Acfufu/alas-launcher)（Tauri 壳，启动时向本仓
 >   注入本地 control API 补丁并执行 git 更新）。
@@ -102,7 +102,7 @@ git tag v2026.10.01 && git push origin v2026.10.01
 - nsi 缺失时回退 portable zip（此时应用内更新会明确报错，不静默失败）。
 - 日常质量门：`.github/workflows/ci.yml`（ruff 全树 / pyright / pytest / 前端 vitest /
   日志格对齐 / 识别参数比对 / 等价门 / docker 静态检查）。
-- **上游同步**是另一条线：`docs/upstream-sync.md`（每周一次，`git merge-tree` 先干跑数冲突）。
+- **上游同步**是另一条线：`docs/upstream-sync.md`（每日自动，冲突时按该文档手动跟进）。
 
 ## 4. Flow：业务逻辑数据化（迁移前 / 迁移后）
 
