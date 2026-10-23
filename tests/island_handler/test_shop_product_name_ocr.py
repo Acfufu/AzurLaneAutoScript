@@ -44,7 +44,7 @@ def read_ids(shop):
 
 
 @pytest.mark.parametrize(
-    'srv, raw_name, expected_name, expected_id',
+    ('srv', 'raw_name', 'expected_name', 'expected_id'),
     [
         # 28 occurrences in the logs, the backslash is a stroke of the icon
         ('cn', '小\\麦种子', '小麦种子', 411000),
@@ -77,7 +77,7 @@ def test_name_is_cleaned(srv, raw_name, expected_name, expected_id, monkeypatch,
 
 
 @pytest.mark.parametrize(
-    'srv, raw_name',
+    ('srv', 'raw_name'),
     [
         # punctuation only, and an empty slot
         ('cn', '”_.'),
@@ -96,7 +96,7 @@ def test_noise_only_slot_returns_none(srv, raw_name, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    'lines, expected_ids',
+    ('lines', 'expected_ids'),
     [
         (['', '%', '小\\麦种子'], [None, None, 411000]),
     ],
@@ -105,7 +105,7 @@ def test_slots_keep_their_position(lines, expected_ids, monkeypatch):
     monkeypatch.setattr(server, 'server', 'cn')
     shop = shop_with_ocr(lines, monkeypatch)
 
-    names, ids = read_ids(shop)
+    _names, ids = read_ids(shop)
 
     assert len(ids) == len(shop._island_shop_item_name_grid.buttons)
     assert ids[:len(expected_ids)] == expected_ids

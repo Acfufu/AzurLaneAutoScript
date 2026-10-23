@@ -123,7 +123,7 @@ class TestExchangeConfirm:
 
 
 class TestScreenReads:
-    @pytest.mark.parametrize('name, meat_id, cards, meat', [
+    @pytest.mark.parametrize(('name', 'meat_id', 'cards', 'meat'), [
         ('MuMu12-20260811-135613.png', 2522,
          [(0, 5103, 2), (1, 5104, 4), (2, 5105, 4), (3, 5106, 4), (4, 5107, 10)], (395, 0)),
         ('MuMu12-20260810-175529.png', 2522, [(0, 5105, 4), (1, 5107, 2)], (398, 0)),
@@ -136,7 +136,7 @@ class TestScreenReads:
         assert read_fish_counts(image, [index for index, _, _ in cards]) == [0] * len(cards)
         assert read_fish_meat(image) == meat
 
-    @pytest.mark.parametrize('name, count, meat', [
+    @pytest.mark.parametrize(('name', 'count', 'meat'), [
         ('MuMu12-20260808-000527.png', 4, (0, 4)),
         ('MuMu12-20260810-144910.png', 1, (399, 18)),
         ('MuMu12-20260810-145006.png', 2, (399, 36)),

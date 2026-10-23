@@ -8,7 +8,6 @@ from module.island.assets import *  # noqa: F403  (data-bundle star import)
 from module.island.data import DIC_ISLAND_PRODUCTION_PLACE, DIC_ISLAND_SLOT
 from module.island.utils import item_name_with_id, production_place_name_with_id
 from module.island_handler.dock import IslandDock
-from module.island_handler.dock_scanner import CharacterScanner
 from module.island_handler.exchange import FISH_MEAT_SOURCES
 from module.island_handler.recipe import IslandProductionRestart, IslandRecipe
 from module.logger import logger

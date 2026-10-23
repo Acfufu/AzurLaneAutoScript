@@ -31,7 +31,7 @@ def build_infos(recipe):
 
 
 class TestFishMeatShortageRate:
-    @pytest.mark.parametrize('meat_stock, rate', [
+    @pytest.mark.parametrize(('meat_stock', 'rate'), [
         (None, 1.),
         (0, 1.),
         (9, 0.5),

@@ -336,7 +336,7 @@ COW_FEED_ACTIVITY = {'kind': 'shop', 'id': 103002, 'group': None, 'workload': 0,
 class TestConversionIdleRedirect:
     def test_pt_neutral_shop_ids(self):
         # Flour and chicken/pig feed keep PT, cow/sheep feed gain PT
-        assert ProductionPlanCalculator.PT_NEUTRAL_SHOP_IDS == {103000, 103001, 103004}
+        assert {103000, 103001, 103004} == ProductionPlanCalculator.PT_NEUTRAL_SHOP_IDS
 
     def test_idle_flour_exported_as_wheat(self):
         calc = make_calculator({})
@@ -371,7 +371,7 @@ class TestConversionIdleRedirect:
 
     def test_idle_conversion_share_needs_no_buffer(self):
         calc = make_calculator({})
-        kwargs = dict(solution=[12], activities=[FLOUR_ACTIVITY], sale_entries=[], activity_count=1)
+        kwargs = {'solution': [12], 'activities': [FLOUR_ACTIVITY], 'sale_entries': [], 'activity_count': 1}
         assert calc._calculate_product_daily_buffer_items(**kwargs) == {2000: 72}
         # 10 of 12 flour left idle, only the wheat of 2 flour is consumed daily
         assert calc._calculate_product_daily_buffer_items(**kwargs, idle_ratios={0: 10 / 12}) == {2000: 12}
