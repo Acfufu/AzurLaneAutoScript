@@ -289,3 +289,4 @@ TEMPLATE_STAGE_HALF_PERCENT = Template(file='./assets/cn/template/TEMPLATE_STAGE
 TEMPLATE_STAGE_PERCENT = Template(file='./assets/cn/template/TEMPLATE_STAGE_PERCENT.png')
 TEMPLATE_STAGE_SOS = Template(file='./assets/cn/template/TEMPLATE_STAGE_SOS.png')
 TEMPLATE_SUBMARINE = Template(file='./assets/cn/template/TEMPLATE_SUBMARINE.png')
+TEMPLATE_SIREN_TempestaGhostBoss02 = Template(file='./assets/cn/template/TEMPLATE_SIREN_TempestaGhostBoss02.gif')
