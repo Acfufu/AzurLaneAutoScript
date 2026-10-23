@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Tests for the island shop product name OCR cleanup.
 
 The misreads are taken from user logs of the island production task, where
