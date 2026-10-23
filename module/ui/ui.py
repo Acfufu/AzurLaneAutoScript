@@ -102,7 +102,10 @@ def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
         # L500-501
         {"name": "story", "action": {"call_if": _story_skip}},
         # L506-509: game tips -> GOTO_MAIN
-        {"name": "game_tips", "check": {"button": GAME_TIPS, "interval": 2}, "action": {"click_and": [GOTO_MAIN]}},
+        # offset=(20, 20) forces template matching; without it appear() degrades to the
+        # area's mean-color check, which matches the 20261022 event main screen's dark
+        # seam between the formation and sortie tiles and clicks the settings gear.
+        {"name": "game_tips", "check": {"button": GAME_TIPS, "offset": (20, 20), "interval": 2}, "action": {"click_and": [GOTO_MAIN]}},
         # L512-518: dorm popups
         {
             "name": "dorm_info",
