@@ -157,3 +157,45 @@ def test_launcher_does_not_import_the_project():
 def test_create_no_window_flag_is_windows_only():
     assert launcher.CREATE_NO_WINDOW == 0x0800_0000
     assert os.name in ("nt", "posix")
+
+
+# ---------------------------------------------------------------------------
+# Regression 2026-10-25: read_pid's -1 sentinel ("an instance exists but its
+# pid is unknown") fell through quit_running into POSIX os.kill(-1, 15) —
+# kill(-1, sig) signals EVERY process the sender may signal, so running this
+# test on a dev machine mass-SIGTERMed the whole user session (every GUI app
+# quit, LaunchAgents died, the test's own shell was killed mid-run) while CI
+# runners stayed green because the pytest process itself is the exempt
+# sender. The pid<=0 guard refuses to signal; these tests pin that contract
+# and fail if the guard is removed (the recorder sees kill(-1, ...)).
+# ---------------------------------------------------------------------------
+
+def test_quit_running_with_corrupt_pid_never_signals(tmp_path, monkeypatch):
+    import os as _os
+    import time as _time
+
+    data = tmp_path / "data"
+    data.mkdir()
+    launcher.pid_file(data).write_text("not-a-pid", encoding="utf-8")
+
+    signalled = []
+    monkeypatch.setattr(_os, "kill", lambda pid, sig: signalled.append((pid, sig)))
+
+    start = _time.monotonic()
+    assert launcher.quit_running(data, timeout=5) == 1
+    assert _time.monotonic() - start < 2  # refused immediately, no timeout loop
+    assert signalled == []
+
+
+def test_quit_running_with_negative_pid_file_never_signals(tmp_path, monkeypatch):
+    import os as _os
+
+    data = tmp_path / "data"
+    data.mkdir()
+    launcher.pid_file(data).write_text("-1", encoding="utf-8")
+    assert launcher.read_pid(data) == -1  # sentinel, not a real pid
+
+    signalled = []
+    monkeypatch.setattr(_os, "kill", lambda pid, sig: signalled.append((pid, sig)))
+    assert launcher.quit_running(data, timeout=5) == 1
+    assert signalled == []

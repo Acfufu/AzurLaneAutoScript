@@ -137,6 +137,12 @@ def read_pid(data: Path) -> int | None:
     except ValueError:
         log_line(data, f"{path.name} holds {raw!r}, not a pid; treating an instance as running")
         return -1
+    if pid < 1:
+        # 0/-1/negative ids are not pids; same sentinel as unreadable garbage
+        # (never None: that would let a second instance stack on the first).
+        # Also keeps the liveness probe below from ever seeing kill(-1, 0).
+        log_line(data, f"{path.name} holds {pid}, not a pid; treating an instance as running")
+        return -1
     if os.name == "nt":  # pragma: no cover - windows path, exercised on device
         import ctypes
 
@@ -162,6 +168,16 @@ def quit_running(data: Path, timeout: float = 15.0) -> int:
     pid = read_pid(data)
     if pid is None:
         return 0
+    if pid <= 0:
+        # read_pid's -1 sentinel ("an instance exists but its pid is
+        # unknown") must never reach os.kill/taskkill: POSIX kill(-1, sig)
+        # signals every process the sender may signal — a user-wide mass
+        # SIGTERM. 2026-10-25: the corrupt-pid-file test hit exactly that
+        # and took down the whole GUI session on dev machines while
+        # staying green on childless CI runners. Report the failure the
+        # callers already expect from "cannot identify the instance".
+        log_line(data, "--quit: cannot identify the running pid; refusing to signal")
+        return 1
     if os.name == "nt":  # pragma: no cover - windows path
         subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], check=False, capture_output=True)
     else:  # pragma: no cover - posix only
