@@ -435,7 +435,7 @@ class FlowEngine:
                 handled = bool(action["call_if"](ctx, action.get("args") or {}))
                 if att is not None:
                     att["count"] += 1
-                self._after_rule(state, rule, action, ctx)
+                self._after_rule(state, rule, action, ctx, handled=handled)
                 self._log(f"state={state.name} hit rule={rule.get('name') or '#'}" + (" ✓" if handled else ""))
                 if handled:
                     control = self._apply_control(rule.get("then"), ctx)
@@ -460,8 +460,18 @@ class FlowEngine:
             # stop=False (original `pass`): keep evaluating lower-priority rules
         return _Outcome()
 
-    def _after_rule(self, state: _RunState, rule: dict[str, Any], action: Any, ctx: FlowCtx) -> None:
-        """Post-action bookkeeping: intervals, timeouts, confirm timers."""
+    def _after_rule(
+        self, state: _RunState, rule: dict[str, Any], action: Any, ctx: FlowCtx, handled: bool = True
+    ) -> None:
+        """Post-action bookkeeping: intervals, timeouts, confirm timers.
+
+        `handled` mirrors the original loops' `if handler(): timeout.reset()`:
+        `on_handled` bookkeeping applies only when the rule actually did
+        something — never on a bare evaluation that found nothing to do
+        (regression 2026-10-24: the every-frame extend made timeout-only
+        exits in `_no_enemy_searching_flow` unreachable, hanging the Event
+        task until the device stuck guard fired).
+        """
         self._reset_intervals(action, ctx)
         if action and action.get("reset_timeout") and state.timeout is not None:
             # original `timeout.reset()` semantics (e.g. keep waiting while not in map)
@@ -472,7 +482,7 @@ class FlowEngine:
             if timer is not None:
                 timer.reset()
         extend = rule.get("on_handled", {}).get("extend_timeout")
-        if extend:
+        if extend and handled:
             state.timeout = _timer(extend).start()
 
     # -------------------------------------------------------------- checks --

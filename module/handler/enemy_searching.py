@@ -101,6 +101,10 @@ def _enemy_searching_flow(drop: Any = None) -> dict[str, Any]:
             "waiting": {
                 "skip_if": {"custom": _is_event_animation},
                 "rules": [
+                    # original `if is_in_map(): timeout.start() else: timeout.reset()`:
+                    # the countdown only accumulates while in map (loading pauses it)
+                    {"name": "not_in_map", "check": {"custom": _not_in_map},
+                     "action": {"reset_timeout": True}, "stop": False},
                     {"name": "in_stage", "action": {"call_if": _in_stage_helper}},
                     {"name": "combat_loading", "check": {"custom": _combat_loading},
                      "action": {"goto": "__exit__", "value": True}},

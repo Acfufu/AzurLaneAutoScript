@@ -886,3 +886,149 @@ def test_resolve_task_task_flow_path(monkeypatch):
     assert calls
     assert calls[0][0] == "freebies"
     assert isinstance(calls[0][1], fw.Freebies)
+
+
+# ---------------------------------------------------------------------------
+# Regression 2026-10-24: on_handled.extend_timeout fired on every rule
+# evaluation instead of only on actual handling. With popup groups in the
+# loop, every frame reset the state timeout, so timeout-only exits (e.g.
+# _no_enemy_searching_flow) became unreachable — the Event task hung until
+# the device stuck guard raised GameStuckError, 8 times in a row.
+#
+# These tests run the real engine + real Timer over a scripted clock
+# (0.3s per screenshot, the production interval), so timeout windows are
+# deterministic without real waiting.
+# ---------------------------------------------------------------------------
+
+import module.base.timer as _base_timer
+import module.flow.engine as _flow_engine
+
+
+class FakeClock:
+    def __init__(self):
+        self.now = 1000.0  # away from 0: Timer treats _start <= 0 as "not started"
+
+
+class ClockDevice(FakeDevice):
+    """FakeDevice advancing the clock 0.3s per screenshot; a tick cap turns an
+    unreachable timeout exit into a loud failure instead of a hung test."""
+
+    def __init__(self, clock, max_ticks=300):
+        super().__init__()
+        self.clock = clock
+        self.max_ticks = max_ticks
+
+    def screenshot(self):
+        if self.tick >= self.max_ticks:
+            raise AssertionError(
+                f"flow exceeded {self.max_ticks} ticks — a timeout-only exit never fired "
+                f"(extend_timeout applied on bare evaluation?)"
+            )
+        super().screenshot()
+        self.clock.now += 0.3
+
+
+class EnemyMapOwner(EnemyOwner):
+    """EnemyOwner with per-tick in-map scripting for settle/timeout paths."""
+
+    def __init__(self, device, plan, in_map_plan):
+        super().__init__(device, plan)
+        self.in_map_plan = in_map_plan
+        self.first_in_map_tick = None
+
+    def is_in_map(self):
+        tick = max(self.device.tick, 1)
+        value = self.in_map_plan[min(tick - 1, len(self.in_map_plan) - 1)]
+        if value and self.first_in_map_tick is None:
+            self.first_in_map_tick = self.device.tick
+        return value
+
+
+class VoteOnceOwner(EnemyMapOwner):
+    """Handles the vote popup exactly once (first in-map frame)."""
+
+    def __init__(self, device, plan, in_map_plan):
+        super().__init__(device, plan, in_map_plan)
+        self.handled_tick = None
+
+    def handle_vote_popup(self):
+        if self.handled_tick is None and self.device.tick >= 2:
+            self.handled_tick = self.device.tick
+            return True
+        return False
+
+
+def test_no_enemy_searching_flow_exits_on_timeout(monkeypatch):
+    """The gate: with popups never handled, the settle wait must still exit
+    via on_timeout. Under the regression this looped forever."""
+    from module.handler.enemy_searching import _no_enemy_searching_flow
+
+    flow = _no_enemy_searching_flow()
+    assert validate_flow(flow) == []
+    clock = FakeClock()
+    monkeypatch.setattr(_base_timer, "time", lambda: clock.now)
+    device = ClockDevice(clock)
+    owner = EnemyMapOwner(device, [{"present": ()}], [True] * 100)
+    result = FlowEngine(owner=owner, device=device).run(flow)
+    assert result is True
+    # Timer(1, count=2) -> ~1.2s of settled frames at 0.3s/frame; bounded, not never
+    assert device.tick <= 12
+
+
+def test_no_enemy_searching_flow_popup_extend_on_handled(monkeypatch):
+    """A handled popup restarts the settle window; afterwards the flow still
+    exits on timeout (extend must not outlive the handling)."""
+    from module.handler.enemy_searching import _no_enemy_searching_flow
+
+    flow = _no_enemy_searching_flow()
+    assert validate_flow(flow) == []
+    clock = FakeClock()
+    monkeypatch.setattr(_base_timer, "time", lambda: clock.now)
+    device = ClockDevice(clock)
+    owner = VoteOnceOwner(device, [{"present": ()}], [True] * 100)
+    result = FlowEngine(owner=owner, device=device).run(flow)
+    assert result is True
+    assert owner.handled_tick is not None
+    assert 1 <= device.tick - owner.handled_tick <= 12
+
+
+def test_enemy_searching_flow_holds_timeout_while_not_in_map(monkeypatch):
+    """The 5s countdown only accumulates in map: 6s of loading must not burn
+    the window (original `else: timeout.reset()` branch)."""
+    from module.handler.enemy_searching import _enemy_searching_flow
+
+    flow = _enemy_searching_flow()
+    assert validate_flow(flow) == []
+    clock = FakeClock()
+    monkeypatch.setattr(_base_timer, "time", lambda: clock.now)
+    device = ClockDevice(clock)
+    # 20 out-of-map frames (6s of loading) > the 5s window, then settled in map
+    owner = EnemyMapOwner(device, [{"present": ()}], [False] * 20 + [True] * 100)
+    result = FlowEngine(owner=owner, device=device).run(flow)
+    assert result is True
+    assert owner.first_in_map_tick is not None
+    assert device.tick > owner.first_in_map_tick
+
+
+def test_after_rule_extend_gated_on_handled(monkeypatch):
+    """White-box: _after_rule extends the state timeout only when handled."""
+    clock = FakeClock()
+    monkeypatch.setattr(_base_timer, "time", lambda: clock.now)
+    engine = FlowEngine()
+    state = _flow_engine._RunState(name="s")
+    state.timeout = _flow_engine._timer(5).start()
+    rule = {
+        "name": "popup",
+        "action": {"call_if": lambda ctx, args: False},
+        "on_handled": {"extend_timeout": 1},
+    }
+    ctx = FlowCtx(device=None, config=None, owner=None)
+
+    bare_start = state.timeout._start
+    engine._after_rule(state, rule, rule["action"], ctx, handled=False)
+    assert state.timeout._start == bare_start  # bare evaluation: untouched
+
+    clock.now += 1.0
+    engine._after_rule(state, rule, rule["action"], ctx, handled=True)
+    assert state.timeout._start == clock.now  # handled: restarted
+    assert state.timeout.limit == 1
