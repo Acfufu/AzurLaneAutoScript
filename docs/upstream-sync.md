@@ -51,6 +51,36 @@ git merge upstream/master
 | `webapp/**`、`module/webui/**`、`module/cli/**` | **完全取本地** | 这些目录上游没有等价物 |
 | 纯上游 `Perf:` / `Fix:` / `Upd:` 提交 | **全取** | fork 的核心价值 |
 
+### 下次同步预解析备忘（基线 4d88c22d8 → 上游 fe8302142）
+
+> 2026-10-25 审计用 `git merge-tree --write-tree master upstream/master` 干跑
+> （ort 引擎 + alas-assets driver）得出 **11 个冲突路径**。以下决议是审计结论，
+> 同步时照做；**本节在下次同步落库后删除**。
+
+- **`module/research/research.py`**（上游 `c4071f4ba`，RESET_AVAILABLE offset 修复）
+  冲突块 = 可用性判定 + drop 守卫。**整块取上游**：`match_template_color(
+  RESET_AVAILABLE, offset=(60, 20), threshold=10)` 门 + `if drop:` 守卫。注意下方
+  点击循环会**自动并入**上游新形态——若误取 ours，结果是旧严格 `appear` 门驱动
+  新 offset 循环的**半采纳**状态，回归被掩盖。同时删掉上游带入 EOF 的
+  `if __name__ == '__main__'` 调试块（硬编码 alas5 / Windows 截图路径）。
+- **`module/island_handler/restaurant.py`**（上游 `53778b51c`，历史菜品识别）
+  推导式源头冲突：**取上游** `for item_id in _RESTAURANT_ITEM_IDS`。我们的
+  `for item_id in menu` 是修复前子集（丢历史/季节菜品识别），且
+  `_RESTAURANT_ITEM_IDS` 定义块已自动并入——取 ours 会把它变成死代码、静默丢修复。
+- **`tests/island_handler/` 四个平铺测试**（`test_production_plan_calculator` /
+  `test_restaurant_logging` / `test_shop_product_name_ocr` /
+  `test_shop_protected_items`）：上游已删除（改为截图金标准子目录套件），我们是
+  modify/delete。**`git rm` 全部四个**——顺手 `git add -A` 会复活过期测试。
+- **五个头部冲突（琐碎）**：`tests/exchange/test_exchange_policy.py`（rename 携带，
+  2 块）、`tests/recipe/test_recipe_fish.py`、`tests/recipe/test_recipe_modes.py`
+  （rename 携带）、`tests/island/test_order.py`、`tests/island/test_season_task.py`
+  ——均为我们的 pyright pragma vs 上游新 docstring/导入；保留 pragma（仍适用时）
+  并保留上游 docstring / 导入即可。
+- **已验证干净并入，无需动作**：`module/island_handler/dock_scanner.py`（阈值
+  221→232）、`module/island/season_task.py`（SeasonTaskNameOcr 新类）、
+  `module/handler/assets.py` STRATEGY_OPENED tw 按钮（alas-assets driver
+  took-theirs=1，双保险下纯文本合并也取上游行）。
+
 ### 合并后必跑的门（顺序即成本从低到高）
 
 ```powershell
