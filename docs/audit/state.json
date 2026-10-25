@@ -134,10 +134,16 @@
       "id": "D3/D4",
       "where": "/Applications .app deployment (untouchable)",
       "summary": ".app snapshot (2026-10-24 05:31) lacks 6bc726f93; D3 behind disabled task + inner gate, D4 dead code in this fork - no crash in normal operation; redeploy at convenience"
+    },
+    {
+      "id": "C4-1",
+      "where": "launcher repo (audit-only)",
+      "summary": "patch.rs PRISTINE fixture embeds stale api/__init__.py snapshot (10-router vs 11); anchors unaffected, cosmetic"
     }
   ],
   "ops_notes": [
-    "D2-1: .app core scheduler stalled since 2026-10-25 18:50 crash (GUI heartbeats, no RESTART); all task NextRuns stale 5.5h+; user should restart the alas core"
+    "Round-3 vs round-4 D-lane interpretive discrepancy on scheduler state (thread exited vs idle-polling); hard facts identical: alas.txt frozen at 18:50:23, 7h+ no task dispatch, GUI heartbeats alive, no restart since 17:23 -> user restart recommended either way",
+    ".app core scheduler: no task dispatched since 2026-10-25 18:50 crash; OpsiMonthBoss (enabled) will live-verify the color_mask hot-patch after restart"
   ],
   "excluded": [
     {
@@ -193,6 +199,14 @@
       "new_confirmed": 4,
       "diff_review": "PASS (0 objections)",
       "date": "2026-10-26"
+    },
+    "4": {
+      "report": "docs/audit/round-4.md",
+      "commits": 1,
+      "new_confirmed": 0,
+      "diff_review": "n/a (no fixes this round -> convergence condition met)",
+      "date": "2026-10-26",
+      "note": "lane B subagent hit runtime limit; final sweep completed inline by coordinator (zero findings)"
     }
   },
   "recommendations": [
@@ -203,5 +217,8 @@
     "dev_tools/split_core_utils.py is a retired one-off; consider archiving under dev_tools/attic or deleting (stale must-stay docstring).",
     "ops (user action): .app core scheduler is DEAD since 2026-10-25 18:50 crash - restart the alas core; OpsiMonthBoss (enabled) will then live-verify the color_mask hot-patch.",
     "CI-side (frozen this audit): ci.yml step name 'Import smoke (full tree)' overclaims module-only scope; sync-upstream.yml could adopt PAT or workflow_run trigger to close the R2 ungated-surface gap; requirements drift could be gated by wiring requirements_updater.py into CI."
-  ]
+  ],
+  "status": "converged",
+  "converged_at_round": 4,
+  "final_report": "docs/audit/FINAL-REPORT.md"
 }
