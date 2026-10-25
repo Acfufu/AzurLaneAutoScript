@@ -16,7 +16,7 @@
 | R3 | Joxos 侧演进零可见性 | P2 | 接受现状；按下文触发条件人工 diff，不做自动化 | 登记在案 |
 | R4 | 资产基线重录的固定人工成本 | P2 | 维持人工重录，不自动化 | 登记在案 |
 | R5 | `.qoder/` 开发残留入库 | P3 | 已解除跟踪（`4850e4a4`） | ✅ 已关闭 |
-| R6 | `uv.lock` + `requirements.txt` 双依赖声明 | P3 | 接受；requirements matrix CI job 守漂移 | 登记在案 |
+| R6 | `uv.lock` + `requirements.txt` 双依赖声明 | P3 | 接受双声明；漂移目前**无自动守卫**（见下） | 登记在案 |
 
 ## R0 — bundle 启动即被 reset（操作性约束）
 
@@ -100,6 +100,13 @@ phase456 会话的笔记与基线文本曾被强制 add 入库。`.gitignore` �
 
 ## R6 — 双依赖声明（P3）
 
-`pyproject.toml` + `uv.lock`（真实安装源）与 `requirements.txt`（上游兼容面）
-并存，漂移由 ci.yml 的 requirements matrix job 把守。接受现状；新增依赖时两处
-同步改。
+`pyproject.toml` + `uv.lock`（真实安装源）与 `requirements.txt`（上游兼容面；
+consumers：`deploy/docker/Dockerfile`、`deploy/pip.py`）并存。
+
+**2026-10-25 审计修正**：早前表述「漂移由 ci.yml 的 requirements matrix job
+把守」**不成立**——该 job 跑的 `dev_tools/verify_requirements.py` 只检查功能清单
+各行的产物 / 门禁**文件是否存在**（`Path.exists`），不做任何依赖内容比对；
+`requirements.txt` 的再生成器 `dev_tools/requirements_updater.py`（`uv export`）
+也未接入任何 workflow。即双声明漂移目前**没有任何自动守卫**，靠纪律兜底：新增
+依赖时 `pyproject.toml` 与 `requirements.txt` 两处同步改，并手动跑 updater 再生成。
+补上守卫（把 updater 接进 CI 或加 drift 比对）属基建变更，另行立项。
