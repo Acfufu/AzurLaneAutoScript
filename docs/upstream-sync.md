@@ -83,6 +83,11 @@ git merge upstream/master
   `tests/island/test_order.py`、`tests/island/test_season_task.py`——我们的
   pyright pragma vs 上游新 docstring/导入；保留 pragma（仍适用时）并保留上游
   docstring / 导入即可。
+- **预期红（勿当回归追查）**：上游新截图金标准套件（exchange/recipe/shop 共
+  ~15 例）依赖仓库根 `collection/` 金标数据——上游自己把该目录放进了
+  `.gitignore`（无跟踪数据可并入），且其 pytest 插件在本仓未注册——合并后跑
+  pytest 会出现批量 ERROR（缺金标 / 缺 `main` fixture）。处置：按需 skip 或
+  注册插件补数据，属数据/基建缺口而非代码回归。
 - **已验证干净并入，无需动作**：`module/island_handler/dock_scanner.py`（阈值
   221→232）、`module/island/season_task.py`（SeasonTaskNameOcr 新类）、
   `module/handler/assets.py` STRATEGY_OPENED tw 按钮（alas-assets driver
