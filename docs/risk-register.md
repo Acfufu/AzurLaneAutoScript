@@ -58,10 +58,11 @@ flow 行为类）；另有 `e3c728f5` 等 pyright 类。
 （`actions/checkout` 凭据 + fallback PR 用 `GH_TOKEN: github.token`），而 GitHub
 对 `GITHUB_TOKEN` 产生的事件不再触发 `push` / `pull_request` 工作流，ci.yml 又只挂
 这两个触发器——自动同步的直推提交**没有任何 CI 跑这些门**，它们只在人工 push /
-人工合并 PR（触发 ci.yml）时运行。实际暴露面有限：未守门路径（`webapp/`、
-`deploy/`、`dev_tools/`、`docs/`）为 fork 自有目录，上游合并没有等价物，同步不直
-接带入其改动；风险仅来自同步合并决议本身改到这些目录。若要收紧需改用 PAT 触发
-或 `workflow_run` 触发器（动 `.github/workflows`，另行立项决策）。
+人工合并 PR（触发 ci.yml）时运行。实际暴露面**不止 fork 自有路径**：上游同样维护
+`deploy/`、`dev_tools/`、`webapp/`（三者均为双方共享路径），根 `requirements.txt`
+更是逐字共享——上游改动会随每日合并静默进入本仓而不过这些门（与 R6 的无守卫
+漂移直接叠加）；`docs/` 才是 fork 自有目录。若要收紧需改用 PAT 触发或
+`workflow_run` 触发器（动 `.github/workflows`，另行立项决策）。
 
 **残余**：运行时行为类回归（如 game_tips 实机假阳性）任何静态门禁都拦不全，
 依赖 flow replay 测试面与实机观察；同步回归模式会随上游演进出现新类别。

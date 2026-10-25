@@ -48,7 +48,7 @@ git merge upstream/master
 | `module/**/assets.py`、`module/ui/assets.py` | **逐块手工**：取上游新增的按钮/坐标，保留我们的去冗余结果 | 资产是硬故障源：客户端改 UI 后模板相似度跌破 0.85 就会静默卡死 60s（2026-09-08 MAP_PREPARATION 事故） |
 | `module/base/*`、`module/ui/{navbar,setting}.py`、`module/handler/*` | **手工**：取上游逻辑，保留我们的改动，跑 verify + 单测 | 这些文件 Flow 引擎也改（S2），先吃上游再吃 Flow，冲突面才可控 |
 | `deploy/**`（Dockerfile、Dockerfile.cn、git.py） | **基本取本地**，只在确有必要时取上游 | 上游仍是 PyWebIO GUI 路线，我们的 `alas` CLI + pywebview 与之不同源 |
-| `webapp/**`、`module/webui/**`、`module/cli/**` | **完全取本地** | 这些目录上游没有等价物 |
+| `webapp/**`、`module/webui/**`、`module/cli/**` | **完全取本地** | `module/cli/` 上游不存在；`webapp/`（上游是它的 Electron 前端）与 `module/webui/`（上游是 PyWebIO）同名路径存在但为互不兼容的另一套实现，无可合并的等价物 |
 | 纯上游 `Perf:` / `Fix:` / `Upd:` 提交 | **全取** | fork 的核心价值 |
 
 ### 下次同步预解析备忘（基线 4d88c22d8 → 上游 fe8302142）
@@ -115,4 +115,4 @@ git push origin master
 
 - 上游 `master` 每天都有提交，其中相当一部分是客户端更新后的资产/阈值调整——**这类提交拖不得**，它们是实机故障的修复。
 - 上游与我们的 `campaign` 表示不同：上游仍是 `.py`，本 fork 是 YAML/JSON + legacy snapshot。所以 `campaign/**` 冲突一律取上游删除。
-- 上游没有 `webapp/`、`module/cli/`、`module/webui/` 的等价物（它的 GUI 仍是 PyWebIO），这些路径的冲突不应出现；出现了说明 fetch 范围错了，检查 `remote.upstream.fetch`。
+- 上游与我们的 GUI/前端表示不同：上游 `module/webui/` 仍是 PyWebIO、`webapp/` 是它的 Electron 前端；本仓是 FastAPI + Svelte（`webapp/` 重写）。**同名路径存在但内容互不兼容**，冲突一律按上表取本地；`module/cli/` 为本仓独有，不应出现冲突——出现了说明 fetch 范围或合并基线错了，检查 `remote.upstream.fetch`。
