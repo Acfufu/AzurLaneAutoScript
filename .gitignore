@@ -284,3 +284,7 @@ webapp/.env.development
 .rivet/
 .rivet-config.json
 .rivet.md
+
+# video-agent-kit plugin scratch (render/TTS caches, plugin_root marker) —
+# tool workdir, not part of the product.
+.video_agent/
