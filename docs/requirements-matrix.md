@@ -46,14 +46,14 @@
 | 常态化 SOP + 远端 | `upstream` 远端（push 指向 `DISABLED://`）+ `docs/upstream-sync.md`（先 `merge-tree` 干跑、按目录的冲突策略、门顺序、真机冒烟清单） | `git remote -v` 可查 | — |
 | 首次全量合并 | 51 个提交 / 66 处冲突，按策略解决（campaign 取删除、deploy 取本地、handler 登录层保我方删掉的 u2 旧路径并移植上游阈值） | merge 提交 + 全部门 | — |
 | 识别参数不漂移 | `dev_tools/verify_thresholds.py`：AST 逐站点比对上游，**549 站点 0 漂移**；<400 可比站点判失败（防假绿） | CI 门 | — |
-| 资产格式不退化 | `dev_tools/dedup_assets.py`（AST 折叠四服同值）+ 语义门 | CI 门（1343 buttons / 441 templates 语义一致） | — |
+| 资产格式不退化 | `dev_tools/dedup_assets.py`（AST 折叠四服同值）+ 语义门 | CI 门（1347 buttons / 444 templates 语义一致） | — |
 | 引擎默认值不复制 | flow 的 check/action 只传 spec 显式键，其余用 owner 签名默认值 | `tests/test_flow_engine.py` 40 例 | — |
 
 ## 5. 代码优化（业务逻辑数据化）
 
 | 需求 | 实现 | 自动化证据 | 真机 |
 |---|---|---|---|
-| 地图/配置数据化 | `campaign/` YAML+JSON（2759 个文件）+ 134 份 legacy snapshot；`module/{island,research,os,config}` 的数据模块 | `verify_map_data --all`（1366/1366）、`verify_config_generated`（零漂移） | 🟡 需实机跑一次活动 |
+| 地图/配置数据化 | `campaign/` YAML+JSON（2762 个文件）+ 134 份 legacy snapshot；`module/{island,research,os,config}` 的数据模块 | `verify_map_data --all`（1366/1366）、`verify_config_generated`（零漂移） | 🟡 需实机跑一次活动 |
 | 任务清单声明式 | `module/tasks/registry.py` | `verify_task_registry` / `verify_task_families` | 🟡 |
 | flow 执行核 | `module/flow/`（model/engine/guards/runtime），默认值透传、载荷校验、`_RunState` 拆开闭包、`run`/`run_group` 共用求值器 | `tests/test_flow_engine.py` 40 例 | 🟡 |
 | 迁移等价可证 | `dev_tools/flow_replay.py` + `tests/test_flow_replay.py`（harness 自身可被证伪）+ `tests/test_flow_awaken.py`（保留迁移前循环原文作参照） | 14 + 6 例 | — |
@@ -70,16 +70,16 @@
 |---|---|---|
 | `ruff check .` | 全树 | 0 |
 | `pyright` | logger/scheduler/tasks/webui/cli/config.utils/flow/packaging/tests | 0 errors |
-| `pytest` | 全树 | 1459 passed |
+| `pytest` | 全树 | 1534 passed + 8 skipped |
 | `pnpm test` | webapp | 19 passed |
 | `smoke_import_all` | module 全树导入 | 445/445 |
 | `verify_config_generated` | 生成物零漂移 | OK |
 | `verify_map_data --all` | 1366 张图逐格等价 | OK |
-| `verify_stage_meta` / `verify_task_families` | stage meta / 任务族 | 27 / 8 族 |
-| `verify_assets check` | 资产语义 | 1343 buttons / 441 templates |
+| `verify_stage_meta` / `verify_task_families` | stage meta / 任务族 | 30 / 8 族 |
+| `verify_assets check` | 资产语义 | 1347 buttons / 444 templates |
 | `dedup_assets --check` | 资产格式 | OK |
 | `gen_log_cell_widths --check` | 与 rich 17.0.0 同源 | OK |
 | `verify_log_align` | headless Edge 逐行量 | 最差 0.03px |
 | `verify_thresholds --check` | 549 站点 vs 上游 | 0 漂移 |
 | `verify_docker_packaging` | COPY 源/ignore/compose | OK |
-| `verify_requirements` | 本矩阵的实现与证据 | 16/16 |
+| `verify_requirements` | 本矩阵的实现与证据 | 21/21 |
