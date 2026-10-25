@@ -55,7 +55,8 @@ git merge upstream/master
 
 > 2026-10-25 审计用 `git merge-tree --write-tree master upstream/master` 干跑
 > （ort 引擎 + alas-assets driver）得出 **11 个冲突路径**。以下决议是审计结论，
-> 同步时照做；**本节在下次同步落库后删除**。
+> 同步时照做；若上游已前进，先按 §1 ② 重跑干跑复核再套用。
+> **本节在下次同步落库后删除**。
 
 - **`module/research/research.py`**（上游 `c4071f4ba`，RESET_AVAILABLE offset 修复）
   冲突块 = 可用性判定 + drop 守卫。**整块取上游**：`match_template_color(
@@ -71,15 +72,23 @@ git merge upstream/master
   `test_restaurant_logging` / `test_shop_product_name_ocr` /
   `test_shop_protected_items`）：上游已删除（改为截图金标准子目录套件），我们是
   modify/delete。**`git rm` 全部四个**——顺手 `git add -A` 会复活过期测试。
-- **五个头部冲突（琐碎）**：`tests/exchange/test_exchange_policy.py`（rename 携带，
-  2 块）、`tests/recipe/test_recipe_fish.py`、`tests/recipe/test_recipe_modes.py`
-  （rename 携带）、`tests/island/test_order.py`、`tests/island/test_season_task.py`
-  ——均为我们的 pyright pragma vs 上游新 docstring/导入；保留 pragma（仍适用时）
-  并保留上游 docstring / 导入即可。
+- **`tests/island_handler/exchange/test_exchange_policy.py`（rename 携带，2 块）**：
+  第 1 块为头部冲突（我们的 pyright pragma vs 上游新 docstring/导入；保留 pragma
+  （仍适用时）并保留上游 docstring / 导入即可）。第 2 块**是实质性冲突**：我们
+  平铺版 `test_exchange.py` 的 `TestScreenReads` 类（约 30 行截图读数参数化用例）
+  vs 上游删除——先核对上游新 `exchange/` 子目录套件是否已覆盖同类读数场景：
+  已覆盖 → 随平铺版一起删；未覆盖 → 先把该类迁入新套件再删平铺版。
+- **四个头部冲突（琐碎）**：`tests/island_handler/recipe/test_recipe_fish.py`、
+  `tests/island_handler/recipe/test_recipe_modes.py`（rename 携带）、
+  `tests/island/test_order.py`、`tests/island/test_season_task.py`——我们的
+  pyright pragma vs 上游新 docstring/导入；保留 pragma（仍适用时）并保留上游
+  docstring / 导入即可。
 - **已验证干净并入，无需动作**：`module/island_handler/dock_scanner.py`（阈值
   221→232）、`module/island/season_task.py`（SeasonTaskNameOcr 新类）、
   `module/handler/assets.py` STRATEGY_OPENED tw 按钮（alas-assets driver
-  took-theirs=1，双保险下纯文本合并也取上游行）。
+  took-theirs=1）。注意纯文本合并**会**在 STRATEGY_OPENED 与相邻 SUBMARINE_HUNT
+  区域起冲突（我们改过相邻行）——driver 是唯一安全网；在未配置 driver 的环境解析
+  需逐块手工取上游 STRATEGY_OPENED 行。
 
 ### 合并后必跑的门（顺序即成本从低到高）
 
