@@ -109,6 +109,7 @@ jobs:
           gate "Lint" uv run --frozen ruff check .
           gate "Type check" uv run --frozen pyright module/logger.py module/scheduler module/tasks module/webui module/cli module/config/utils.py module/flow deploy/packaging tests
           gate "Import smoke" uv run --frozen python dev_tools/smoke_import_all.py
+          gate "Undefined names" uv run --frozen python dev_tools/check_undefined_names.py
           gate "Structure" uv run --frozen python dev_tools/verify_alas_structure.py
           gate "Task registry" uv run --frozen python dev_tools/verify_task_registry.py
           gate "Task record" uv run --frozen python dev_tools/verify_task_record.py

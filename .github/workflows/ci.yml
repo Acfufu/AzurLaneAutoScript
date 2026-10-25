@@ -59,6 +59,15 @@ jobs:
       - name: Import smoke (full tree)
         run: uv run python dev_tools/smoke_import_all.py
 
+      # Import smoke only executes module-level code; names used inside
+      # function bodies that neither an explicit import nor any star-import
+      # source supplies pass every other gate and only explode at runtime
+      # (2026-10-25 color_mask NameError in grid_predictor, introduced by the
+      # 2026-09-28 upstream merge). This resolves star-import exports
+      # statically and fails on such names before they ship.
+      - name: Undefined names (star imports resolved)
+        run: uv run python dev_tools/check_undefined_names.py
+
       - name: Structure verification
         run: |
           uv run python dev_tools/verify_alas_structure.py
