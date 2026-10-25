@@ -1,4 +1,4 @@
-from module.base.utils import area_offset, color_similarity_2d, crop, cv2, np, rgb2gray
+from module.base.utils import area_offset, color_mask, color_similarity_2d, crop, cv2, np, rgb2gray
 from module.exception import ScriptError
 from module.logger import logger
 from module.map_detection.utils import area2corner, corner2area, perspective_transform
