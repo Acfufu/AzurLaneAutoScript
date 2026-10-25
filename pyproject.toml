@@ -107,9 +107,11 @@ ignore = [
     #         Real undefined names are caught by dev_tools/check_undefined_names.py
     #         in CI (not pyright/import smoke alone: CI pyright paths and the smoke
     #         walk cover only a subset of the tree). That gate inherits the
-    #         extend-exclude above, so module/config, module/campaign,
-    #         module/submodule, campaign/ and submodule/ sit outside every
-    #         undefined-name gate - lint them explicitly when touching those trees.
+    #         extend-exclude above, so module/campaign, module/submodule, campaign/
+    #         and submodule/ sit outside every undefined-name gate, and
+    #         module/config is covered only at module level (import smoke) plus
+    #         utils.py in CI pyright - function-body undefined names there are
+    #         ungated. Lint them explicitly when touching those trees.
     "B905",  # zip without strict, py<3.10 compatibility in legacy code
     "B904",  # raise-without-from: per-site exception chaining intent needs manual review
     "RUF001",  # ambiguous unicode in strings: game text/names are intentional
