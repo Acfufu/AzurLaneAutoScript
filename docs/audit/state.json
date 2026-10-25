@@ -1,0 +1,39 @@
+{
+  "round": 2,
+  "branch": "offpeak-audit/20261026",
+  "base_master": "11dc9b1a",
+  "upstream_tip_at_start": "fe8302142",
+  "last_sync_merge_actual": "e9e9e7eac (merged upstream up to 4d88c22d8, 2026-10-23)",
+  "unmerged_upstream_count": 12,
+  "baseline_corrections": [
+    "User brief cited a0d74120 (2026-09-28) as last sync merge; actual latest sync merge in master is e9e9e7eac. Truly unmerged upstream commits: 12 (head fe8302142)."
+  ],
+  "fixed": [
+    {"id": "B1", "commits": ["ec8f3685b", "8d80a2603"], "summary": "risk-register R2: GITHUB_TOKEN sync push triggers no ci.yml; exposure includes shared upstream paths"},
+    {"id": "B2", "commits": ["1adc645cc"], "summary": "risk-register R6: requirements matrix job checks file existence only; drift unguarded"},
+    {"id": "B3-residue", "commits": ["4fcc175c9", "63f1a19ef"], "summary": "pyproject F405 comment names real gate (check_undefined_names) + precise exclusion scope"},
+    {"id": "B4", "commits": ["f1e8dd96d", "297ff2afa"], "summary": "per-commit gate claim corrected in real-machine-checklist.md and requirements-matrix.md"},
+    {"id": "E1-E3", "commits": ["a0c4a70b4", "78dfc602b"], "summary": "upstream-sync next-sync resolution memo (11 conflicted paths, merge-tree verified)"}
+  ],
+  "pending": [
+    {"id": "B5", "reason": "single-sided: SOP minimum-list may be by-design (human push fires full ci.yml); verify: sed -n '54,70p' docs/upstream-sync.md vs ci.yml:47-69"},
+    {"id": "B6", "reason": "single-sided: ci.yml:59 step name 'Import smoke (full tree)' overclaims module-only walk; fix target is a forbidden workflow file"},
+    {"id": "C2", "reason": "single-sided: updater.py:45 lazy import of launcher-injected control_api lacks try/except; falsifier says endpoint is launcher-only by contract"},
+    {"id": "E4/E5", "reason": "informational: five header-only test conflicts; covered as memo lines, no standalone action"}
+  ],
+  "confirmed_external": [
+    {"id": "C1", "where": "launcher repo (audit-only)", "summary": "setup.rs:216 sparse-checkout '!webapp/' strips active SPA (renamed from webapp-tauri 2026-09-08); updater restart re-applies; fresh clones get no frontend"},
+    {"id": "C3", "where": "launcher repo (audit-only)", "summary": "alas_tasks.rs:8-28 stale 'PyWebIO/no HTTP API' rationale; contract reads still correct"},
+    {"id": "D3/D4", "where": "/Applications .app deployment (untouchable)", "summary": ".app snapshot (2026-10-24 05:31) lacks 6bc726f93: page_island + ImageError imports; latent (island tasks disabled); redeploy from HEAD recommended"}
+  ],
+  "excluded": [
+    {"id": "A-semantic-drift", "reason": "exhaustive old-line survival scan over 126 upstream commits + AST function compares found zero drift outside gated surfaces"},
+    {"id": "B3-full-gap-claim", "reason": "exclusions disclosed 3x (pyproject NOTE, gate scope note, smoke docstring); falsifier ran classifier over excluded trees: 139 findings, 0 violations; campaign/ structurally ungatable (stub idiom); submodule/ imported by nothing"},
+    {"id": "D1-equivalence", "reason": "threshold=10 exactly equals old color_threshold=245 (255-245; upstream's own mapping in fec3917e); no issue"},
+    {"id": "D1/D2-runtime", "reason": "already fixed pre-audit (c253f4e69, 6681aa3e1); runtime logs confirm no post-fix occurrences"},
+    {"id": "D5-storm", "reason": "GameStuckError cluster correlates with device/atx-agent instability; environmental, no fork-code action"}
+  ],
+  "rounds": {
+    "1": {"report": "docs/audit/round-1.md", "commits": 9, "new_confirmed": 5, "date": "2026-10-25"}
+  }
+}
