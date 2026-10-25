@@ -1,5 +1,5 @@
 {
-  "round": 3,
+  "round": 4,
   "branch": "offpeak-audit/20261026",
   "base_master": "11dc9b1a",
   "upstream_tip_at_start": "fe8302142",
@@ -9,43 +9,199 @@
     "User brief cited a0d74120 (2026-09-28) as last sync merge; actual latest sync merge in master is e9e9e7eac. Truly unmerged upstream commits: 12 (head fe8302142)."
   ],
   "fixed": [
-    {"id": "B1", "commits": ["ec8f3685b", "8d80a2603"], "summary": "risk-register R2: GITHUB_TOKEN sync push triggers no ci.yml; exposure includes shared upstream paths"},
-    {"id": "B2", "commits": ["1adc645cc"], "summary": "risk-register R6: requirements matrix job checks file existence only; drift unguarded"},
-    {"id": "B3-residue", "commits": ["4fcc175c9", "63f1a19ef"], "summary": "pyproject F405 comment names real gate (check_undefined_names) + precise exclusion scope"},
-    {"id": "B4", "commits": ["f1e8dd96d", "297ff2afa"], "summary": "per-commit gate claim corrected in real-machine-checklist.md and requirements-matrix.md"},
-    {"id": "E1-E3", "commits": ["a0c4a70b4", "78dfc602b"], "summary": "upstream-sync next-sync resolution memo (11 conflicted paths, merge-tree verified)"},
-    {"id": "B2-1", "commits": ["204c3b5ba"], "summary": "requirements.txt clause inverted: upstream edits conflict loudly, not silent (round-1 fixup correction)"},
-    {"id": "B2-2", "commits": ["0f0115a92"], "summary": "threshold site count 550 -> 549"},
-    {"id": "C2", "commits": ["a1f4427cd"], "summary": "updater.py graceful degradation when control_api not injected (200 {ok:false,error}; narrow ModuleNotFoundError guard)"},
-    {"id": "E2-1", "commits": ["3e5b16299"], "summary": "memo expected-red note: upstream screenshot suites (~15) ERROR post-merge (gitignored goldens + unregistered plugin)"}
+    {
+      "id": "B1",
+      "commits": [
+        "ec8f3685b",
+        "8d80a2603"
+      ],
+      "summary": "risk-register R2: GITHUB_TOKEN sync push triggers no ci.yml; exposure includes shared upstream paths"
+    },
+    {
+      "id": "B2",
+      "commits": [
+        "1adc645cc"
+      ],
+      "summary": "risk-register R6: requirements matrix job checks file existence only; drift unguarded"
+    },
+    {
+      "id": "B3-residue",
+      "commits": [
+        "4fcc175c9",
+        "63f1a19ef"
+      ],
+      "summary": "pyproject F405 comment names real gate (check_undefined_names) + precise exclusion scope"
+    },
+    {
+      "id": "B4",
+      "commits": [
+        "f1e8dd96d",
+        "297ff2afa"
+      ],
+      "summary": "per-commit gate claim corrected in real-machine-checklist.md and requirements-matrix.md"
+    },
+    {
+      "id": "E1-E3",
+      "commits": [
+        "a0c4a70b4",
+        "78dfc602b"
+      ],
+      "summary": "upstream-sync next-sync resolution memo (11 conflicted paths, merge-tree verified)"
+    },
+    {
+      "id": "B2-1",
+      "commits": [
+        "204c3b5ba"
+      ],
+      "summary": "requirements.txt clause inverted: upstream edits conflict loudly, not silent (round-1 fixup correction)"
+    },
+    {
+      "id": "B2-2",
+      "commits": [
+        "0f0115a92"
+      ],
+      "summary": "threshold site count 550 -> 549"
+    },
+    {
+      "id": "C2",
+      "commits": [
+        "a1f4427cd"
+      ],
+      "summary": "updater.py graceful degradation when control_api not injected (200 {ok:false,error}; narrow ModuleNotFoundError guard)"
+    },
+    {
+      "id": "E2-1",
+      "commits": [
+        "3e5b16299"
+      ],
+      "summary": "memo expected-red note: upstream screenshot suites (~15) ERROR post-merge (gitignored goldens + unregistered plugin)"
+    },
+    {
+      "id": "B3-1/2/3 (README surface)",
+      "commits": [
+        "93949c3a4"
+      ],
+      "summary": "README living scoreboard: 689 py / 1396 json / 1347+444 assets / 1534 passed + 8 skipped"
+    },
+    {
+      "id": "B3-2/3/4 (matrix surface)",
+      "commits": [
+        "a72657fe7"
+      ],
+      "summary": "matrix section 6 living table: 21/21, 30, 1534+8, 1347/444; section 4/5 evidence cells follow"
+    }
   ],
   "pending": [],
   "closed": [
-    {"id": "B5", "reason": "ratified CLOSE: SOP list is a dated cost-ordered subset; human push triggers full ci.yml; bot pre-push mirrors ci scope incl. undefined-names"},
-    {"id": "B6", "reason": "ratified CLOSE: ci.yml step-name mislabel below threshold, no doc repeats it, fix target frozen"},
-    {"id": "B2-3", "reason": "closed: R2 enumeration is a dated (2026-10-24) record; undefined-names gate landed 41h later; register defers machine truth to the workflow. Optional one-word refresh noted as recommendation"},
-    {"id": "B2-4", "reason": "closed: flow/model.py docstring substance correct (pyright static + NameError-at-import both real); wording nit only"},
-    {"id": "E4/E5", "reason": "closed: header-only conflicts, wrong resolution fails loudly at collection; memo records them informationally"}
+    {
+      "id": "B5",
+      "reason": "ratified CLOSE: SOP list is a dated cost-ordered subset; human push triggers full ci.yml; bot pre-push mirrors ci scope incl. undefined-names"
+    },
+    {
+      "id": "B6",
+      "reason": "ratified CLOSE: ci.yml step-name mislabel below threshold, no doc repeats it, fix target frozen"
+    },
+    {
+      "id": "B2-3",
+      "reason": "closed: R2 enumeration is a dated (2026-10-24) record; undefined-names gate landed 41h later; register defers machine truth to the workflow. Optional one-word refresh noted as recommendation"
+    },
+    {
+      "id": "B2-4",
+      "reason": "closed: flow/model.py docstring substance correct (pyright static + NameError-at-import both real); wording nit only"
+    },
+    {
+      "id": "E4/E5",
+      "reason": "closed: header-only conflicts, wrong resolution fails loudly at collection; memo records them informationally"
+    }
   ],
   "confirmed_external": [
-    {"id": "C1", "where": "launcher repo (audit-only)", "summary": "setup.rs:216 sparse-checkout '!webapp/' strips active SPA (renamed from webapp-tauri 2026-09-08); updater restart re-applies; fresh clones get no frontend; '!webapp-tauri/src-tauri/' is a dead no-op entry"},
-    {"id": "C2-1", "where": "launcher repo (audit-only)", "summary": "setup.rs:28-31 repo probe requires deploy/installer.py deleted from payload (e2f4ea925); Windows/Linux portable layout undetectable (latent: macOS-only shipping today); no alternate probe"},
-    {"id": "C2-2 + C3", "where": "launcher repo (audit-only)", "summary": "stale PyWebIO/app.py rationale comments in alas_tasks.rs:8-28 and menu_model.rs:44-45; behavior intact, comments mislead"},
-    {"id": "D3/D4", "where": "/Applications .app deployment (untouchable)", "summary": ".app snapshot (2026-10-24 05:31) lacks 6bc726f93; D3 behind disabled task + inner gate, D4 dead code in this fork - no crash in normal operation; redeploy at convenience"}
+    {
+      "id": "C1",
+      "where": "launcher repo (audit-only)",
+      "summary": "setup.rs:216 sparse-checkout '!webapp/' strips active SPA (renamed from webapp-tauri 2026-09-08); updater restart re-applies; fresh clones get no frontend; '!webapp-tauri/src-tauri/' is a dead no-op entry"
+    },
+    {
+      "id": "C2-1",
+      "where": "launcher repo (audit-only)",
+      "summary": "setup.rs:28-31 repo probe requires deploy/installer.py deleted from payload (e2f4ea925); Windows/Linux portable layout undetectable (latent: macOS-only shipping today); no alternate probe"
+    },
+    {
+      "id": "C2-2 + C3",
+      "where": "launcher repo (audit-only)",
+      "summary": "stale PyWebIO/app.py rationale comments in alas_tasks.rs:8-28 and menu_model.rs:44-45; behavior intact, comments mislead"
+    },
+    {
+      "id": "D3/D4",
+      "where": "/Applications .app deployment (untouchable)",
+      "summary": ".app snapshot (2026-10-24 05:31) lacks 6bc726f93; D3 behind disabled task + inner gate, D4 dead code in this fork - no crash in normal operation; redeploy at convenience"
+    }
   ],
   "ops_notes": [
     "D2-1: .app core scheduler stalled since 2026-10-25 18:50 crash (GUI heartbeats, no RESTART); all task NextRuns stale 5.5h+; user should restart the alas core"
   ],
   "excluded": [
-    {"id": "A-semantic-drift", "reason": "round 1: exhaustive old-line survival over 126 upstream commits, 0 survivors; round 2: config/registry parity, return-arity, exception-contract, module/base full AST compare - all clean"},
-    {"id": "A-info-wait_until_stable", "reason": "upstream still carries the shared-mutable-Timer bug we fixed; hypothetical future-regression only, already covered by SOP module/base conflict row (take upstream logic, keep our fixes)"},
-    {"id": "B3-full-gap-claim", "reason": "exclusions disclosed 3x; falsifier classifier run over excluded trees: 139 findings, 0 violations; campaign/ structurally ungatable (stub idiom); submodule/ imported by nothing"},
-    {"id": "D1-equivalence", "reason": "threshold=10 exactly equals old color_threshold=245 (255-245; upstream's own mapping in fec3917e); no issue"},
-    {"id": "D1/D2-runtime", "reason": "already fixed pre-audit (c253f4e69, 6681aa3e1); runtime logs confirm no post-fix occurrences"},
-    {"id": "D5-storm", "reason": "GameStuckError cluster correlates with device/atx-agent instability; environmental, no fork-code action"}
+    {
+      "id": "A-semantic-drift",
+      "reason": "round 1: exhaustive old-line survival over 126 upstream commits, 0 survivors; round 2: config/registry parity, return-arity, exception-contract, module/base full AST compare - all clean"
+    },
+    {
+      "id": "A-info-wait_until_stable",
+      "reason": "upstream still carries the shared-mutable-Timer bug we fixed; hypothetical future-regression only, already covered by SOP module/base conflict row (take upstream logic, keep our fixes)"
+    },
+    {
+      "id": "B3-full-gap-claim",
+      "reason": "exclusions disclosed 3x; falsifier classifier run over excluded trees: 139 findings, 0 violations; campaign/ structurally ungatable (stub idiom); submodule/ imported by nothing"
+    },
+    {
+      "id": "D1-equivalence",
+      "reason": "threshold=10 exactly equals old color_threshold=245 (255-245; upstream's own mapping in fec3917e); no issue"
+    },
+    {
+      "id": "D1/D2-runtime",
+      "reason": "already fixed pre-audit (c253f4e69, 6681aa3e1); runtime logs confirm no post-fix occurrences"
+    },
+    {
+      "id": "D5-storm",
+      "reason": "GameStuckError cluster correlates with device/atx-agent instability; environmental, no fork-code action"
+    },
+    {
+      "id": "B3-5",
+      "reason": "retired one-off tool (self-declared); stale migration-era docstring is noise"
+    },
+    {
+      "id": "A3-1",
+      "reason": "remoteStatus TS type nit: zero consumers, compile-time self-revealing"
+    }
   ],
   "rounds": {
-    "1": {"report": "docs/audit/round-1.md", "commits": 10, "new_confirmed": 5, "date": "2026-10-25"},
-    "2": {"report": "docs/audit/round-2.md", "commits": 5, "new_confirmed": 4, "diff_review": "PASS (0 objections)", "date": "2026-10-25"}
-  }
+    "1": {
+      "report": "docs/audit/round-1.md",
+      "commits": 10,
+      "new_confirmed": 5,
+      "date": "2026-10-25"
+    },
+    "2": {
+      "report": "docs/audit/round-2.md",
+      "commits": 5,
+      "new_confirmed": 4,
+      "diff_review": "PASS (0 objections)",
+      "date": "2026-10-25"
+    },
+    "3": {
+      "report": "docs/audit/round-3.md",
+      "commits": 3,
+      "new_confirmed": 4,
+      "diff_review": "PASS (0 objections)",
+      "date": "2026-10-26"
+    }
+  },
+  "recommendations": [
+    "verify_thresholds.py: one-sided kwarg comparison - silently skips watched kwargs the upstream site no longer passes, never iterates the reverse direction; historically missed the c253f4e69 color_threshold crash of its own founding class. Fix: symmetric kwarg-name-set comparison per matched site pair.",
+    "Living-number refresh has no owner: SOP post-merge gate list has no step to write fresh counts back into README/matrix section 6, and verify_requirements checks only file existence. Fix: add a post-merge docs-sync step, or extend verify_requirements to cross-check doc numbers against tool output.",
+    "Conversion backlog: 3 campaign dirs from the 2026-10 syncs (event_20261022_cn, war_archives_20241024_cn, war_archives_20251023_cn; 22 maps) are raw .py outside both the dataization and verify_map_data coverage (gate skips non-snapshot folders per documented contract).",
+    "pyrightconfig.json still includes deleted alas.py/gui.py (IDE-only artifact; CI passes explicit paths) and .gitignore lists pyrightconfig.json while the file is tracked (dead entry).",
+    "dev_tools/split_core_utils.py is a retired one-off; consider archiving under dev_tools/attic or deleting (stale must-stay docstring).",
+    "ops (user action): .app core scheduler is DEAD since 2026-10-25 18:50 crash - restart the alas core; OpsiMonthBoss (enabled) will then live-verify the color_mask hot-patch.",
+    "CI-side (frozen this audit): ci.yml step name 'Import smoke (full tree)' overclaims module-only scope; sync-upstream.yml could adopt PAT or workflow_run trigger to close the R2 ungated-surface gap; requirements drift could be gated by wiring requirements_updater.py into CI."
+  ]
 }
