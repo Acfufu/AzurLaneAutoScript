@@ -32,10 +32,10 @@
 | 应用内更新 | 无 | **有**：拉 release → 下载 setup.exe → 停任务 → 分离启动安装器 `/S /R` → 自动重启 | 完成，真机待验 |
 | 入口 | 多脚本 | **单一 `alas` 命令**：`alas run headless/web/desktop`、`alas build frontend/sidecar/launcher/installer`、`alas doctor`、`alas version` | 完成 |
 | 业务逻辑表达 | 散落各模块的 `while 1:` | **`module/flow/` 声明式执行核**（flow 数据 + 共享引擎 + 双跑等价门） | 进行中（详见 §4） |
-| 地图数据 | `campaign/*.py` | **YAML/JSON + legacy snapshot**（1366 yaml / 1393 json / 667 py / 134 份快照），运行时天然广播 | 完成 |
+| 地图数据 | `campaign/*.py` | **YAML/JSON + legacy snapshot**（1366 yaml / 1396 json / 689 py / 134 份快照），运行时天然广播 | 完成 |
 | 任务清单 | 各任务自己 `run()` | `module/tasks/registry.py` 声明式任务表（含 family），调度与配置生成共用一份事实源 | 完成 |
 | 设备层 | 全量 | 保留全部；**主动移除** uiautomator2 XPath 登录旧路径（handler 层） | 完成 |
-| 工程门 | 无 | ruff 全树 0、pyright（运行时状态相关层）0、pytest 1459、导入冒烟 445/445、配置零漂移、地图数据 1366/1366、资产语义 1343/441、资产去冗余格式、**日志格对齐（真实浏览器逐行量）**、**识别参数 vs 上游 549 站点**、docker 打包静态检查 | 完成 |
+| 工程门 | 无 | ruff 全树 0、pyright（运行时状态相关层）0、pytest 1534 passed + 8 skipped、导入冒烟 445/445、配置零漂移、地图数据 1366/1366、资产语义 1347/444、资产去冗余格式、**日志格对齐（真实浏览器逐行量）**、**识别参数 vs 上游 549 站点**、docker 打包静态检查 | 完成 |
 | Docker | 官方镜像 | 多阶段构建，**镜像内含前端**（此前只发 API，干净检出会得到一个"看起来坏了"的镜像） | 完成，真机待验 |
 
 ### 我们修掉的、上游还没有的问题
