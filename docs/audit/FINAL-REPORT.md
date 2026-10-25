@@ -62,7 +62,13 @@
 | E4/E5 头部冲突 | 错误决议在收集期响亮失败；memo 已作信息性记录 |
 | A4 STRATEGY_OPENED 缺席 | 纯同步滞后（上游 a538382fa 在最后 sync 之后落地），非 fork 漂移；memo 已覆盖吸收路径 |
 
-## 4. 域外确认项（launcher 仓 / 部署面，只审不修——建议清单）
+## 4. 域外确认项（launcher 仓 / 部署面）
+
+> **2026-10-26 收尾更新**：下表 launcher 侧三项（C1、C2-1、C3+C2-2+C4-1）已
+> 在 alas-launcher `main` 提交 `9f89595` 修复（本地，未 push；cargo test 232
+> passed / clippy clean）。生效条件：重打包发布 launcher（旧二进制仍持旧
+> sparse pattern；存量安装的 `webapp/dist` 未被删过，不受影响）。D3/D4 与
+> 运维重启项仍待用户动作（见 §6 后「阻塞项」）。
 
 | # | 位置 | 内容 |
 |---|---|---|
@@ -98,7 +104,19 @@
 
 ## 6. 终态
 
-- 分支 `offpeak-audit/20261026`：19 个 commit（15 修复 + 4 记录/报告），保留
-  不合并、不 push；工作区无未提交审计产物。
+- 分支 `offpeak-audit/20261026`：20 个 commit（15 修复 + 5 记录/报告/收尾），
+  保留不合并、不 push；工作区无未提交审计产物。
 - 收敛判定：第 4 轮五道扇出（B 道内联补齐）确认级零新增，无修正即无 diff 需
   复审——达成终止条件。
+
+### 阻塞项（需用户动作/拍板）
+
+1. **重启 alas 核心**（唯一"今天就该做"的）：Quit 整个 alas-launcher 再开，
+   或 webui 调度页 Start。一次动作同时解决：7h+ 任务积压、color_mask 热补丁
+   实战验证（重启后 OpsiMonthBoss 立即跑，看 error/ 目录数保持 47、日志无
+   NameError）、D3/D4 自愈（.app 启动时 `reset --hard origin/master`，而
+   origin 已含 6bc726f93——origin/master == 本地 master `11dc9b1a`）。
+2. **审计分支合并**：`offpeak-audit/20261026` 的 15 个修复 commit（含 C2
+   payload 代码修复）在合并进 master 前不会进入 .app；审阅后按你节奏合。
+3. **推送**：launcher `main`（`9f89595`）与 payload 审计分支均为本地提交，
+   push 由你执行（发布动作）。
