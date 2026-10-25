@@ -42,7 +42,23 @@ def update_restart(request: Request):
     consumes it and re-runs its startup setup between stop and start. Same
     localhost/lock gating as the scheduler control endpoints — with a webui
     password set, the PasswordGate middleware 401s this route anyway."""
-    from module.webui.control_api import UPDATE_RESTART_REQUEST, _local_host, _locked
+    try:
+        from module.webui.control_api import UPDATE_RESTART_REQUEST, _local_host, _locked
+    except ModuleNotFoundError as e:
+        # module/webui/control_api.py exists only in launcher-managed checkouts
+        # (patch-injected by alas-launcher); a launcher-less source checkout can
+        # still reach this endpoint from the webui, so degrade visibly instead
+        # of a 500 the SPA swallows.
+        if e.name != "module.webui.control_api":
+            raise
+        return {
+            "ok": False,
+            "error": (
+                "launcher integration not installed: control_api.py is injected "
+                "by alas-launcher. Update manually (git pull + restart) or run "
+                "under the launcher."
+            ),
+        }
 
     if _locked() or not _local_host(request):
         return {"ok": False, "error": "locked"}
