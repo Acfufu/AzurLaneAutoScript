@@ -107,5 +107,6 @@ def test_module_exports_relative_spec(tmp_path):
     (pkg / "__init__.py").write_text("", encoding="utf-8")
     (pkg / "bundle.py").write_text("X = 1\n", encoding="utf-8")
     src = checker.resolve_module_path(".bundle", relative_to=pkg / "mod.py")
+    assert src is not None
     assert src == pkg / "bundle.py"
     assert "X" in checker.module_exports(src)
