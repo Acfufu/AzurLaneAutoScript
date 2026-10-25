@@ -12,7 +12,7 @@ from module.island_handler.exchange import FISH_MEAT_SOURCES
 from module.island_handler.recipe import IslandProductionRestart, IslandRecipe
 from module.logger import logger
 from module.map_detection.utils import Points
-from module.ui.page import page_island_manage
+from module.ui.page import page_island, page_island_manage
 
 ANCHOR_AREA = (452, 7, 481, 36)
 DETECT_AREA = (192, 69, 1221, 653)
