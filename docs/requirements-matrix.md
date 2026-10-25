@@ -59,7 +59,12 @@
 | 迁移等价可证 | `dev_tools/flow_replay.py` + `tests/test_flow_replay.py`（harness 自身可被证伪）+ `tests/test_flow_awaken.py`（保留迁移前循环原文作参照） | 14 + 6 例 | — |
 | 剩余 272 处 while | ⬜ 本轮只迁了 awaken 一个（+ 上游已有的 11 个文件）。队列与建议批次见 `docs/flow-migration-guide.md` | — | — |
 
-## 6. 质量门现状（每次提交都跑）
+## 6. 质量门现状
+
+> 运行面（2026-10-25 修正）：python 侧门在人工提交与每日同步推前都跑；
+> `pnpm test`、`verify_log_align`、`verify_docker_packaging`、`verify_requirements`
+> 仅由 ci.yml 运行——每日自动同步用 GITHUB_TOKEN 直推不触发 ci.yml，这些门当天
+> 不跑（机制与暴露面见 risk-register.md R2 残余）。
 
 | 门 | 范围 | 现状 |
 |---|---|---|
