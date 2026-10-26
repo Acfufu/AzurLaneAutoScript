@@ -19,11 +19,13 @@ let saving = $state(false);
 let toolTasks = $state<Set<string>>(new Set());
 let toolAlive = $state(false);
 let toolKeepBottom = $state(true);
+let toolError = $state("");
 
 const isToolTask = $derived(toolTasks.has(selectedTask));
 
 async function loadTask(task: string) {
   selectedTask = task;
+  toolError = "";
   const { menu, args } = await api.schema("alas");
   const found = new Set(toolTasks);
   for (const data of Object.values(menu)) {
@@ -46,10 +48,16 @@ async function refreshToolState() {
 }
 
 async function toggleTool() {
+  toolError = "";
   if (toolAlive) {
     await api.stop(activeInstance);
   } else {
-    await api.run(activeInstance);
+    // Tool tasks dispatch by name: /run(func=<Task>) runs that single task,
+    // while /run without func starts the main scheduler loop instead.
+    const res = await api.run(activeInstance, selectedTask);
+    if (!res.ok) {
+      toolError = res.error ?? "start failed";
+    }
   }
   await refreshToolState();
 }
@@ -120,6 +128,9 @@ $effect(() => {
           >
             {toolAlive ? t('Gui.Button.Stop') : t('Gui.Button.Start')}
           </button>
+          {#if toolError}
+            <span class="text-xs text-status-warning [overflow-wrap:anywhere]">{toolError}</span>
+          {/if}
           <span class="ms-auto">{t('Gui.Overview.Log')}</span>
           <button
             class="btn m-0 border-toggle"
