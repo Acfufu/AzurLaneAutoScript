@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 
 import adbutils
 import uiautomator2 as u2
@@ -15,14 +16,24 @@ from module.logger import logger
 
 ADB_BINARY_LIST = ["./bin/adb/adb.exe", "/usr/bin/adb"]
 
+# GUI (launchd) launches on macOS run with the minimal PATH /usr/bin:/bin:...
+# which misses Homebrew and the Android SDK, so probe standard install
+# locations explicitly instead of relying on PATH lookup.
+MACOS_ADB_LIST = [
+    "/opt/homebrew/bin/adb",
+    "/usr/local/bin/adb",
+    os.path.expanduser("~/Library/Android/sdk/platform-tools/adb"),
+]
+
 
 def resolve_adb_binary() -> str:
     """Resolve the adb executable used by the device layer.
 
     Shared by ConnectionAttr.adb_binary and AdbConnectManager.adb (Phase 456):
     deploy config AdbExecutable -> ./bin/adb/adb.exe -> /usr/bin/adb ->
-    adbutils bundled adb.exe -> `adb` on PATH. Returns an absolute path when
-    a real binary is found, otherwise the bare `adb` (PATH lookup) fallback.
+    macOS standard install locations -> adbutils bundled adb.exe -> `adb`
+    on PATH. Returns an absolute path when a real binary is found, otherwise
+    the bare `adb` (PATH lookup) fallback.
     """
     # Try adb in deploy.yaml
     from module.webui.setting import State
@@ -34,7 +45,7 @@ def resolve_adb_binary() -> str:
 
     # Try known local/global locations (bin/adb/ is a runtime copy from
     # adbutils, kept out of git)
-    for file in ADB_BINARY_LIST:
+    for file in ADB_BINARY_LIST + MACOS_ADB_LIST:
         if os.path.exists(file):
             return os.path.abspath(file)
 
@@ -45,10 +56,14 @@ def resolve_adb_binary() -> str:
     if os.path.exists(file):
         return file
 
-    # Use adb in system PATH
+    # Use adb in system PATH, resolved to an absolute path so downstream
+    # subprocess calls don't depend on the launching environment
+    file = shutil.which("adb")
+    if file:
+        return file
     logger.warning(
-        "adb not found in deploy config, ./bin/adb/adb.exe or the adbutils "
-        "bundle, falling back to `adb` on PATH"
+        "adb not found in deploy config, known locations or PATH, "
+        "falling back to bare `adb`"
     )
     return "adb"
 
