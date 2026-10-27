@@ -5,6 +5,7 @@ import { connState, currentInstance, logs, schedulers, status } from "../api/sto
 import AppAside from "../components/AppAside.svelte";
 import AppMenu from "../components/AppMenu.svelte";
 import EmulatorPanel from "../components/EmulatorPanel.svelte";
+import ShellMaintenancePanel from "../components/ShellMaintenancePanel.svelte";
 import LogView from "../components/LogView.svelte";
 import { push } from "../router.svelte";
 
@@ -204,6 +205,9 @@ $effect(() => {
       <!-- Emulator fleet panel: local launcher webview only (direction-1);
            renders nothing in a plain browser. -->
       <EmulatorPanel />
+      <!-- Shell maintenance panel (direction-7a): log retention numbers,
+           launcher-webview only like the emulator panel above. -->
+      <ShellMaintenancePanel />
     </section>
 
     <!-- logs column -->
