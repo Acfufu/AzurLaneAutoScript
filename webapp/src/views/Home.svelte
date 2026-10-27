@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api } from "../api/client";
 import { loadI18n, t } from "../api/i18n.svelte";
-import { currentInstance, logs, schedulers, status } from "../api/store.svelte";
+import { connState, currentInstance, logs, schedulers, status } from "../api/store.svelte";
 import AppAside from "../components/AppAside.svelte";
 import AppMenu from "../components/AppMenu.svelte";
 import LogView from "../components/LogView.svelte";
@@ -32,18 +32,19 @@ let keepBottom = $state(true);
 let toggleError = $state("");
 const EMPTY_LOGS: string[] = [];
 
-/** One-shot REST bootstrap: the backend's in-memory snapshot cache is
- *  cold on a fresh backend start (and absent while the bot never ran),
- *  so fetch once to fill the three columns; SSE takes over afterwards. */
+/** One-shot REST bootstrap, only while no SSE snapshot exists: the store
+ *  keeps receiving scheduler frames app-wide even while this page is
+ *  closed, so an existing snapshot is always more truthful than a REST
+ *  read. The old code refetched on every mount and fabricated `current`
+ *  from the expiry-queue head, mislabeling the running task after
+ *  priority edits (audit M12). */
 async function refreshScheduler() {
   if (!activeInstance) return;
+  if (schedulers[activeInstance]) return;
   const res = await api.scheduler(activeInstance);
-  // The REST response splits the running task out of pending, but the SSE
-  // snapshots keep it in pending. Merge it back so the store always has one
-  // shape and the running row's next_run survives page navigation.
   schedulers[activeInstance] = {
-    current: res.running[0]?.command ?? null,
-    pending: [...res.running, ...res.pending],
+    current: null,
+    pending: res.pending,
     waiting: res.waiting,
   };
 }
@@ -116,6 +117,7 @@ $effect(() => {
             class:bg-surface-app={instanceAlive}
             class:text-white={!instanceAlive}
             class:text-body={instanceAlive}
+            disabled={!connState.connected}
             onclick={toggleScheduler}
           >
             {instanceAlive ? t('Gui.Button.Stop') : t('Gui.Button.Start')}

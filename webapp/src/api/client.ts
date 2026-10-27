@@ -9,11 +9,18 @@ import { reportApiError } from "./errors.svelte";
  */
 const BASE = import.meta.env.VITE_API_BASE ?? "";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, timeoutMs = 30000): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${BASE}${path}`, init);
+    // Default timeout so a hung backend can't leave a saving indicator
+    // spinning forever (audit L12). Callers passing their own signal (none
+    // today) keep it.
+    res = await fetch(`${BASE}${path}`, { ...init, signal: init?.signal ?? AbortSignal.timeout(timeoutMs) });
   } catch (e) {
+    if (e instanceof DOMException && e.name === "TimeoutError") {
+      reportApiError(`Request timeout: ${path}`);
+      throw e;
+    }
     reportApiError(`Network error: ${path}`);
     throw e;
   }
@@ -149,7 +156,6 @@ export const api = {
     request<{
       alive: boolean;
       running_func: string | null;
-      running: { command: string; next_run: string }[];
       pending: { command: string; next_run: string }[];
       waiting: { command: string; next_run: string }[];
     }>(`/scheduler/${name}`),

@@ -103,7 +103,6 @@ class TaskItem(BaseModel):
 class SchedulerResponse(BaseModel):
     alive: bool
     running_func: str | None = None
-    running: list[TaskItem]
     pending: list[TaskItem]
     waiting: list[TaskItem]
 

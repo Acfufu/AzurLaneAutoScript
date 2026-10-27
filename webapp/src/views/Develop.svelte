@@ -31,6 +31,31 @@ type UpdStatus = Awaited<ReturnType<typeof api.updateStatus>>;
 let upd = $state<UpdStatus | null>(null);
 // git mode: set while the launcher is pulling + restarting the backend
 let restarting = $state(false);
+// re-entry guard for the refresh poller (audit M5: repeated clicks used to
+// stack intervals that never stopped)
+let refreshing = $state(false);
+
+/** Active poller ids; cleared on unmount (audit M5: pollers used to leak
+ *  past navigation, throwing unhandled rejections every 1.5s forever). */
+const pollers: number[] = [];
+
+function startPoller(intervalMs: number, tick: () => Promise<boolean>, maxFailures = 3): void {
+  let failures = 0;
+  const timer = window.setInterval(() => {
+    tick()
+      .then((done) => {
+        failures = 0;
+        if (done) window.clearInterval(timer);
+      })
+      .catch(() => {
+        // Transport/HTTP failures are already reported by request(); stop
+        // after N consecutive misses instead of erroring forever.
+        failures += 1;
+        if (failures >= maxFailures) window.clearInterval(timer);
+      });
+  }, intervalMs);
+  pollers.push(timer);
+}
 
 async function refreshUpdate() {
   try {
@@ -41,15 +66,20 @@ async function refreshUpdate() {
 }
 
 async function refreshReleases() {
-  await api.updateRefresh();
-  const timer = window.setInterval(async () => {
+  if (refreshing) return;
+  refreshing = true;
+  try {
+    await api.updateRefresh();
+  } finally {
+    // The refresh itself failing (L13) surfaces via /update/status state;
+    // the poller must still run to observe it, then stop.
+    refreshing = false;
+  }
+  startPoller(1500, async () => {
     const st = await api.updateStatus();
     upd = st;
-    const busy = st.state === 'refreshing' || st.git?.state === 'fetching';
-    if (!busy) {
-      window.clearInterval(timer);
-    }
-  }, 1500);
+    return !(st.state === 'refreshing' || st.git?.state === 'fetching');
+  });
 }
 
 async function restartToUpdate() {
@@ -61,17 +91,18 @@ async function restartToUpdate() {
   restarting = true;
   // The launcher stops this backend, pulls, and starts it again — poll until
   // the webui answers once more (the shell also re-navigates to the webui,
-  // which simply reloads us).
-  const timer = window.setInterval(async () => {
-    try {
+  // which simply reloads us). No failure cap: every poll fails while the
+  // backend is down mid-restart.
+  startPoller(
+    2000,
+    async () => {
       const st = await api.updateStatus();
       upd = st;
       restarting = false;
-      window.clearInterval(timer);
-    } catch {
-      // backend down mid-restart: keep polling
-    }
-  }, 2000);
+      return true;
+    },
+    Number.POSITIVE_INFINITY,
+  );
 }
 
 async function installRelease(tag: string) {
@@ -81,25 +112,25 @@ async function installRelease(tag: string) {
     return;
   }
   // Poll until the install finishes (or fails); the app restarts on success.
-  const timer = window.setInterval(async () => {
+  startPoller(1500, async () => {
     const st = await api.updateStatus();
     upd = st;
-    if (!st.installing) {
-      window.clearInterval(timer);
-    }
-  }, 1500);
+    return !st.installing;
+  });
 }
 
 async function setLanguage(lang: string) {
-  await api.setLanguage(lang);
-  status.language = lang;
+  // Backend normalizes unknown codes to en-US; adopt its answer instead of
+  // trusting the requested value (audit L9).
+  const res = await api.setLanguage(lang);
+  status.language = res.language;
   // t() is reactive: once the new dictionary is loaded the UI re-renders.
   await loadI18n();
 }
 
 async function setTheme(theme: string) {
-  await api.setTheme(theme);
-  status.theme = theme;
+  const res = await api.setTheme(theme);
+  status.theme = res.theme;
 }
 
 /** One class string per state so conditional utilities never conflict. */
@@ -138,6 +169,10 @@ $effect(() => {
   void refreshUpdate();
   return () => {
     titleState.value = "";
+    // Stop every poller this view started, including the deliberately
+    // patient restart one (audit M5).
+    for (const timer of pollers) window.clearInterval(timer);
+    pollers.length = 0;
   };
 });
 </script>

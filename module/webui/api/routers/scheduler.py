@@ -17,21 +17,16 @@ def scheduler(config_name: str):
     config.load()
     config.get_next_task()
     manager = ProcessManager.get_manager(config_name)
-    alive = manager.alive
-    pending = config.pending_task
-    if alive and len(pending) >= 1:
-        running = pending[:1]
-        pending = pending[1:]
-    else:
-        running = []
-
+    # No `running` field: the old one held pending[:1] — the expiry-queue
+    # head, not the executing task — and the overview fabricated a "current"
+    # task from it, mislabeling after priority edits (audit M12). What is
+    # actually executing is running_func; the queue stays whole in pending.
     def dump(func):
         return {"command": func.command, "next_run": str(func.next_run)}
 
     return {
-        "alive": alive,
-        "running_func": manager.running_func if alive else None,
-        "running": [dump(f) for f in running],
-        "pending": [dump(f) for f in pending],
+        "alive": manager.alive,
+        "running_func": manager.running_func if manager.alive else None,
+        "pending": [dump(f) for f in config.pending_task],
         "waiting": [dump(f) for f in config.waiting_task],
     }

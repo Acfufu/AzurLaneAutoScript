@@ -3010,7 +3010,8 @@
       "ConfigSaved": "Config saved",
       "AlasIsRunning": "Scheduler is already running",
       "ClickToUpdate": "New update available, click here to update",
-      "InvalidValues": "Invalid values, reverted: {keys}"
+      "InvalidValues": "Invalid values, reverted: {keys}",
+      "BackendOffline": "Backend connection lost, reconnecting…"
     },
     "Status": {
       "Running": "Running",

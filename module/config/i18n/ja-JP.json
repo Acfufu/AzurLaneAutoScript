@@ -3010,7 +3010,8 @@
       "ConfigSaved": "コンフィグ設定は保存されました",
       "AlasIsRunning": "スケジューラーはもう実行しています",
       "ClickToUpdate": "新しいアップデータがあります。クリックしてアップデータ",
-      "InvalidValues": "無効な値のため元に戻しました：{keys}"
+      "InvalidValues": "無効な値のため元に戻しました：{keys}",
+      "BackendOffline": "バックエンドとの接続が切断されました。再接続中…"
     },
     "Status": {
       "Running": "実行中",

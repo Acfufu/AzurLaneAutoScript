@@ -9,8 +9,13 @@ export const status = $state<Status>({
   language: "zh-CN",
 });
 
-/** WS connection state (wrapped so the property may be reassigned). */
-export const connState = $state<{ connected: boolean }>({ connected: false });
+/** SSE connection state (wrapped so the property may be reassigned).
+ *  `connected` mirrors the live socket; `everConnected` gates the offline
+ *  banner so a cold boot doesn't flash "offline" before the first open. */
+export const connState = $state<{ connected: boolean; everConnected: boolean }>({
+  connected: false,
+  everConnected: false,
+});
 
 /** Per-instance log buffer, newest entries last. */
 export const logs = $state<Record<string, string[]>>({});
@@ -65,6 +70,7 @@ export function connectEvents() {
   es = new EventSource(url);
   es.onopen = () => {
     connState.connected = true;
+    connState.everConnected = true;
   };
   es.addEventListener("status", (event) => {
     const data = (event as MessageEvent<string>).data;

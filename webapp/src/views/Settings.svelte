@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api } from "../api/client";
 import { loadI18n, t } from "../api/i18n.svelte";
-import { currentInstance, logs, refreshStatus, status } from "../api/store.svelte";
+import { connState, currentInstance, logs, refreshStatus, status } from "../api/store.svelte";
 import type { ArgDefinition } from "../api/types";
 import AppAside from "../components/AppAside.svelte";
 import AppMenu from "../components/AppMenu.svelte";
@@ -144,6 +144,7 @@ $effect(() => {
             class:bg-surface-app={toolAlive}
             class:text-white={!toolAlive}
             class:text-body={toolAlive}
+            disabled={!connState.connected}
             onclick={toggleTool}
           >
             {toolAlive ? t('Gui.Button.Stop') : t('Gui.Button.Start')}

@@ -1,6 +1,7 @@
 <script lang="ts">
 import { apiError, clearApiError } from "./api/errors.svelte";
-import { status } from "./api/store.svelte";
+import { connState, status } from "./api/store.svelte";
+import { t } from "./api/i18n.svelte";
 import AppHeader from "./components/AppHeader.svelte";
 import { route } from "./router.svelte";
 import Develop from "./views/Develop.svelte";
@@ -20,6 +21,16 @@ $effect(() => {
 
 <div id="app" class="h-full">
   <AppHeader />
+  {#if connState.everConnected && !connState.connected}
+    <!-- Backend death used to freeze the UI with no signal at all: status
+         stopped updating, buttons acted on stale state, and REST failures
+         surfaced as scattered console errors (audit M11). -->
+    <div
+      class="fixed top-14 left-1/2 z-50 -translate-x-1/2 rounded border border-solid px-3 py-2 text-sm [border-color:var(--warning-line,var(--danger-line))] [background:var(--warning-bg,var(--danger-bg))] [color:var(--warning-fg,var(--danger-fg))]"
+    >
+      {t('Gui.Toast.BackendOffline')}
+    </div>
+  {/if}
   {#if apiError.text}
     <!-- Global API failure banner (transport/HTTP/JSON errors reported by
          client.request); expected ok:false errors stay inline in views. -->

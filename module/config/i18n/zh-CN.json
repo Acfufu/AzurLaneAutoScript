@@ -3010,7 +3010,8 @@
       "ConfigSaved": "设置已保存",
       "AlasIsRunning": "调度器已在运行中",
       "ClickToUpdate": "有更新可用，点击这里进行更新",
-      "InvalidValues": "以下值无效，已回退：{keys}"
+      "InvalidValues": "以下值无效，已回退：{keys}",
+      "BackendOffline": "与后端的连接已断开，正在重连……"
     },
     "Status": {
       "Running": "运行中",
