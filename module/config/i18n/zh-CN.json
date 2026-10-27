@@ -3011,7 +3011,8 @@
       "AlasIsRunning": "调度器已在运行中",
       "ClickToUpdate": "有更新可用，点击这里进行更新",
       "InvalidValues": "以下值无效，已回退：{keys}",
-      "BackendOffline": "与后端的连接已断开，正在重连……"
+      "BackendOffline": "与后端的连接已断开，正在重连……",
+      "ModInstanceReadonly": "Mod 实例暂不支持在网页端编辑，配置以只读方式展示。"
     },
     "Status": {
       "Running": "运行中",
@@ -3070,7 +3071,8 @@
       "Name": "配置名称",
       "Modified": "修改时间",
       "Mod": "插件",
-      "Actions": "操作"
+      "Actions": "操作",
+      "ImportOverwrite": "导入将覆盖现有实例 “{name}”，确定继续？"
     },
     "Update": {
       "UpToDate": "已是最新版本",

@@ -1,5 +1,6 @@
 """Shared helpers for the webui API routers."""
 
+import os
 import re
 from datetime import datetime
 from typing import Any
@@ -9,6 +10,7 @@ from rich.console import Console
 from module.config.deep import deep_get, deep_iter, deep_set
 from module.config.utils import alas_instance, filepath_config, write_file
 from module.logger import WEB_THEME
+from module.submodule.utils import get_config_mod
 from module.webui.process_manager import ProcessManager
 from module.webui.setting import State
 
@@ -19,6 +21,33 @@ _update_singleton = None
 # render_log is only called sequentially (single to_thread batches), so a
 # shared console is safe.
 _render_console: "Console | None" = None
+
+_INVALID_NAME_CHARS = re.compile(r'[\\/:*?"<>|]')
+
+
+def valid_instance_name(name: str) -> str | None:
+    """Return an error message when the name can't be an instance config
+    file, else None. Shared by /instance/new, rename and config import:
+    "x/y" used to write config/x/y.json, an instance /status never lists
+    (audit M3/M6)."""
+    if not name:
+        return "Empty name"
+    if _INVALID_NAME_CHARS.search(name):
+        return f"Invalid characters in name: {name}"
+    return None
+
+
+def instance_mod(name: str) -> str | None:
+    """Mod backing an instance ("maa"/"fpy"), or None for a plain one.
+
+    A plain config file always wins: with both alas.json and alas.maa.json
+    present, instance "alas" is the editable main config and the bridge is
+    secondary — get_config_mod() alone would report the mod for the pair.
+    """
+    if os.path.isfile(filepath_config(name)):
+        return None
+    mod = get_config_mod(name)
+    return mod if mod != "alas" else None
 
 
 def _get_render_console() -> Console:
@@ -77,6 +106,8 @@ def build_status() -> dict[str, Any]:
                 "name": name,
                 "state": manager.state,
                 "alive": manager.alive,
+                # Frontend renders mod instances read-only (audit M9).
+                "mod": instance_mod(name),
             }
         )
     return {

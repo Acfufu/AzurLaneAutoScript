@@ -39,7 +39,10 @@ async function request<T>(path: string, init?: RequestInit, timeoutMs = 30000): 
 export const api = {
   status: () => request<Status>("/status"),
 
-  schema: (mod = "alas") => request<{ menu: MenuSchema; args: ArgSchema }>(`/schema/${mod}`),
+  schema: (mod = "alas", instance?: string) =>
+    request<{ menu: MenuSchema; args: ArgSchema }>(
+      `/schema/${mod}${instance ? `?instance=${encodeURIComponent(instance)}` : ""}`,
+    ),
 
   config: (name: string) => request<Record<string, unknown>>(`/config/${name}`),
 
@@ -102,11 +105,22 @@ export const api = {
     }),
 
   importConfig: (name: string, config: Record<string, unknown>) =>
-    request<{ ok: boolean }>(`/config/${name}/import`, {
+    request<{ ok: boolean }>(`/config/${encodeURIComponent(name)}/import`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ config }),
     }),
+
+  /** Raw file download — goes through fetch (not request) because the
+   *  payload is a blob, but still checks res.ok so a redirect-to-HTML or
+   *  404 body can't be saved as "{name}.json" (audit M6). */
+  exportConfig: async (name: string): Promise<Blob> => {
+    const res = await fetch(`${BASE}/config/${encodeURIComponent(name)}/export`);
+    if (!res.ok) {
+      throw new Error(`Export failed: ${res.status}`);
+    }
+    return res.blob();
+  },
 
   updateStatus: () =>
     request<{

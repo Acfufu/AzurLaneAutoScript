@@ -3011,7 +3011,8 @@
       "AlasIsRunning": "スケジューラーはもう実行しています",
       "ClickToUpdate": "新しいアップデータがあります。クリックしてアップデータ",
       "InvalidValues": "無効な値のため元に戻しました：{keys}",
-      "BackendOffline": "バックエンドとの接続が切断されました。再接続中…"
+      "BackendOffline": "バックエンドとの接続が切断されました。再接続中…",
+      "ModInstanceReadonly": "Mod インスタンスは現在 Web UI から編集できません。設定は読み取り専用です。"
     },
     "Status": {
       "Running": "実行中",
@@ -3070,7 +3071,8 @@
       "Name": "コンフィグ名",
       "Modified": "更新日時",
       "Mod": "モジュール",
-      "Actions": "操作"
+      "Actions": "操作",
+      "ImportOverwrite": "インポートすると既存のインスタンス “{name}” を上書きします。続行しますか？"
     },
     "Update": {
       "UpToDate": "今Alasは最新バージョンです",

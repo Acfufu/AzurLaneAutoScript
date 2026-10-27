@@ -5,6 +5,8 @@ export interface InstanceStatus {
   name: string;
   state: InstanceState;
   alive: boolean;
+  /** "maa"/"fpy" for mod bridge instances (rendered read-only), null for plain configs. */
+  mod: string | null;
 }
 
 export interface Status {

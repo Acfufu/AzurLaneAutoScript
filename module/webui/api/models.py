@@ -54,6 +54,9 @@ class InstanceStatus(BaseModel):
     name: str
     state: int
     alive: bool
+    # "maa"/"fpy" when the instance is a mod bridge (webui renders it
+    # read-only), None for a plain config (audit M9).
+    mod: str | None = None
 
 
 class StatusResponse(BaseModel):

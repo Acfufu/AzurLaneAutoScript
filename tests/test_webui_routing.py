@@ -203,3 +203,85 @@ def test_alas_instance_dedupes_base_and_mod_bridge(tmp_path, monkeypatch):
 
     instances = alas_instance()
     assert instances.count("alas") == 1
+
+
+@pytest.mark.anyio
+async def test_config_import_creates_and_clears_serial(tmp_path, monkeypatch):
+    # Import is the sanctioned way to restore a backup: it may create a new
+    # instance, must refuse template targets and invalid names (M6/M10),
+    # and must not carry the source machine's emulator serial over.
+    import json as jsonlib
+
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "template.json").write_text("{}", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    transport = httpx.ASGITransport(app=create_api_app())
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as test_client:
+        payload = {"Alas": {"Emulator": {"Serial": "127.0.0.1:5555", "PackageName": "com.YoStarEN.AzurLane"}}}
+        res = await test_client.post("/config/audit-imp/import", json={"config": payload})
+        assert res.status_code == 200
+        assert res.json()["ok"] is True
+        saved = jsonlib.loads((tmp_path / "config" / "audit-imp.json").read_text(encoding="utf-8"))
+        assert saved["Alas"]["Emulator"]["Serial"] == ""
+        assert saved["Alas"]["Emulator"]["PackageName"] == "com.YoStarEN.AzurLane"
+
+        res = await test_client.post("/config/template/import", json={"config": {}})
+        assert res.status_code == 403
+        res = await test_client.post("/config/template-backup/import", json={"config": {}})
+        assert res.status_code == 403
+        # A slash can't even reach the handler (Starlette keeps %2F out of
+        # the path param → static-mount 405, nothing written); other invalid
+        # characters do arrive and must be rejected by name validation.
+        res = await test_client.post("/config/a%2Fb/import", json={"config": {}})
+        assert res.status_code != 200
+        res = await test_client.post("/config/a:b/import", json={"config": {}})
+        assert res.status_code == 404
+        assert not (tmp_path / "config" / "a").exists()
+        assert not (tmp_path / "config" / "a:b.json").exists()
+
+
+@pytest.mark.anyio
+async def test_mod_instance_config_is_readonly(tmp_path, monkeypatch):
+    # The webui used to read/write config/alas.json for instance "alas"
+    # while the maa bridge lives in config/alas.maa.json — editing was a
+    # silent no-op (audit M9). Reads now serve the real file; writes are
+    # refused; /configs reports the /status name.
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "alas.maa.json").write_text('{"Maa": {"say": 1}}', encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    transport = httpx.ASGITransport(app=create_api_app())
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as test_client:
+        res = await test_client.get("/configs")
+        assert [c["name"] for c in res.json()] == ["alas"]
+
+        res = await test_client.get("/config/alas")
+        assert res.status_code == 200
+        assert res.json() == {"Maa": {"say": 1}}
+
+        res = await test_client.post("/config/alas", json={"value": {"Maa.say": 2}})
+        assert res.status_code == 403
+        res = await test_client.post("/config/alas/import", json={"config": {}})
+        assert res.status_code == 403
+
+        res = await test_client.get("/config/alas/export")
+        assert res.status_code == 200
+        assert b'"say": 1' in res.content
+
+        # the plain file must never have been created by any of the above
+        assert not (tmp_path / "config" / "alas.json").exists()
+
+
+def test_schema_instance_server(tmp_path, monkeypatch):
+    # Select options resolve against the edited instance's game server,
+    # not a hardcoded cn (audit M8).
+    import json as jsonlib
+
+    (tmp_path / "config").mkdir()
+    cfg = tmp_path / "config" / "alas.json"
+    cfg.write_text(jsonlib.dumps({"Alas": {"Emulator": {"PackageName": "com.YoStarEN.AzurLane"}}}), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    from module.webui.api.routers.schema import _instance_server
+
+    assert _instance_server("alas") == "en"
+    cfg.write_text("{}", encoding="utf-8")
+    assert _instance_server("alas") == "cn"

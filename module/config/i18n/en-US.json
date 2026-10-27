@@ -3011,7 +3011,8 @@
       "AlasIsRunning": "Scheduler is already running",
       "ClickToUpdate": "New update available, click here to update",
       "InvalidValues": "Invalid values, reverted: {keys}",
-      "BackendOffline": "Backend connection lost, reconnecting…"
+      "BackendOffline": "Backend connection lost, reconnecting…",
+      "ModInstanceReadonly": "Mod instances cannot be edited in the webui yet; the config is read-only."
     },
     "Status": {
       "Running": "Running",
@@ -3070,7 +3071,8 @@
       "Name": "Name",
       "Modified": "Modified",
       "Mod": "Mod",
-      "Actions": "Actions"
+      "Actions": "Actions",
+      "ImportOverwrite": "Importing will overwrite the existing instance \"{name}\". Continue?"
     },
     "Update": {
       "UpToDate": "Latest version",

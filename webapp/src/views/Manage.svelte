@@ -37,6 +37,9 @@ function pickImportFile() {
   fileInput?.click();
 }
 
+/** Same character rule as the backend's valid_instance_name (audit M3/M6). */
+const INVALID_NAME = /[\\/:*?"<>|]/;
+
 async function importFile(event: Event) {
   error = "";
   const input = event.currentTarget as HTMLInputElement;
@@ -50,22 +53,49 @@ async function importFile(event: Event) {
     error = "Invalid JSON file";
     return;
   }
+  if (typeof config !== "object" || config === null || Array.isArray(config)) {
+    error = "Invalid JSON file";
+    return;
+  }
   const name = file.name.replace(/\.json$/, "");
-  await api.importConfig(name, config);
+  if (INVALID_NAME.test(name)) {
+    error = `Invalid instance name: ${name}`;
+    input.value = "";
+    return;
+  }
+  // Overwriting an existing instance needs a confirm — delete has one too
+  // (audit M6). Backend protects template and clears the emulator serial.
+  if (configs.some((cfg) => cfg.name === name) && !window.confirm(t("Gui.AppManage.ImportOverwrite", { name }))) {
+    input.value = "";
+    return;
+  }
+  try {
+    await api.importConfig(name, config);
+  } catch {
+    // request() already raised the global banner for HTTP failures
+    error = "Import failed";
+    input.value = "";
+    return;
+  }
   input.value = "";
   await refresh();
   await refreshStatus();
 }
 
 async function exportConfig(name: string) {
-  const res = await fetch(`/config/${name}/export`);
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${name}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  error = "";
+  try {
+    const blob = await api.exportConfig(name);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    // 404/403 body used to be saved as "{name}.json" (audit M6)
+    error = "Export failed";
+  }
 }
 
 async function renameConfig(name: string) {

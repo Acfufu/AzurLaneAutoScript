@@ -1,5 +1,4 @@
 import os
-import re
 
 from fastapi import APIRouter
 
@@ -11,6 +10,7 @@ from module.submodule.utils import (
     get_available_mod_func,
     get_config_mod,
 )
+from module.webui.api.helpers import valid_instance_name
 from module.webui.api.models import (
     DeleteInstanceRequest,
     NewInstanceRequest,
@@ -24,8 +24,6 @@ from module.webui.process_manager import ProcessManager
 from module.webui.setting import State
 
 router = APIRouter(tags=["control"])
-
-_INVALID_NAME_CHARS = re.compile(r'[\\/:*?"<>|]')
 
 
 def _instance_file(name: str) -> str:
@@ -86,10 +84,9 @@ def new_instance(request: NewInstanceRequest):
         return {"ok": False, "error": "Empty name"}
     if name in alas_instance() or name == "template":
         return {"ok": False, "error": f"Instance {name} already exists"}
-    if _INVALID_NAME_CHARS.search(name):
-        # Same validation as rename: "x/y" used to return ok:true and write
-        # config/x/y.json, an instance /status never lists (audit M3).
-        return {"ok": False, "error": f"Invalid characters in name: {name}"}
+    error = valid_instance_name(name)
+    if error is not None:
+        return {"ok": False, "error": error}
     origin = request.origin or "template"
     if origin != "template" and origin not in alas_instance():
         return {"ok": False, "error": f"Origin instance {origin} not found"}
@@ -129,8 +126,9 @@ def rename_instance(request: RenameInstanceRequest):
         return {"ok": False, "error": "Empty name"}
     if new_name == "template" or new_name in alas_instance():
         return {"ok": False, "error": f"Instance {new_name} already exists"}
-    if _INVALID_NAME_CHARS.search(new_name):
-        return {"ok": False, "error": f"Invalid characters in name: {new_name}"}
+    error = valid_instance_name(new_name)
+    if error is not None:
+        return {"ok": False, "error": error}
     manager = ProcessManager.get_manager(name)
     if manager.alive:
         manager.stop()

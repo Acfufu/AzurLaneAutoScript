@@ -24,11 +24,17 @@ let invalidKeys = $state<string[]>([]);
 
 const isToolTask = $derived(toolTasks.has(selectedTask));
 const instanceAlive = $derived(status.instances.find((i) => i.name === activeInstance)?.alive ?? false);
+/** Mod bridge instances (maa/fpy) are read-only in the webui (audit M9):
+ *  their schema/args live in the submodule and editing the base file would
+ *  be a silent no-op — show a notice instead of the form. */
+const instanceMod = $derived(status.instances.find((i) => i.name === activeInstance)?.mod ?? null);
 
 async function loadTask(task: string) {
   selectedTask = task;
   toolError = "";
-  const { menu, args } = await api.schema("alas");
+  // Server-specific select options must resolve against THIS instance's
+  // game server, not a hardcoded cn (audit M8).
+  const { menu, args } = await api.schema("alas", activeInstance);
   const found = new Set(toolTasks);
   for (const data of Object.values(menu)) {
     if (data.page === "tool") {
@@ -133,7 +139,9 @@ $effect(() => {
   <AppMenu onoverview={() => push('/')} ontask={onMenuTask} />
 
   <div class="min-w-0 grow overflow-y-auto bg-surface-app p-4">
-    {#if isToolTask}
+    {#if instanceMod}
+      <div class="panel p-4 text-[0.9rem] text-muted">{t('Gui.Toast.ModInstanceReadonly')}</div>
+    {:else if isToolTask}
       <!-- tool tasks: scheduler bar (top) + form + log (bottom) -->
       <div class="grid gap-1.6 [grid-auto-flow:column] [grid-template-columns:1fr_minmax(25rem,6fr)_1fr]">
         <div class="panel col-[2] my-[0.3rem] flex items-center gap-2 p-2.4">
