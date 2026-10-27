@@ -4,6 +4,7 @@ import { loadI18n, t } from "../api/i18n.svelte";
 import { connState, currentInstance, logs, schedulers, status } from "../api/store.svelte";
 import AppAside from "../components/AppAside.svelte";
 import AppMenu from "../components/AppMenu.svelte";
+import EmulatorPanel from "../components/EmulatorPanel.svelte";
 import LogView from "../components/LogView.svelte";
 import { push } from "../router.svelte";
 
@@ -199,6 +200,10 @@ $effect(() => {
           {/each}
         </div>
       </div>
+
+      <!-- Emulator fleet panel: local launcher webview only (direction-1);
+           renders nothing in a plain browser. -->
+      <EmulatorPanel />
     </section>
 
     <!-- logs column -->
