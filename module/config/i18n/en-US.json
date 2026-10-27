@@ -558,6 +558,12 @@
       "name": "Hoard Tasks For X Minute(s)",
       "help": "By purposely not adding ready tasks to pending, allows for larger subsets to be built and run en masse at a later time\nCan reduce the frequency of operating AL"
     },
+    "OcrBackend": {
+      "name": "OCR Backend",
+      "help": "Inference backend for on-device OCR. 'ane' routes the azur_lane model through a fixed-shape CoreML model onto the Apple Neural Engine (Apple Silicon only, ~0.3W under load); takes effect after restarting the instance. Languages without a static model stay on CPU.",
+      "cpu": "CPU",
+      "ane": "ANE (Apple Neural Engine)"
+    },
     "WhenTaskQueueEmpty": {
       "name": "When Task Queue is Empty",
       "help": "Close AL when there are no pending tasks, can help reduce CPU",

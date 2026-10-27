@@ -558,6 +558,12 @@
       "name": "囤積任務 X 分鐘",
       "help": "能在收穫期間降低操作遊戲的頻率\n任務觸發後，等待 X 分鐘後，一次性執行佇列中的任務"
     },
+    "OcrBackend": {
+      "name": "OCR 推理後端",
+      "help": "裝置端 OCR 的推理後端。ane 將 azur_lane 模型經定寬 CoreML 模型送上 Apple 神經網路引擎（僅 Apple Silicon，滿載約 0.3W），重啟實例後生效；無靜態模型的語種自動回落 CPU。",
+      "cpu": "CPU",
+      "ane": "ANE（Apple 神經網路引擎）"
+    },
     "WhenTaskQueueEmpty": {
       "name": "當任務隊列清空後",
       "help": "無任務時關閉遊戲，能在收菜期間降低 CPU 佔用",

@@ -558,6 +558,12 @@
       "name": "Optimization.TaskHoardingDuration.name",
       "help": "Optimization.TaskHoardingDuration.help"
     },
+    "OcrBackend": {
+      "name": "OCR 推論バックエンド",
+      "help": "オンデバイス OCR の推論バックエンド。ane は azur_lane モデルを固定幅 CoreML モデル経由で Apple Neural Engine に載せます（Apple Silicon 専用、高負荷時約 0.3W）。インスタンス再起動後に有効。静的モデルのない言語は CPU を使用します。",
+      "cpu": "CPU",
+      "ane": "ANE（Apple Neural Engine）"
+    },
     "WhenTaskQueueEmpty": {
       "name": "Optimization.WhenTaskQueueEmpty.name",
       "help": "Optimization.WhenTaskQueueEmpty.help",

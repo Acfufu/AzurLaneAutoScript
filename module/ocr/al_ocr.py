@@ -1,4 +1,5 @@
 import itertools
+import json
 import os
 
 import cv2
@@ -16,6 +17,13 @@ cv2.setNumThreads(2)
 
 IMG_HEIGHT = 32
 SEQ_LEN_CMPR_RATIO = 4  # densenet-lite downsamples width by 4x
+
+# ANE backend (2026-10-28): the Apple Neural Engine only accepts fully static
+# shapes, so context='ane' runs a fixed-shape CoreML variant of the model
+# (<name>_staticn_w640.onnx, N=1/H=32/W=640) one line at a time, every crop
+# padded to W=640. Converted from the same checkpoint (parity verified,
+# alas-launcher probe 3f89556); models without a static variant stay on cpu.
+STATIC_W = 640
 
 
 class AlOcr:
@@ -42,7 +50,7 @@ class AlOcr:
         model_epoch=None,
         cand_alphabet=None,
         root="./bin/cnocr_models/azur_lane",
-        context="cpu",
+        context=None,
         name=None,
     ):
         self._args = (model_name, model_epoch, cand_alphabet, root, context, name)
@@ -51,6 +59,8 @@ class AlOcr:
         self._alphabet = None
         self._inv_alph_dict = None
         self._cand_alph_idx = None
+        # Fixed input width when running the static-shape ANE model; None on cpu/gpu.
+        self._static_width = None
         self._net_prefix = None if name == "" else name
 
     def init(
@@ -59,7 +69,7 @@ class AlOcr:
         model_epoch=None,
         cand_alphabet=None,
         root="./bin/cnocr_models/azur_lane",
-        context="cpu",
+        context=None,
         name=None,
     ):
         """
@@ -67,7 +77,9 @@ class AlOcr:
         :param model_epoch: kept for API compatibility, unused
         :param cand_alphabet: candidate character set, None for unrestricted
         :param root: directory containing <name>.onnx and label_cn.txt
-        :param context: 'cpu' or 'gpu' (onnxruntime provider)
+        :param context: 'cpu', 'gpu' (onnxruntime provider), 'ane' (Apple
+            Neural Engine via a static-shape CoreML model), or None = auto
+            (see _resolve_backend)
         :param name: instance name, also the model file name
         """
         model_name = name or model_name
@@ -81,6 +93,12 @@ class AlOcr:
         # Alphabet will be set before calling ocr via atomic_ocr_* methods.
         # self.set_cand_alphabet(cand_alphabet)
 
+        if context is None:
+            context = self._resolve_backend()
+        self._static_width = None
+        if context == "ane":
+            onnx_path = self._init_ane(model_dir, model_name) or onnx_path
+
         providers = ["CPUExecutionProvider"]
         if context == "gpu" and "CUDAExecutionProvider" in onnxruntime.get_available_providers():
             providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
@@ -89,7 +107,70 @@ class AlOcr:
         # Cap intra-op threads: the default (one per core) is slower and floods
         # the scheduler with short-lived threads on many-core machines.
         sess_options.intra_op_num_threads = 2
-        self._session = onnxruntime.InferenceSession(onnx_path, providers=providers, sess_options=sess_options)
+        if self._static_width is not None:
+            self._session = self._make_coreml_session(onnx_path, sess_options)
+        else:
+            self._session = onnxruntime.InferenceSession(onnx_path, providers=providers, sess_options=sess_options)
+
+    def _init_ane(self, model_dir, model_name):
+        """Pick the ANE path for this model when possible.
+
+        Returns the static-shape ONNX path to load (and sets
+        _static_width) when the static variant + CoreML provider exist;
+        returns None (leaving the caller on the cpu path) otherwise, so a
+        missing static variant degrades per-model instead of hard-failing
+        the whole backend choice.
+        """
+        static_path = os.path.join(model_dir, f"{model_name}_staticn_w640.onnx")
+        if not os.path.exists(static_path):
+            logger.info(f"OCR backend ane: no static model for {model_name!r}, using cpu")
+            return None
+        if "CoreMLExecutionProvider" not in onnxruntime.get_available_providers():
+            logger.warning("OCR backend ane: CoreMLExecutionProvider unavailable, using cpu")
+            return None
+        self._static_width = STATIC_W
+        return static_path
+
+    @staticmethod
+    def _make_coreml_session(onnx_path, sess_options):
+        """Create a CoreML-first session; probe-verified option order
+        (MLProgram/ALL falls back to plain ALL, then bare provider)."""
+        last_err = None
+        for opts in ({"ModelFormat": "MLProgram", "MLComputeUnits": "ALL"}, {"MLComputeUnits": "ALL"}, None):
+            try:
+                if opts is None:
+                    provs = ["CoreMLExecutionProvider", "CPUExecutionProvider"]
+                else:
+                    provs = [("CoreMLExecutionProvider", opts), "CPUExecutionProvider"]
+                session = onnxruntime.InferenceSession(onnx_path, sess_options=sess_options, providers=provs)
+                if session.get_providers()[0] == "CoreMLExecutionProvider":
+                    logger.info(f"OCR session on CoreML: {os.path.basename(onnx_path)}")
+                    return session
+                last_err = RuntimeError(f"CoreML not first provider: {session.get_providers()}")
+            except Exception as e:  # noqa: BLE001 - try the next candidate
+                last_err = e
+        raise RuntimeError(f"Could not create CoreML session for {onnx_path}: {last_err}")
+
+    @staticmethod
+    def _resolve_backend():
+        """Auto backend pick when the caller didn't force one (models.py never
+        passes context). Host-level policy: env ALAS_OCR_BACKEND wins, then
+        Alas.Optimization.OcrBackend from ./config/alas.json (the webui form,
+        read once per process at first OCR use — takes effect on next instance
+        restart), else 'cpu'."""
+        env = os.environ.get("ALAS_OCR_BACKEND", "")
+        if env in ("cpu", "ane"):
+            return env
+        try:
+            with open(os.path.join("config", "alas.json"), encoding="utf-8") as fp:
+                value = json.load(fp)["Alas"]["Optimization"]["OcrBackend"]
+            if value in ("cpu", "ane"):
+                return value
+            logger.warning(f"Unknown OcrBackend {value!r}, using cpu")
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            # Missing file/section = plain cpu install, not worth a warning.
+            logger.info(f"OcrBackend auto-detect fell back to cpu ({e})")
+        return "cpu"
 
     @staticmethod
     def _read_charset(charset_fp):
@@ -259,6 +340,9 @@ class AlOcr:
             return []
         img_list = [self._preprocess_img_array(img) for img in img_list]
 
+        if self._static_width is not None:
+            return self._ocr_for_single_lines_static(img_list)
+
         batch_size = len(img_list)
         img_list, img_widths = self._pad_arrays(img_list)
 
@@ -273,6 +357,28 @@ class AlOcr:
         res = []
         for i in range(batch_size):
             res.append(self._gen_line_pred_chars(prob[:, i, :], img_widths[i], max_width))
+        return res
+
+    def _ocr_for_single_lines_static(self, img_list):
+        """ANE path: the static-shape model takes one (1, 32, 640) input at a
+        time. Each crop is padded to the fixed width (wider crops — never
+        produced by the 1280px game screen — are scaled down); decoding uses
+        the crop's true width so padding never leaks characters (parity with
+        the dynamic batch path, probe 2026-10-27 P4s_static640)."""
+        res = []
+        for img in img_list:
+            width = min(img.shape[2], self._static_width)
+            if img.shape[2] > self._static_width:
+                img = cv2.resize(img[0], (self._static_width, IMG_HEIGHT), interpolation=cv2.INTER_AREA)[np.newaxis, :, :]
+            elif img.shape[2] < self._static_width:
+                img = np.pad(img, ((0, 0), (0, 0), (0, self._static_width - img.shape[2])))
+            prob = self._predict(np.ascontiguousarray(img[np.newaxis, ...], dtype="float32"))
+            # Static N=1 output is [T, num_classes]; reshape to [T, 1, C] so the
+            # shared cand-mask + decode helpers apply as-is.
+            prob = np.reshape(prob, (-1, 1, prob.shape[-1]))
+            if self._cand_alph_idx is not None:
+                prob = prob * self._gen_mask(prob.shape)
+            res.append(self._gen_line_pred_chars(prob[:, 0, :], width, self._static_width))
         return res
 
     def _predict(self, batch):

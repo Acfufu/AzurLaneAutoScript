@@ -211,6 +211,14 @@
         "type": "input",
         "value": 0
       },
+      "OcrBackend": {
+        "type": "select",
+        "value": "cpu",
+        "option": [
+          "cpu",
+          "ane"
+        ]
+      },
       "WhenTaskQueueEmpty": {
         "type": "select",
         "value": "goto_main",

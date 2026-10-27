@@ -26,6 +26,9 @@ Toast:
   ConfigSaved:
   AlasIsRunning:
   ClickToUpdate:
+  InvalidValues:
+  BackendOffline:
+  ModInstanceReadonly:
 
 Status:
   Running:
@@ -85,6 +88,7 @@ AppManage:
   Modified:
   Mod:
   Actions:
+  ImportOverwrite:
 
 Update:
   UpToDate:
