@@ -21,9 +21,11 @@ async function refresh() {
 
 async function createConfig() {
   error = "";
-  const res = await api.newInstance(newName);
-  if (!res.ok) {
-    error = res.error ?? "Failed";
+  // HTTP failures already surface in the global banner; catch so the
+  // rejection doesn't also die as an unhandled promise (audit M3).
+  const res = await api.newInstance(newName).catch(() => null);
+  if (!res?.ok) {
+    error = res?.error ?? "Failed";
     return;
   }
   newName = "";

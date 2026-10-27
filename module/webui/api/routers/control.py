@@ -5,7 +5,12 @@ from fastapi import APIRouter
 
 from module.config.deep import deep_set
 from module.config.utils import alas_instance, filepath_config, write_file
-from module.submodule.utils import get_available_func, get_available_mod, get_available_mod_func
+from module.submodule.utils import (
+    get_available_func,
+    get_available_mod,
+    get_available_mod_func,
+    get_config_mod,
+)
 from module.webui.api.models import (
     DeleteInstanceRequest,
     NewInstanceRequest,
@@ -14,12 +19,22 @@ from module.webui.api.models import (
     RunRequest,
     StopRequest,
 )
+from module.webui.api.routers.events import forget_instance
 from module.webui.process_manager import ProcessManager
 from module.webui.setting import State
 
 router = APIRouter(tags=["control"])
 
 _INVALID_NAME_CHARS = re.compile(r'[\\/:*?"<>|]')
+
+
+def _instance_file(name: str) -> str:
+    """Config file backing an instance: plain instances live at
+    config/{name}.json, mod instances (maa/fpy) at config/{name}.{mod}.json.
+    get_config_mod reads MOD_CONFIG_DICT, which alas_instance() refreshes as
+    a side effect of the existence checks that always precede a call here.
+    """
+    return filepath_config(name, get_config_mod(name))
 
 
 def _run_target_error(instance: str, func: str | None) -> str | None:
@@ -53,8 +68,14 @@ def run_alas(request: RunRequest):
 
 @router.post("/stop", response_model=OkResponse, response_model_exclude_none=True)
 def stop_alas(request: StopRequest):
-    manager = ProcessManager.get_manager(request.instance)
-    manager.stop()
+    if request.instance not in alas_instance():
+        return {"ok": False, "error": f"Instance {request.instance} not found"}
+    # Bypass get_manager(): it fabricates a persistent manager for any name,
+    # so a typo'd /stop used to leave permanent bookkeeping behind (audit
+    # L6). A valid instance without a manager entry has nothing running.
+    manager = ProcessManager._processes.get(request.instance)
+    if manager is not None:
+        manager.stop()
     return {"ok": True}
 
 
@@ -65,7 +86,13 @@ def new_instance(request: NewInstanceRequest):
         return {"ok": False, "error": "Empty name"}
     if name in alas_instance() or name == "template":
         return {"ok": False, "error": f"Instance {name} already exists"}
+    if _INVALID_NAME_CHARS.search(name):
+        # Same validation as rename: "x/y" used to return ok:true and write
+        # config/x/y.json, an instance /status never lists (audit M3).
+        return {"ok": False, "error": f"Invalid characters in name: {name}"}
     origin = request.origin or "template"
+    if origin != "template" and origin not in alas_instance():
+        return {"ok": False, "error": f"Origin instance {origin} not found"}
     origin_config = State.config_updater.read_file(origin)
     deep_set(origin_config, "Alas.Emulator.Serial", "")
     write_file(filepath_config(name), origin_config)
@@ -80,7 +107,13 @@ def delete_instance(request: DeleteInstanceRequest):
     manager = ProcessManager.get_manager(name)
     if manager.alive:
         manager.stop()
-    os.remove(filepath_config(name))
+    os.remove(_instance_file(name))
+    # Drop the manager and the scheduler bookkeeping so the deleted instance
+    # stops producing ghost SSE frames (a recompute of the now-missing config
+    # yields all-default data) and replayed logs; a same-name re-creation
+    # then starts truly fresh (audit M4).
+    ProcessManager._processes.pop(name, None)
+    forget_instance(name)
     return {"ok": True}
 
 
@@ -101,8 +134,12 @@ def rename_instance(request: RenameInstanceRequest):
     manager = ProcessManager.get_manager(name)
     if manager.alive:
         manager.stop()
-    os.rename(filepath_config(name), filepath_config(new_name))
+    # Keep the mod suffix on renames: renaming the maa instance "alas" moves
+    # alas.maa.json to {new_name}.maa.json, not to a plain {new_name}.json.
+    mod = get_config_mod(name)
+    os.rename(filepath_config(name, mod), filepath_config(new_name, mod))
     # Drop the stale manager entry so the renamed instance starts fresh and
     # the old name stops appearing in process bookkeeping.
     ProcessManager._processes.pop(name, None)
+    forget_instance(name)
     return {"ok": True}

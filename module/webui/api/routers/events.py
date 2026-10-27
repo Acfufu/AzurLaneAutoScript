@@ -27,6 +27,16 @@ _last_recompute: dict[str, float] = {}
 _RECOMPUTE_INTERVAL = 30.0
 
 
+def forget_instance(name: str) -> None:
+    """Drop all per-instance bookkeeping (audit M4): a deleted or renamed
+    instance's cached snapshot would otherwise be replayed to new SSE
+    connections, and its recompute timer kept producing ghost frames from
+    the now-missing config.
+    """
+    _scheduler_cache.pop(name, None)
+    _last_recompute.pop(name, None)
+
+
 def _recompute_scheduler(name: str) -> dict | None:
     """Compute the current pending/waiting split straight from the config
     file, mirroring the REST /scheduler/{name} route (shared shape with

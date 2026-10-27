@@ -94,14 +94,19 @@ def _add_dev_cors(app: FastAPI):
 
 
 def _add_home_redirect(app: FastAPI):
-    """Redirect every unmatched path back to the SPA home page.
+    """Redirect browser navigations to unknown paths back to the SPA home.
 
     The frontend routes live in the URL hash (#/xxx), which the browser
     never sends to the server, so the only meaningful server paths are the
-    registered API routes, the root SPA page, and its static assets.
-    Anything else (typos, stale links, stray requests) gets a 302 back to
-    "/" instead of the default JSON 404; browsers re-apply the original
-    #fragment to the redirect target, so hash routes survive.
+    registered API routes, the root SPA page, and its static assets. Only
+    navigations (Accept: text/html) fall back to "/" — browsers re-apply
+    the original #fragment to the redirect target, so hash routes survive.
+    fetch()/EventSource/asset loads send */* or specific types, so a stale
+    shell referencing a deleted asset or a mistyped API path gets an honest
+    JSON 404 instead of index.html — which used to surface as a MIME white
+    screen or a "Bad response" SyntaxError after the redirect to "/" (audit
+    L3), and also swallowed the 404s the config routes raise for unknown
+    instances (audit M10).
 
     Loop guard: when the SPA build is missing (webapp/dist not
     built), "/" itself 404s — return the JSON 404 then instead of
@@ -110,7 +115,11 @@ def _add_home_redirect(app: FastAPI):
 
     @app.exception_handler(StarletteHTTPException)
     async def unmatched_path_to_home(request, exc):
-        if exc.status_code == 404 and request.url.path != "/":
+        if (
+            exc.status_code == 404
+            and request.url.path != "/"
+            and "text/html" in request.headers.get("accept", "")
+        ):
             return RedirectResponse("/", status_code=302)
         # Other HTTP errors (405, ...) and a missing "/" keep FastAPI's
         # default JSON response.

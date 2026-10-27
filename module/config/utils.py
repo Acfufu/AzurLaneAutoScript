@@ -165,6 +165,11 @@ def alas_instance():
 
     out.extend(list_mod_instance())
 
+    # A base instance and its mod bridge share one name (alas.json and
+    # alas.maa.json both map to "alas"); dedupe while keeping order so the
+    # instance list never carries the same name twice.
+    out = list(dict.fromkeys(out))
+
     if not len(out):
         out = ['alas']
 

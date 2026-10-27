@@ -59,7 +59,10 @@ def list_mod_instance():
         name, extension = os.path.splitext(file)
         config_name, mod_name = os.path.splitext(name)
         mod_name = mod_name[1:]
-        if config_name != 'template' and extension == '.json' and mod_name != '':
+        # Only known mods count as mod instances (audit L5): any dotted
+        # name used to qualify, so `alas.backup.json` became instance "alas"
+        # with mod "backup" and crashed the main loop on the unknown mod.
+        if config_name != 'template' and extension == '.json' and mod_name in MOD_DICT:
             out.append(config_name)
             MOD_CONFIG_DICT[config_name] = mod_name
 
