@@ -2,6 +2,7 @@
 import { api } from "../api/client";
 import { loadI18n, t } from "../api/i18n.svelte";
 import { refreshStatus, status, titleState } from "../api/store.svelte";
+import { THEME_OPTIONS } from "../api/themes";
 import AppAside from "../components/AppAside.svelte";
 import { push } from "../router.svelte";
 
@@ -20,10 +21,6 @@ const LANGS = [
   { label: "繁體中文", value: "zh-TW" },
   { label: "English", value: "en-US" },
   { label: "日本語", value: "ja-JP" },
-];
-const THEMES = [
-  { label: "Light", value: "default" },
-  { label: "Dark", value: "dark" },
 ];
 
 // release updater data
@@ -232,7 +229,7 @@ $effect(() => {
       </div>
       <p class="mt-4 mb-1.6 text-center">Change theme / 更改主题</p>
       <div class="flex flex-wrap justify-center gap-1.6">
-        {#each THEMES as theme (theme.value)}
+        {#each THEME_OPTIONS as theme (theme.value)}
           <button class={pickButtonClass(status.theme === theme.value)} onclick={() => setTheme(theme.value)}>
             {theme.label}
           </button>

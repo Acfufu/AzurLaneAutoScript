@@ -18,9 +18,14 @@ def remote_status():
 
 @router.post("/remote/start", response_model=OkResponse, response_model_exclude_none=True)
 def remote_start():
-    from module.webui.remote_access import start_remote_access_service
+    from module.webui.remote_access import ParseError, start_remote_access_service
 
-    start_remote_access_service()
+    # An unconfigured/malformed SSHServer raised ParseError uncaught and
+    # surfaced as HTTP 500 instead of an honest ok:false (audit L2).
+    try:
+        start_remote_access_service()
+    except ParseError as e:
+        return {"ok": False, "error": str(e)}
     return {"ok": True}
 
 

@@ -151,7 +151,14 @@ def _add_password_gate(app: FastAPI):
 
     class PasswordGate(BaseHTTPMiddleware):
         async def dispatch(self, request, call_next):
-            if not secrets.compare_digest(request.headers.get("Authorization", ""), expected):
+            authorization = request.headers.get("Authorization", "")
+            try:
+                matched = secrets.compare_digest(authorization, expected)
+            except TypeError:
+                # compare_digest rejects non-ASCII str headers; treat them
+                # as a failed match instead of a 500 (audit L4).
+                matched = False
+            if not matched:
                 return JSONResponse(
                     {"detail": "Unauthorized"},
                     status_code=401,

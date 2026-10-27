@@ -285,3 +285,12 @@ def test_schema_instance_server(tmp_path, monkeypatch):
     assert _instance_server("alas") == "en"
     cfg.write_text("{}", encoding="utf-8")
     assert _instance_server("alas") == "cn"
+
+
+@pytest.mark.anyio
+async def test_theme_rejects_unknown(client):
+    # /theme persisted any string; only themes with a stylesheet block in
+    # theme.css are accepted now (audit L1).
+    response = await client.post("/theme", json={"theme": "bogus"})
+    assert response.status_code == 400
+    assert "Unknown theme" in response.json()["detail"]

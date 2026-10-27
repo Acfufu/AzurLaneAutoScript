@@ -29,12 +29,19 @@ const instanceAlive = $derived(status.instances.find((i) => i.name === activeIns
  *  be a silent no-op — show a notice instead of the form. */
 const instanceMod = $derived(status.instances.find((i) => i.name === activeInstance)?.mod ?? null);
 
-async function loadTask(task: string) {
+/** Monotonic guard for the two awaits in loadTask: a fast task switch
+ *  must not let the slower request land schema/config from the previous
+ *  task (audit L10). Returns whether this load is still the current one. */
+let loadSeq = 0;
+
+async function loadTask(task: string): Promise<boolean> {
+  const seq = ++loadSeq;
   selectedTask = task;
   toolError = "";
   // Server-specific select options must resolve against THIS instance's
   // game server, not a hardcoded cn (audit M8).
   const { menu, args } = await api.schema("alas", activeInstance);
+  if (seq !== loadSeq) return false;
   const found = new Set(toolTasks);
   for (const data of Object.values(menu)) {
     if (data.page === "tool") {
@@ -46,6 +53,7 @@ async function loadTask(task: string) {
   toolTasks = found;
   schema = args;
   config = await api.config(activeInstance);
+  return seq === loadSeq;
 }
 
 async function refreshToolState() {
@@ -118,7 +126,9 @@ function onMenuTask(task: string) {
 $effect(() => {
   const task = route.query.task || "Alas";
   if (task !== selectedTask || Object.keys(schema).length === 0) {
-    void loadTask(task).then(() => refreshToolState());
+    void loadTask(task).then((current) => {
+      if (current) void refreshToolState();
+    });
   }
 });
 

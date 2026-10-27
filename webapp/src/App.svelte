@@ -2,6 +2,7 @@
 import { apiError, clearApiError } from "./api/errors.svelte";
 import { connState, status } from "./api/store.svelte";
 import { t } from "./api/i18n.svelte";
+import { isTheme } from "./api/themes";
 import AppHeader from "./components/AppHeader.svelte";
 import { route } from "./router.svelte";
 import Develop from "./views/Develop.svelte";
@@ -9,13 +10,14 @@ import Home from "./views/Home.svelte";
 import Manage from "./views/Manage.svelte";
 import Settings from "./views/Settings.svelte";
 
-const THEMES = ["default", "dark", "light", "minty", "yeti", "sketchy"];
-
 $effect(() => {
   // Single source of truth for theming: the data-theme attribute on <html>
   // selects the token block in src/styles/theme.css. No stylesheet swaps,
   // no FOUC, no cascade-order dependencies.
-  document.documentElement.dataset.theme = THEMES.includes(status.theme) ? status.theme : "default";
+  document.documentElement.dataset.theme = isTheme(status.theme) ? status.theme : "default";
+  // <html lang> follows the persisted language instead of the hardcoded
+  // zh-CN in index.html (audit L14).
+  document.documentElement.lang = status.language;
 });
 </script>
 

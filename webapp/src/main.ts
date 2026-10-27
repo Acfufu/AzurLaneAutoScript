@@ -5,6 +5,7 @@ import { mount } from "svelte";
 import App from "./App.svelte";
 import { loadI18n } from "./api/i18n.svelte";
 import { connectEvents, refreshStatus, status } from "./api/store.svelte";
+import { isTheme } from "./api/themes";
 import { initRouter } from "./router.svelte";
 
 async function bootstrap() {
@@ -16,8 +17,9 @@ async function bootstrap() {
     // backend not ready yet; the SSE reconnection will refresh later
   }
   // Theme is a single data-theme attribute on <html>; setting it before
-  // mount avoids any flash of the default theme.
-  document.documentElement.dataset.theme = status.theme;
+  // mount avoids any flash of the default theme. Persisted values are
+  // validated against the canonical theme list (audit L1).
+  document.documentElement.dataset.theme = isTheme(status.theme) ? status.theme : "default";
   try {
     await loadI18n();
   } catch {

@@ -1,5 +1,4 @@
 import json
-import threading
 import time
 
 from fastapi import APIRouter, Request
@@ -18,14 +17,16 @@ def update_status():
 
 @router.post("/update/refresh", response_model=OkResponse, response_model_exclude_none=True)
 def update_refresh():
-    def worker():
-        try:
-            _get_updater().refresh()
-        except Exception as e:
-            logger.exception(e)
-
-    threading.Thread(target=worker, daemon=True).start()
-    return {"ok": True}
+    # Synchronous: a release-list fetch is a single GitHub call, and the
+    # caller is a user-pressed button. The old fire-and-forget thread
+    # answered ok:true before knowing anything and only logged failures
+    # (audit L13). Frontend polls /update/status for the resulting state.
+    try:
+        _get_updater().refresh()
+        return {"ok": True}
+    except Exception as e:
+        logger.exception(e)
+        return {"ok": False, "error": str(e)}
 
 
 @router.post("/update/install", response_model=OkResponse, response_model_exclude_none=True)
