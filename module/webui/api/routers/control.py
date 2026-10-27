@@ -5,6 +5,7 @@ from fastapi import APIRouter
 
 from module.config.deep import deep_set
 from module.config.utils import alas_instance, filepath_config, write_file
+from module.submodule.utils import get_available_func, get_available_mod, get_available_mod_func
 from module.webui.api.models import (
     DeleteInstanceRequest,
     NewInstanceRequest,
@@ -21,8 +22,28 @@ router = APIRouter(tags=["control"])
 _INVALID_NAME_CHARS = re.compile(r'[\\/:*?"<>|]')
 
 
+def _run_target_error(instance: str, func: str | None) -> str | None:
+    """Validate a /run target before spawning anything.
+
+    The child process only logs "No function matched" and exits, so an
+    unvalidated name used to surface as ok:true plus a dead process — the
+    silent no-op behind the tool-page start incident (audit H1).
+    """
+    if instance not in alas_instance():
+        return f"Instance {instance} not found"
+    if func is None:
+        return None
+    valid = {"alas"} | set(get_available_func()) | set(get_available_mod()) | set(get_available_mod_func())
+    if func not in valid:
+        return f"No function matched: {func}"
+    return None
+
+
 @router.post("/run", response_model=OkResponse, response_model_exclude_none=True)
 def run_alas(request: RunRequest):
+    error = _run_target_error(request.instance, request.func)
+    if error is not None:
+        return {"ok": False, "error": error}
     manager = ProcessManager.get_manager(request.instance)
     if manager.alive:
         return {"ok": False, "error": f"{request.instance} is already running"}

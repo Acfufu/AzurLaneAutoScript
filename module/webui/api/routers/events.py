@@ -42,7 +42,10 @@ def _recompute_scheduler(name: str) -> dict | None:
     try:
         from module.config.config import AzurLaneConfig
 
-        config = AzurLaneConfig(name)
+        # read_only mirrors the REST /scheduler route: report the schedule
+        # as written on disk, without the scheduler loop's in-memory
+        # force-enable/NextRun coercion (audit H4).
+        config = AzurLaneConfig(name, read_only=True)
         config.load()
         config.get_next_task()
         pending = config.pending_task

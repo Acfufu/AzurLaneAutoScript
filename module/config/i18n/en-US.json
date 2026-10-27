@@ -3009,7 +3009,8 @@
       "DisableTranslateMode": "Click here to disable translate mode",
       "ConfigSaved": "Config saved",
       "AlasIsRunning": "Scheduler is already running",
-      "ClickToUpdate": "New update available, click here to update"
+      "ClickToUpdate": "New update available, click here to update",
+      "InvalidValues": "Invalid values, reverted: {keys}"
     },
     "Status": {
       "Running": "Running",

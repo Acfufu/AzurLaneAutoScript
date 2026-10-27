@@ -3009,7 +3009,8 @@
       "DisableTranslateMode": "點擊這裡關閉翻譯模式",
       "ConfigSaved": "設定已儲存",
       "AlasIsRunning": "調度器已在執行中",
-      "ClickToUpdate": "有更新可用，點擊這裡進行更新"
+      "ClickToUpdate": "有更新可用，點擊這裡進行更新",
+      "InvalidValues": "以下值無效，已回退：{keys}"
     },
     "Status": {
       "Running": "執行中",

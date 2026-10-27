@@ -81,6 +81,13 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
     # Class property
     is_hoarding_task = True
 
+    # Read-only view, set by webui display paths (scheduler REST route and
+    # the SSE recompute). Skips the in-memory coercion in override() —
+    # force-enable and NextRun clamping are scheduler-loop policy, not
+    # display truth — and makes save() a no-op so a read can never write
+    # (audit H4).
+    read_only = False
+
     def __setattr__(self, key, value):
         if key in self.bound:
             path = self.bound[key]
@@ -90,7 +97,7 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
         else:
             super().__setattr__(key, value)
 
-    def __init__(self, config_name, task=None):
+    def __init__(self, config_name, task=None, read_only=False):
         logger.attr("Server", self.SERVER)
         # This will read ./config/<config_name>.json
         self.config_name = config_name
@@ -116,6 +123,9 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
         self.task: Function
         # Template config is used for dev tools
         self.is_template_config = config_name.startswith("template")
+        # Must be set before init_task() so the first load() already skips
+        # the coercion (see the class attribute above).
+        self.read_only = read_only
 
         if self.is_template_config:
             # For dev tools
@@ -296,6 +306,8 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
             raise RequestHumanTakeover
 
     def save(self, mod_name="alas"):
+        if self.read_only:
+            return False
         if not self.modified:
             return False
 
@@ -314,6 +326,10 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
         self.save()
 
     def override(self, **kwargs):
+        if self.read_only:
+            # Display views report the config as written on disk; the
+            # force-enable/NextRun clamping below is run-time policy.
+            return
         now = datetime.now().replace(microsecond=0)
         limited = set()
 

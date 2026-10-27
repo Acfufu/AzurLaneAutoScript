@@ -10,10 +10,14 @@ router = APIRouter(tags=["scheduler"])
 def scheduler(config_name: str):
     from module.config.config import AzurLaneConfig
 
-    config = AzurLaneConfig(config_name)
+    # read_only: the webui must report the schedule as written on disk,
+    # not as the scheduler loop's override() would coerce it (force-enable
+    # and NextRun clamping are run policy, not display truth — audit H4).
+    config = AzurLaneConfig(config_name, read_only=True)
     config.load()
     config.get_next_task()
-    alive = ProcessManager.get_manager(config_name).alive
+    manager = ProcessManager.get_manager(config_name)
+    alive = manager.alive
     pending = config.pending_task
     if alive and len(pending) >= 1:
         running = pending[:1]
@@ -26,6 +30,7 @@ def scheduler(config_name: str):
 
     return {
         "alive": alive,
+        "running_func": manager.running_func if alive else None,
         "running": [dump(f) for f in running],
         "pending": [dump(f) for f in pending],
         "waiting": [dump(f) for f in config.waiting_task],

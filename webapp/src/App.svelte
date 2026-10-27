@@ -1,4 +1,5 @@
 <script lang="ts">
+import { apiError, clearApiError } from "./api/errors.svelte";
 import { status } from "./api/store.svelte";
 import AppHeader from "./components/AppHeader.svelte";
 import { route } from "./router.svelte";
@@ -19,6 +20,18 @@ $effect(() => {
 
 <div id="app" class="h-full">
   <AppHeader />
+  {#if apiError.text}
+    <!-- Global API failure banner (transport/HTTP/JSON errors reported by
+         client.request); expected ok:false errors stay inline in views. -->
+    <div
+      class="fixed bottom-2 right-2 z-50 max-w-96 rounded border border-solid px-3 py-2 text-sm [border-color:var(--danger-line)] [background:var(--danger-bg)] [color:var(--danger-fg)] [overflow-wrap:anywhere]"
+    >
+      <span>{apiError.text}</span>
+      <button class="ms-2 border-0 bg-transparent p-0 [color:inherit] underline" onclick={clearApiError}>
+        ✕
+      </button>
+    </div>
+  {/if}
   <main class="h-[calc(100vh-50px)]">
     {#if route.path === '/settings'}
       <Settings />

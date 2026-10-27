@@ -153,13 +153,36 @@ def _save_config(modified: dict[str, Any], config_name: str, args_schema: dict[s
                     valuetype = "int"
                 elif all(isinstance(o, float) for o in option):
                     valuetype = "float"
-        v = _parse_value(v, valuetype) if isinstance(valuetype, str) else v
+        if valuetype is None:
+            # Plain inputs with a numeric/boolean schema default share the
+            # DOM-strings problem (272 args ship without valuetype, e.g.
+            # Alas.Optimization.ScreenshotInterval): infer from the default
+            # so "0.5" is stored as a float instead of corrupting the field
+            # with a string (audit M2).
+            default = deep_get(args_schema, k + ".value")
+            if isinstance(default, bool):
+                valuetype = "bool"
+            elif isinstance(default, int):
+                valuetype = "int"
+            elif isinstance(default, float):
+                valuetype = "float"
         validate = deep_get(args_schema, k + ".validate")
         if not len(str(v)):
+            # Empty input resets the arg to its default; must run before
+            # the type conversion below (int("") would raise).
             default = deep_get(args_schema, k + ".value")
             deep_set(config, k, default)
             valid.append(k)
-        elif validate == "datetime":
+            continue
+        if isinstance(valuetype, str):
+            try:
+                v = _parse_value(v, valuetype)
+            except (ValueError, TypeError):
+                # e.g. "abc" into a numeric field: reject and report it
+                # instead of storing a corrupt string (audit M2).
+                invalid.append(k)
+                continue
+        if validate == "datetime":
             # datetime args (e.g. Scheduler.NextRun) validate by parsing;
             # keep the string form so json.dumps stays happy
             try:

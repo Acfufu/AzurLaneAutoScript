@@ -20,8 +20,10 @@ let toolTasks = $state<Set<string>>(new Set());
 let toolAlive = $state(false);
 let toolKeepBottom = $state(true);
 let toolError = $state("");
+let invalidKeys = $state<string[]>([]);
 
 const isToolTask = $derived(toolTasks.has(selectedTask));
+const instanceAlive = $derived(status.instances.find((i) => i.name === activeInstance)?.alive ?? false);
 
 async function loadTask(task: string) {
   selectedTask = task;
@@ -43,14 +45,20 @@ async function loadTask(task: string) {
 async function refreshToolState() {
   if (isToolTask && activeInstance) {
     const sched = await api.scheduler(activeInstance);
-    toolAlive = sched.alive;
+    // Instance-level alive only says *something* runs; running_func says
+    // what was started ("alas"/mod name = the main loop). Without it the
+    // button showed Stop whenever the main loop ran and killed it (H2).
+    toolAlive = sched.alive && sched.running_func === selectedTask;
   }
 }
 
 async function toggleTool() {
   toolError = "";
   if (toolAlive) {
-    await api.stop(activeInstance);
+    const res = await api.stop(activeInstance);
+    if (!res.ok) {
+      toolError = "stop failed";
+    }
   } else {
     // Tool tasks dispatch by name: /run(func=<Task>) runs that single task,
     // while /run without func starts the main scheduler loop instead.
@@ -71,8 +79,14 @@ function scrollToGroup(name: string) {
 
 async function saveValue(path: string, value: unknown) {
   saving = true;
+  invalidKeys = [];
   try {
-    await api.saveConfig(activeInstance, { [path]: value });
+    const res = await api.saveConfig(activeInstance, { [path]: value });
+    // Rejected keys are not written; surface them instead of letting the
+    // value silently snap back on the reload below (audit M2).
+    if (res.invalid.length) {
+      invalidKeys = res.invalid;
+    }
     config = await api.config(activeInstance);
   } finally {
     saving = false;
@@ -103,6 +117,12 @@ $effect(() => {
 });
 
 $effect(() => {
+  // A one-shot tool task that finished leaves the process dead; flip the
+  // button back via SSE status instead of waiting for the next REST poll.
+  if (!instanceAlive) toolAlive = false;
+});
+
+$effect(() => {
   void loadI18n();
   void refreshStatus();
 });
@@ -130,6 +150,11 @@ $effect(() => {
           </button>
           {#if toolError}
             <span class="text-xs text-status-warning [overflow-wrap:anywhere]">{toolError}</span>
+          {/if}
+          {#if invalidKeys.length}
+            <span class="text-xs text-status-warning [overflow-wrap:anywhere]">
+              {t('Gui.Toast.InvalidValues', { keys: invalidKeys.join(', ') })}
+            </span>
           {/if}
           <span class="ms-auto">{t('Gui.Overview.Log')}</span>
           <button
@@ -186,6 +211,11 @@ $effect(() => {
       {/each}
       {#if saving}
         <span class="text-xs text-status-running">saving...</span>
+      {/if}
+      {#if invalidKeys.length}
+        <span class="text-xs text-status-warning [overflow-wrap:anywhere]">
+          {t('Gui.Toast.InvalidValues', { keys: invalidKeys.join(', ') })}
+        </span>
       {/if}
     {/if}
   </div>

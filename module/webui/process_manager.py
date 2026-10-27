@@ -38,6 +38,11 @@ class ProcessManager:
         self.renderables_max_length = 400
         self.renderables_reduce_length = 80
         self._process: Process | None = None
+        # What this manager's process was started with: the /run func,
+        # or the resolved mod name ("alas"/"maa"/...) for a main-loop start.
+        # Exposed by /scheduler as running_func so the UI can tell "the tool
+        # task is running" from "something else (the main loop) is" (audit H2).
+        self.running_func: str | None = None
         self._process_locks: dict[str, threading.Lock] = {}
         self.thd_log_queue_handler: threading.Thread | None = None
 
@@ -45,6 +50,7 @@ class ProcessManager:
         if not self.alive:
             if func is None:
                 func = get_config_mod(self.config_name)
+            self.running_func = func
             self._process = Process(
                 target=ProcessManager.run_process,
                 args=(
@@ -80,6 +86,7 @@ class ProcessManager:
                 self.thd_log_queue_handler.join(timeout=1)
                 if self.thd_log_queue_handler.is_alive():
                     logger.warning("Log queue handler thread does not stop within 1 seconds")
+        self.running_func = None
         logger.info(f"[{self.config_name}] exited")
 
     def _thread_log_queue_handler(self) -> None:

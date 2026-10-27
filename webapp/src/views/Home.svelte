@@ -29,6 +29,7 @@ const currentTask = $derived(
     : null,
 );
 let keepBottom = $state(true);
+let toggleError = $state("");
 const EMPTY_LOGS: string[] = [];
 
 /** One-shot REST bootstrap: the backend's in-memory snapshot cache is
@@ -48,10 +49,21 @@ async function refreshScheduler() {
 }
 
 async function toggleScheduler() {
-  if (instanceAlive) {
-    await api.stop(activeInstance);
-  } else {
-    await api.run(activeInstance);
+  toggleError = "";
+  try {
+    if (instanceAlive) {
+      const res = await api.stop(activeInstance);
+      if (!res.ok) {
+        toggleError = "stop failed";
+      }
+    } else {
+      const res = await api.run(activeInstance);
+      if (!res.ok) {
+        toggleError = res.error ?? "start failed";
+      }
+    }
+  } catch (e) {
+    toggleError = String(e);
   }
   // Status and scheduler updates arrive via SSE.
 }
@@ -94,16 +106,21 @@ $effect(() => {
     <section class="flex h-full min-h-0 flex-col overflow-hidden">
       <div class="panel m-1.25 flex items-center justify-between p-2.5 font-medium">
         <span class="mx-2 my-auto text-[1.25rem]">{t('Gui.Overview.Scheduler')}</span>
-        <button
-          class="btn m-0 border-toggle"
-          class:bg-accent={!instanceAlive}
-          class:bg-surface-app={instanceAlive}
-          class:text-white={!instanceAlive}
-          class:text-body={instanceAlive}
-          onclick={toggleScheduler}
-        >
-          {instanceAlive ? t('Gui.Button.Stop') : t('Gui.Button.Start')}
-        </button>
+        <div class="flex items-center gap-2">
+          {#if toggleError}
+            <span class="text-xs text-status-warning [overflow-wrap:anywhere]">{toggleError}</span>
+          {/if}
+          <button
+            class="btn m-0 border-toggle"
+            class:bg-accent={!instanceAlive}
+            class:bg-surface-app={instanceAlive}
+            class:text-white={!instanceAlive}
+            class:text-body={instanceAlive}
+            onclick={toggleScheduler}
+          >
+            {instanceAlive ? t('Gui.Button.Stop') : t('Gui.Button.Start')}
+          </button>
+        </div>
       </div>
 
       <div class="panel m-1.25 grid h-[var(--space-section)] flex-shrink-0 overflow-y-auto p-2.5 font-medium [grid-auto-flow:row] [grid-template-rows:auto_auto_1fr]">

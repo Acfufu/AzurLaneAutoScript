@@ -40,6 +40,11 @@ def _startup():
     from module.webui.tasks import TaskHandler
 
     lang.reload()
+    # Theme/language were persisted on every change but never read back, so
+    # every restart silently fell back to the dark/zh-CN in-memory defaults
+    # (audit H3).
+    State.theme = State.deploy_config.Theme
+    lang.set_language(State.deploy_config.Language)
     task_handler = TaskHandler()
     # Auto-update loop removed (2026-08): source deployments are git-managed
     # by the user and installed builds update through the manual release

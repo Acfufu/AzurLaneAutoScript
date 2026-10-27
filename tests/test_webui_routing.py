@@ -78,3 +78,27 @@ async def test_hash_fragment_is_client_side(client):
         assert response.status_code == 200
     else:
         assert response.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_run_rejects_unknown_instance(client):
+    # /run used to spawn a manager for any name (phantom instance, then a
+    # default-config main loop); reject it before any state is created.
+    response = await client.post("/run", json={"instance": "no-such-instance"})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is False
+    assert "not found" in body["error"]
+
+
+@pytest.mark.anyio
+async def test_run_rejects_unknown_func(client):
+    # An unmatched func used to return ok:true while the child process
+    # logged "No function matched" and exited — the silent no-op behind
+    # the tool-page start incident. Validation happens before any manager
+    # is touched, so no lifespan state is needed here.
+    response = await client.post("/run", json={"instance": "alas", "func": "audit_nonexistent_probe"})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is False
+    assert body["error"] == "No function matched: audit_nonexistent_probe"

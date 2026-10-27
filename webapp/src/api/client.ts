@@ -1,4 +1,5 @@
 import type { ArgSchema, MenuSchema, Status } from "./types";
+import { reportApiError } from "./errors.svelte";
 
 /**
  * Base URL of the python backend.
@@ -9,11 +10,23 @@ import type { ArgSchema, MenuSchema, Status } from "./types";
 const BASE = import.meta.env.VITE_API_BASE ?? "";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, init);
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, init);
+  } catch (e) {
+    reportApiError(`Network error: ${path}`);
+    throw e;
+  }
   if (!res.ok) {
+    reportApiError(`${path} → ${res.status}`);
     throw new Error(`${path} -> ${res.status}`);
   }
-  return (await res.json()) as T;
+  try {
+    return (await res.json()) as T;
+  } catch (e) {
+    reportApiError(`Bad response: ${path}`);
+    throw e;
+  }
 }
 
 export const api = {
@@ -135,6 +148,7 @@ export const api = {
   scheduler: (name: string) =>
     request<{
       alive: boolean;
+      running_func: string | null;
       running: { command: string; next_run: string }[];
       pending: { command: string; next_run: string }[];
       waiting: { command: string; next_run: string }[];
