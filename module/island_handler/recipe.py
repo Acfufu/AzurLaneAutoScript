@@ -839,16 +839,17 @@ class IslandRecipe(IslandExchange, IslandShop):
             return True
         else:
             logger.info(f'Set recipe amount to {batch_count}')
-        if ISLAND_RECIPE_AMOUNT_OCR.ocr(self.device.image) < batch_count:
-            # Check if already at max, if so, cannot set to desired amount
-            counters = self.get_recipe_ingredient_counters()
-            if counters is None:
-                # Active recipe scan failed (transient, e.g. laggy frame):
-                # stock cannot be verified, skip the amount adjustment instead
-                # of crashing (TypeError 2026-10-29 05:00, error 1793221199727).
-                logger.warning('Active recipe not identifiable, cannot verify ingredient stock, skip recipe this cycle')
-                return False
-            for counter in counters:
+            if ISLAND_RECIPE_AMOUNT_OCR.ocr(self.device.image) < batch_count:
+                # Check if already at max, if so, cannot set to desired amount
+                counters = self.get_recipe_ingredient_counters()
+                if counters is None:
+                    # Active recipe scan failed (transient, e.g. laggy frame):
+                    # stock cannot be verified, skip the amount adjustment
+                    # instead of crashing (TypeError 2026-10-29 05:00, error
+                    # 1793221199727).
+                    logger.warning('Active recipe not identifiable, cannot verify ingredient stock, skip recipe this cycle')
+                    return False
+                for counter in counters:
                     if counter[2] < 0:
                         logger.warning('Insufficient ingredient for next recipe amount, cannot set recipe amount to desired value')
                         return False
