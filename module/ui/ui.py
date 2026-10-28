@@ -5,8 +5,15 @@ from module.base.decorator import run_once
 from module.base.timer import Timer
 from module.exception import GameNotRunningError, GamePageUnknownError, RequestHumanTakeover
 from module.flow.runtime import run_group
+from module.handler.assets import NETWORK_DOWN_CHECK, NETWORK_DOWN_CONFIRM
 from module.handler.info_handler import InfoHandler
-from module.island.assets import ISLAND_ORDER_SPEED_UP_CHECK, ISLAND_ORDER_SPEED_UP_CLOSE
+from module.island.assets import (
+    ISLAND_BUY_SUCCESS_CHECK,
+    ISLAND_BUY_SUCCESS_CLOSE,
+    ISLAND_CULTIVATING_PLAN_CHECK,
+    ISLAND_ORDER_SPEED_UP_CHECK,
+    ISLAND_ORDER_SPEED_UP_CLOSE,
+)
 from module.logger import logger
 from module.ocr.ocr import Ocr
 from module.ui.assets import *  # noqa: F403  (data-bundle star import)
@@ -93,6 +100,16 @@ def _idle_page(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
 def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
     """The popup rule group (priority order = original ui_additional)."""
     return [
+        # Game client lost the server connection ("信息 / 服务器连接失败
+        # [NetworkDown]", crash-adjacent 2026-10-29 04:30: it dimmed the whole
+        # screen, every click landed on the overlay and the flow behind it
+        # clicked itself into GameTooManyClickError). Confirm reconnect first —
+        # nothing else can proceed while offline.
+        {
+            "name": "network_down",
+            "check": {"button": NETWORK_DOWN_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": NETWORK_DOWN_CONFIRM},
+        },
         # L486-487: page_os popups first (RESET_FLEET_PREPARATION >= 5 raises inside)
         {"name": "os_popups", "action": {"call_if": _ui_page_os_popups}},
         # L490-493
@@ -194,6 +211,24 @@ def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
             "name": "island_speed_up",
             "check": {"button": ISLAND_ORDER_SPEED_UP_CHECK, "offset": (30, 30), "interval": 3},
             "action": {"click": ISLAND_ORDER_SPEED_UP_CLOSE},
+        },
+        # Island shop "购买成功" receipt popup (tap-blank-to-close, screen
+        # dimming): left behind when a buy flow is interrupted (2026-10-29
+        # 05:03, 05:17) it defeats every page check exactly like the dialog
+        # above. The popup itself stays bright.
+        {
+            "name": "island_buy_success",
+            "check": {"button": ISLAND_BUY_SUCCESS_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": ISLAND_BUY_SUCCESS_CLOSE},
+        },
+        # 养成计划 (CULTIVATING PLAN) minigame screen: no page check matches it,
+        # so any task starting there dies with GamePageUnknownError (2026-10-29
+        # 04:16). Anchor on the 进入养成计划 button and back out; the screen
+        # state persists game-side, escaping is all ALAS needs.
+        {
+            "name": "cultivating_plan",
+            "check": {"button": ISLAND_CULTIVATING_PLAN_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": BACK_ARROW_WHITE},
         },
         # L596-599: white-menu switch
         {
