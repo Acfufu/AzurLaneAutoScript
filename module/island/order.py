@@ -277,6 +277,13 @@ class IslandOrder(IslandUI):
                 clicked = True
                 confirm_timer.reset()
                 continue
+            # Game refuses the submit with a "资源不够啦" toast when stock run
+            # out between the satisfy check and the submit (requirement OCR can
+            # misread); clicking on would never confirm, reject instead.
+            if self.appear(ISLAND_ORDER_SUBMIT_REFUSED, offset=(20, 20), interval=2):
+                logger.warning('Order submit refused: insufficient resources, reject it instead')
+                self.reject_order()
+                return False
             if self.handle_island_order_level_up():
                 confirm_timer.reset()
                 continue
