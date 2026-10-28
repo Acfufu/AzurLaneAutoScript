@@ -261,6 +261,20 @@ class IslandUI(UI):
             return True
         return False
 
+    def handle_island_speed_up_dialog(self):
+        """
+        The order cooldown speed-up coupon dialog ("加速 / SPEED UP") is a
+        screen-dimming modal: while it is open every page check fails and no
+        popups_main rule matches it, so ui_ensure spins into
+        GamePageUnknownError (crash 2026-10-29 01:02). The dialog itself stays
+        bright, so its 自动选择 button is a reliable anchor and the X closes it.
+        """
+        if self.appear(ISLAND_ORDER_SPEED_UP_CHECK, offset=(30, 30), interval=3):
+            logger.info('Island speed up dialog appeared, close it')
+            self.device.click(ISLAND_ORDER_SPEED_UP_CLOSE)
+            return True
+        return False
+
     def handle_island_popup_confirm(self, name='', offset=None, interval=2):
         if offset is None:
             offset = self._popup_offset
@@ -275,6 +289,8 @@ class IslandUI(UI):
         if self.handle_island_get_items():
             return True
         if self.handle_island_level_up():
+            return True
+        if self.handle_island_speed_up_dialog():
             return True
         return False
 

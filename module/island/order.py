@@ -443,6 +443,18 @@ class IslandOrder(IslandUI):
                 remain_time = self.cooldown_time_ocr.ocr(self.device.image)
             next_runtime = datetime.now() + remain_time
             self.next_runtime.append(next_runtime)
+        # The speed-up coupon dialog can surface around a reject (observed
+        # 2026-10-29: it opened by itself under client lag after the last
+        # reject) and dims the whole screen, so leaving it open makes the
+        # next task's ui_ensure die with GamePageUnknownError.
+        for _ in self.loop(timeout=6):
+            if self.appear(page_island_order.check_button, offset=(20, 20)):
+                break
+            if self.handle_island_additional():
+                continue
+            self.device.click(ISLAND_CLICK_SAFE_AREA)
+        else:
+            logger.warning('Order page still not recognizable at task end, next task should recover via popups')
         if self.next_runtime:
             next_runtime = min(self.next_runtime)
             logger.info(f'Next order runtime: {next_runtime}')

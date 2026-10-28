@@ -6,6 +6,7 @@ from module.base.timer import Timer
 from module.exception import GameNotRunningError, GamePageUnknownError, RequestHumanTakeover
 from module.flow.runtime import run_group
 from module.handler.info_handler import InfoHandler
+from module.island.assets import ISLAND_ORDER_SPEED_UP_CHECK, ISLAND_ORDER_SPEED_UP_CLOSE
 from module.logger import logger
 from module.ocr.ocr import Ocr
 from module.ui.assets import *  # noqa: F403  (data-bundle star import)
@@ -184,6 +185,16 @@ def popups_main(get_ship: bool = True) -> list[dict[str, Any]]:
         },
         # L592-594: idle page
         {"name": "idle", "action": {"call_if": _idle_page}},
+        # Island order cooldown speed-up coupon dialog: a screen-dimming modal
+        # that defeats every page check (dimmed ISLAND_ORDER_CHECK) and no rule
+        # above matches it -> GamePageUnknownError + exit(1) (crash 2026-10-29
+        # 01:02). The dialog itself stays bright, so the anchor still matches;
+        # close it via its X regardless of which task hit it.
+        {
+            "name": "island_speed_up",
+            "check": {"button": ISLAND_ORDER_SPEED_UP_CHECK, "offset": (30, 30), "interval": 3},
+            "action": {"click": ISLAND_ORDER_SPEED_UP_CLOSE},
+        },
         # L596-599: white-menu switch
         {
             "name": "white_menu",
