@@ -340,6 +340,7 @@ class IslandOrder(IslandUI):
                 continue
             if not clicked and self.match_template_color(submit_button, offset=(20, 20), interval=1):
                 self.device.click(submit_button)
+                clicked = True
                 confirm_timer.reset()
                 continue
             if not confirm_timer.reached():
