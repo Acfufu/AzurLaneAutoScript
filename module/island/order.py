@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import datetime, timedelta
 
 import cv2
@@ -8,7 +9,7 @@ import module.config.server as server
 from module.base.button import Button, ButtonGrid
 from module.base.decorator import cached_property
 from module.base.timer import Timer
-from module.base.utils import color_similarity_2d
+from module.base.utils import color_similarity_2d, crop
 from module.config.utils import get_server_next_update
 from module.island.assets import *  # noqa: F403  (data-bundle star import)
 from module.island.data import DIC_ISLAND_ITEM, DIC_ISLAND_SEASON_ORDER
@@ -35,6 +36,18 @@ EMPTY_SEASON_ORDER_ID = 0
 # Regular orders expire at server update. Within this window a reject-cooldown
 # cycle (~100min) would outlive the order, so submit using protected stock instead.
 ORDER_EXPIRE_FORCE_WINDOW = timedelta(hours=2)
+# Counter-area ink (pixels near the letter color) under which a requirement row
+# counts as empty, matching the 30-pixel red gate in
+# IslandReversedDigitCounter.pre_process.
+REQUIREMENT_ROW_EMPTY_INK = 30
+# Red pixels above which the row's stock text is red, i.e. the row is short.
+REQUIREMENT_ROW_RED_INK = 30
+
+# Scan result of the requirement panel. readable=False means rows were covered
+# by popups or still rendering, so the order must never be submitted on it;
+# red_insufficient means the game paints a row's stock red, i.e. short.
+OrderRequirementScan = namedtuple(
+    'OrderRequirementScan', ['requirements', 'readable', 'red_insufficient'], defaults=({}, True, False))
 
 
 def get_circles(image, color, inner_radius, outer_radius):
@@ -187,16 +200,54 @@ class IslandOrder(IslandUI):
         return corrected_id
 
     def scan_current_order_requirements(self):
+        """
+        Scan the requirement rows on the current panel.
+
+        Returns:
+            OrderRequirementScan: requirements and whether the scan can be
+            trusted. Rows covered by popups or still rendering make the scan
+            unreadable so the order is never submitted on guesses; rows with
+            red stock text are insufficient regardless of the digits read.
+        """
         name_ocr = self.requirement_name_ocr
         counter_ocr = self.requirement_counter_ocr
         names = name_ocr.ocr(self.device.image)
         ids = [self.item_name_to_item_id(name) for name in names]
         counters = counter_ocr.ocr(self.device.image)
         requirements = {}
-        for id, counter in zip(ids, counters):
-            if id is not None and counter is not None:
-                requirements[id] = counter
-        return requirements
+        readable = True
+        red_insufficient = False
+        for row, (id, counter) in enumerate(zip(ids, counters)):
+            image = crop(self.device.image, counter_ocr.buttons[row])
+            dark = color_similarity_2d(image, color=counter_ocr.letter)
+            red = color_similarity_2d(image, color=counter_ocr.sub_letter)
+            dark = int((dark >= counter_ocr.threshold).sum())
+            red = int((red >= counter_ocr.sub_threshold).sum())
+            if tuple(counter) == (0, 0, 0):
+                if dark > REQUIREMENT_ROW_EMPTY_INK:
+                    # Ink in the counter area but no digits read: the row is
+                    # covered by a popup or still rendering.
+                    logger.warning(f'Requirement row {row + 1} has unreadable counter text, treat scan as unreadable')
+                    readable = False
+                # Otherwise a genuinely empty row: orders list 1-3 items and
+                # OCR noise on empty rows (e.g. a phantom item name) is dropped.
+                continue
+            if id is None:
+                logger.warning(f'Requirement row {row + 1} has counter {counter} but no item name, treat scan as unreadable')
+                readable = False
+                continue
+            requirements[id] = counter
+            if red > REQUIREMENT_ROW_RED_INK:
+                # The game paints the stock red iff the row is short; trust
+                # the color over the digits.
+                logger.warning(f'Requirement row {row + 1} stock is red: {counter}, insufficient regardless of digits')
+                red_insufficient = True
+        if not requirements and readable:
+            # Orders always list at least one item; an all-empty read means
+            # the whole panel was covered or still rendering.
+            logger.warning('No requirement row read, treat scan as unreadable')
+            readable = False
+        return OrderRequirementScan(requirements=requirements, readable=readable, red_insufficient=red_insufficient)
 
     def get_order_remain_time(self, order_button: Button):
         time_button = order_button.crop((10, 119, 100, 145))
@@ -350,16 +401,30 @@ class IslandOrder(IslandUI):
             next_runtime = datetime.now() + remain_time
             self.next_runtime.append(next_runtime)
             return False
-        requirements = self.scan_current_order_requirements()
+        scan = self.scan_current_order_requirements()
+        if not scan.readable:
+            # The panel can be covered by popups or still rendering when the
+            # scan lands (observed 2026-10-29: panel content lagged the panel
+            # frame under client lag and a submit on the stale content got
+            # refused); wait once and re-scan before deciding.
+            logger.info('Requirement panel unreadable, wait 1s and scan again')
+            self.device.sleep(1)
+            self.device.screenshot()
+            scan = self.scan_current_order_requirements()
         force = not is_urgent and not is_season and (
             get_server_next_update(self.config.Scheduler_ServerUpdate) - datetime.now() <= ORDER_EXPIRE_FORCE_WINDOW
         )
         if force:
             logger.info('Regular order is about to expire at server update, submit ignoring protected stock')
-        if self.is_order_satisfied(requirements, is_urgent=is_urgent, is_season=is_season, force=force):
+        satisfied = scan.readable and not scan.red_insufficient and self.is_order_satisfied(
+            scan.requirements, is_urgent=is_urgent, is_season=is_season, force=force)
+        if satisfied:
             return self.submit_order(is_urgent=is_urgent)
         else:
-            logger.warning('Order requirements not satisfied due to low stock')
+            if not scan.readable:
+                logger.warning('Order requirements unreadable, treat as not satisfied')
+            else:
+                logger.warning('Order requirements not satisfied due to low stock')
             if is_urgent:
                 logger.warning('Urgent order can only be delayed')
                 remain_time = self.get_order_remain_time(order_button)
@@ -372,8 +437,13 @@ class IslandOrder(IslandUI):
                 self.next_runtime.append(next_runtime)
                 return False
             elif is_season:
+                if not scan.readable:
+                    # Requirements are unreliable, marking a wrong season
+                    # order stuck would trigger a pointless replan.
+                    logger.warning('Season order requirements unreadable, keep stuck season order id unchanged')
+                    return False
                 logger.warning('Season order can only be abandoned, skip this order')
-                stuck_season_order_id = get_season_order_id(requirements)
+                stuck_season_order_id = get_season_order_id(scan.requirements)
                 self.update_stuck_season_order(stuck_season_order_id)
                 return False
             else:
