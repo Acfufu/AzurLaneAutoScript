@@ -411,7 +411,8 @@ class IslandRestaurant(IslandDock):
                         f"{restaurant} for 8 hours"
                     )
 
-            self.ensure_dock_page_at_top()
+            # find_character_with_blacklist re-ensures the top page itself;
+            # a second call here just burns two more swipe records.
             fallback_blacklist = (
                 unavailable_waitress_list
                 | selected_waitresses

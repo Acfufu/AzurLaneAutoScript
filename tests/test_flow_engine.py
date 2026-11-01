@@ -640,6 +640,25 @@ def test_switch_set_flow_dry_run():
     assert any("SW_ON" in c for c in clicks)
 
 
+def test_switch_set_no_click_when_already_at_target():
+    # 2026-11-01 island dock incident (GameTooManyClickError): when the switch
+    # is already at the target state, the exit guard passes on tick 1 but its
+    # confirm timer needs one more frame; in that same tick the click rule used
+    # to fire because set_click_timer.clear() makes reached() a fast first try,
+    # toggling the switch AWAY from the target. Upstream set() returned
+    # immediately without clicking in this case.
+    from module.ui.switch import Switch
+
+    on, off = _Btn("SW_ON4"), _Btn("SW_OFF4")
+    sw = Switch("test4")
+    sw.add_state("on", on)
+    sw.add_state("off", off)
+    device = FakeDevice()
+    owner = DriveOwner(device, [{"present": ("SW_OFF4",)}])
+    assert sw.set("off", main=owner) is False  # nothing clicked -> changed=False
+    assert not [c for c in device.calls if c[0] == "click"]
+
+
 def test_switch_wait_flow_dry_run():
     from module.ui.switch import Switch
 

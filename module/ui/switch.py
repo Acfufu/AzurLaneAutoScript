@@ -47,9 +47,17 @@ def _sw_additional(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> b
 
 
 def _sw_click_ready(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
-    """Known state (or unknown after has_unknown) + click timer reached."""
+    """Known non-target state (or unknown after has_unknown) + click timer reached."""
     sw = (args or {}).get("sw")
+    state = (args or {}).get("state")
     current = ctx.params.get("_sw_current")
+    if current == state:
+        # Already at target: the exit guard just needs its confirm frame.
+        # Clicking here would toggle the switch AWAY from the target —
+        # upstream set() returned immediately in this case. (2026-11-01
+        # island dock incident: this spurious click made every set() on an
+        # already-correct switch thrash the button until GameTooManyClickError.)
+        return False
     if current == "unknown" and not ctx.params.get("_sw_has_unknown"):
         return False
     return sw.set_click_timer.reached()
