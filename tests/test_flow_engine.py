@@ -1062,10 +1062,11 @@ def test_reset_confirm_starvation_regression():
 
     device = FakeDevice()
     owner = ScriptedOwner(device, [{"present": ()}])
-    owner._sp_confirm = Timer(0.05, count=3).start()
+    confirm = Timer(0.05, count=3).start()
+    owner._sp_confirm = confirm  # type: ignore[assignment] (double attaches a real confirm timer)
 
     def sp_end(ctx, args=None, **kw):
-        return owner._sp_confirm.reached()
+        return confirm.reached()
 
     def never_handles(ctx, args=None, **kw):
         return False
