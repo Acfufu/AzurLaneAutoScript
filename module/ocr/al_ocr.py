@@ -147,7 +147,7 @@ class AlOcr:
                     logger.info(f"OCR session on CoreML: {os.path.basename(onnx_path)}")
                     return session
                 last_err = RuntimeError(f"CoreML not first provider: {session.get_providers()}")
-            except Exception as e:  # noqa: BLE001 - try the next candidate
+            except Exception as e:  # try the next candidate
                 last_err = e
         raise RuntimeError(f"Could not create CoreML session for {onnx_path}: {last_err}")
 

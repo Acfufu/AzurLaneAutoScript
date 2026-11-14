@@ -12,11 +12,10 @@ Three layers:
 import json
 import os
 
-import cv2
 import numpy as np
 import pytest
 
-from module.ocr.al_ocr import AlOcr, STATIC_W
+from module.ocr.al_ocr import STATIC_W, AlOcr
 
 MODEL_ROOT = "./bin/cnocr_models/azur_lane"
 STATIC_MODEL = os.path.join(MODEL_ROOT, "azur_lane_staticn_w640.onnx")
@@ -146,7 +145,7 @@ def render_digits(text, width=360, height=48):
             img = Image.new("RGB", (width, height), (255, 255, 255))
             ImageDraw.Draw(img).text((8, 2), text, fill=(0, 0, 0), font=font)
             return np.array(img)
-        except Exception:  # noqa: BLE001 - font not on this machine
+        except Exception:  # font not on this machine
             continue
     pytest.skip("no Impact-family system font for in-distribution rendering")
     raise AssertionError("unreachable")
@@ -157,7 +156,7 @@ def _coreml_available():
         import onnxruntime
 
         return "CoreMLExecutionProvider" in onnxruntime.get_available_providers()
-    except Exception:  # noqa: BLE001 - treat any import failure as unavailable
+    except Exception:  # treat any import failure as unavailable
         return False
 
 

@@ -22,6 +22,12 @@ DIST_BUILT = os.path.isfile(os.path.join("webapp", "dist", "index.html"))
 BROWSER_ACCEPT = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
 
 
+def _fs_missing(*parts) -> bool:
+    # Sync existence probe: ASYNC240 bans os.path calls inside async test
+    # bodies; the probe deliberately stays sync after the request completed.
+    return not os.path.exists(os.path.join(*parts))
+
+
 @pytest.fixture
 async def client():
     # httpx ASGI transport instead of starlette.testclient.TestClient:
@@ -139,7 +145,7 @@ async def test_instance_new_rejects_invalid_chars(client):
     body = response.json()
     assert body["ok"] is False
     assert "Invalid characters" in body["error"]
-    assert not os.path.exists(os.path.join("config", "x"))
+    assert _fs_missing("config", "x")
 
 
 @pytest.mark.anyio
@@ -167,7 +173,7 @@ async def test_config_unknown_instance_rejected(client):
     assert post.status_code == 404
     export = await client.get("/config/no-such-instance/export")
     assert export.status_code == 404
-    assert not os.path.exists(os.path.join("config", "no-such-instance.json"))
+    assert _fs_missing("config", "no-such-instance.json")
 
 
 @pytest.mark.anyio
