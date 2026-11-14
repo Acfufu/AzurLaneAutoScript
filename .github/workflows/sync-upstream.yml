@@ -154,7 +154,18 @@ jobs:
             fi
           fi
           git push origin "$BRANCH" --force
-          gh pr create --base master --head "$BRANCH" \
-            --title "$TITLE" \
-            --body "$BODY" \
-            || echo "PR already open — nothing to do"
+          # A blanket `|| echo` here once masked a real permission failure
+          # ("Resource not accessible by integration") as a benign
+          # already-open note: the job stayed green for two weeks while no
+          # PR ever existed and upstream sync silently stalled. Distinguish
+          # already-open from a genuine failure; only the former is benign.
+          if gh pr create --base master --head "$BRANCH" \
+              --title "$TITLE" \
+              --body "$BODY"; then
+            echo "sync PR created"
+          elif [ "$(gh pr list --head "$BRANCH" --state open --json number -q 'length')" = "1" ]; then
+            echo "PR already open — nothing to do"
+          else
+            echo "::error title=Sync PR::gh pr create failed (see log above). Check Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests'."
+            exit 1
+          fi
