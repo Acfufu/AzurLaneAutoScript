@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Tests for the decision logic of the island transport module."""
 
 import pytest
@@ -97,7 +100,9 @@ def test_decide_swaps_into_blocked_slot(monkeypatch):
     unknown.unknown = True
     subs = {1: unknown, 3: commission('03', [('Mango', 8)], {'Mango': 30}, index=3)}
 
-    swaps, submit = module.transport_decide(slots, subs)
+    decided = module.transport_decide(slots, subs)
+    assert decided is not None
+    swaps, submit = decided
     assert FakeOptimizer.max_commissions == 3
     # Commissions with unknown items are not valued
     assert FakeOptimizer.names == ['P1', 'P2', 'P3', '03']

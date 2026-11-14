@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes/values to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 from datetime import datetime
 
 import pytest
@@ -71,11 +74,16 @@ def test_consecutive_extractors_load_cn_first(tmp_path, monkeypatch):
     ):
         requests.clear()
         extractor()
-        assert requests[0][1] == 'CN', (extractor.__name__, requests[0][2])
+        # LuaLoader resolves the requested server to the first alias whose
+        # folder exists; on case-insensitive filesystems (macOS/Windows) the
+        # bare 'cn' folder matches the created 'CN' one, so compare the CN
+        # group case-insensitively. The point of the test is that every
+        # extractor hits the CN data first, not the exact spelling.
+        assert requests[0][1].lower() == 'cn', (extractor.__name__, requests[0][2])
         assert all(
-            server == 'CN' for request_loader, server, _ in requests if request_loader is loader
+            server.lower() == 'cn' for request_loader, server, _ in requests if request_loader is loader
         ), extractor.__name__
-        assert loader.server == 'CN', extractor.__name__
+        assert loader.server.lower() == 'cn', extractor.__name__
 
 
 def test_sources_include_primary_secondary_and_activity_outputs():

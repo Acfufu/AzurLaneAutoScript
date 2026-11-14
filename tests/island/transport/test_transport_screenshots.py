@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes/values to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Transport slot, requirement and reward goldens from real JP and CN captures."""
 
 from module.base.utils import crop

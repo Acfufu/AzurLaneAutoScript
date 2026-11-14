@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Policy and confirmation-flow regression tests for island fish exchange."""
 from types import SimpleNamespace
 

@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 from contextlib import nullcontext
 from types import SimpleNamespace
 
@@ -324,7 +327,8 @@ def test_order_submission_does_not_request_full_check(submitted):
     main.handle_info_bar = lambda: None
     main.click_order = lambda *args, **kwargs: True
     main.appear = lambda *args, **kwargs: False
-    main.scan_current_order_requirements = lambda: {}
+    from module.island.order import OrderRequirementScan
+    main.scan_current_order_requirements = lambda: OrderRequirementScan(requirements={}, readable=True, red_insufficient=False)
     main.is_order_satisfied = lambda *args, **kwargs: True
     main.submit_order = lambda **kwargs: submitted
 

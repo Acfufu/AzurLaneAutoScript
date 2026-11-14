@@ -3,6 +3,7 @@ from lxml import etree
 from module.base.timer import Timer
 from module.device.method.adb import Adb
 from module.device.method.uiautomator_2 import Uiautomator2
+from module.device.method.utils import HierarchyButton
 from module.device.method.wsa import WSA
 from module.logger import logger
 
@@ -61,3 +62,15 @@ class AppControl(Adb, WSA, Uiautomator2):
         else:
             self.hierarchy = self.dump_hierarchy_adb()
         return self.hierarchy
+
+    def xpath_to_button(self, xpath: str) -> HierarchyButton:
+        """
+        Args:
+            xpath (str):
+
+        Returns:
+            HierarchyButton:
+                An object with methods and properties similar to Button.
+                If element not found or multiple elements were found, return None.
+        """
+        return HierarchyButton(self.hierarchy, xpath)

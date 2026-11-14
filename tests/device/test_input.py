@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 import base64
 from types import SimpleNamespace
 from unittest.mock import Mock, PropertyMock, call

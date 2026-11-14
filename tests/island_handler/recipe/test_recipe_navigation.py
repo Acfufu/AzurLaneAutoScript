@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Recipe stock scans end only at a recognized list boundary."""
 from types import SimpleNamespace
 

@@ -810,7 +810,7 @@ class ProductionPlanCalculator:
             if self.restaurant_enabled[restaurant_id]
         }
         sale_entries = []
-        for slot, _menu in sell_slots.items():
+        for slot, menu in sell_slots.items():
             for item_id, recipe_id in menu.items():
                 if recipe_id in self.seasonal_recipe_ids and not self.recipe_available.get(recipe_id, False):
                     continue

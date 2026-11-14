@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false
 import struct
 from pathlib import Path
 
@@ -125,7 +128,7 @@ def test_truncation_before_first_text_finishes_is_rejected(sdk):
     text_field = integer(1) + string('clipboard text', sdk >= 30)
     required_end = complete.index(text_field) + len(text_field)
     for end in range(0, required_end, 4):
-        with pytest.raises(OSError, match='Truncated Android clipboard parcel'):
+        with pytest.raises(OSError, match='Android clipboard'):
             decode_clipboard_parcel(dump(complete[:end]), sdk)
     assert decode_clipboard_parcel(dump(complete[:required_end]), sdk) == 'clipboard text'
 

@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes/values to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false
 """Tests for EventShopUI._get_event_deadline in module.shop_event.ui."""
 from datetime import datetime, timedelta
 from types import SimpleNamespace

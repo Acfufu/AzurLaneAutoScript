@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes/values to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 """Quantity selection follows the displayed value when the shop clamps a click."""
 from collections import deque
 from types import SimpleNamespace
@@ -108,7 +111,8 @@ def test_quantity_selection_tracks_actual_click_results(
 
 @pytest.mark.parametrize('maximum', range(1, 41))
 def test_quantity_selection_reaches_every_valid_quantity(monkeypatch, maximum):
-    monkeypatch.setattr(shop_module.logger, 'disabled', True)
+    # loguru has no `.disabled` flag; silence the module through its API.
+    shop_module.logger.disable('module.island_handler.shop')
     for current in range(1, maximum + 1):
         for target in range(1, maximum + 1):
             shop, device = make_quantity_shop(monkeypatch, current=current, maximum=maximum)

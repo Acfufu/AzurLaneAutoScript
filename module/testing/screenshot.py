@@ -465,7 +465,15 @@ def pytest_pyfunc_call(pyfuncitem):
     # Resolve the source before looking for module parameters.  This means a
     # decorated test with no module arguments still fails clearly for a missing
     # screenshot while ordinary tests remain entirely under pytest's hooks.
-    file, screenshot = load_screenshot(pyfuncitem)
+    try:
+        file, screenshot = load_screenshot(pyfuncitem)
+    except ScreenshotNotFound as exc:
+        # Upstream ships the test code but not the collection/ images (they
+        # never enter the upstream repo), so a fresh clone cannot run these
+        # goldens. Skip with the reason instead of failing the whole suite;
+        # putting the .webp into collection/ turns the skip back into a run.
+        pytest.skip(f'screenshot golden not available: {exc}')
+
     requests = {
         name: pyfuncitem.funcargs[name]
         for name in module_parameters(pyfuncitem.function)

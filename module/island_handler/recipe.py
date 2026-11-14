@@ -1003,7 +1003,7 @@ class IslandRecipe(IslandExchange, IslandShop):
         del_cached_property(self, 'recipe_grid')
         del_cached_property(self, 'recipe_ids')
         while self.recipe_id_sequence:
-            for recipe_id, _info, _mode in self.recipe_id_sequence:
+            for recipe_id, info, mode in self.recipe_id_sequence:  # noqa: B007 (leak into post-loop plan, upstream semantics)
                 recipe = get_recipe_data(recipe_id)
                 if recipe['workload'] <= available_workload:
                     break

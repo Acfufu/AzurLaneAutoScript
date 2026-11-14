@@ -602,9 +602,3 @@ class RewardResearch(ResearchSelector, ResearchQueue, StorageHandler):
             # ten minutes in advance to avoid idle research.
             self.end_time = self.end_time + timedelta(minutes=-10)
         self.config.task_delay(target=self.end_time)
-
-
-if __name__ == '__main__':
-    self = RewardResearch('alas5')
-    self.image_file = r'C:\Users\LmeSzinc\Documents\MuMu共享文件夹\Screenshots\科研刷新202610\683320600-0ded609d-ef77-4dc4-ac44-c9789b1b2275.png'
-    self.research_reset()

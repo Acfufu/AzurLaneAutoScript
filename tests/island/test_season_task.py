@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 """Season-task recognition goldens and target-update behavior."""
 from module.island.assets import ISLAND_SEASON_TASK_RECEIVE_ALL, TEMPLATE_ISLAND_SEASON_TASK_OBTAINED
 from module.island.season_task import NAME_AREA, IslandSeasonTask

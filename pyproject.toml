@@ -127,7 +127,10 @@ ignore = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+# Upstream's screenshot-golden tests (tests/island*, tests/island_handler/*) rely on the
+# pytest hooks in module/testing/screenshot.py; register it as a plugin here so the
+# whole suite can run under one pytest invocation.
+addopts = "-ra -p module.testing.screenshot"
 filterwarnings = [
     # websockets 14.x deprecates the legacy client API used by
     # module/device/method/minitouch.py (WebSocketClientProtocol /

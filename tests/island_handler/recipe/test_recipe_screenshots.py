@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 """Recipe recognition goldens; awaiting human review of collection/ images."""
 import pytest
 

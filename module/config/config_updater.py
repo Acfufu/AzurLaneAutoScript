@@ -53,7 +53,11 @@ class ConfigUpdater:
     # Historical key migrations were removed in Phase 5.1 (all entries were
     # already commented out; migrations are far past their expiry window).
     # Add entries here as `(source, target)` or `(source, target, update_func)`.
-    redirection: list = []
+    redirection: list = [
+        # 2026.10.29 (upstream 888892972): Manjuu renamed to Workerjuu
+        ('IslandProduction.IslandProduction.UseManjuuByDefault',
+         'IslandProduction.IslandProduction.UseWorkerjuuByDefault'),
+    ]
 
     @cached_property
     def args(self):

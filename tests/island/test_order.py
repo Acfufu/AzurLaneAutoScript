@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Order recognition goldens and season-order scheduling rules."""
 from module.island.assets import ISLAND_ORDER_SPEED_UP_CLOSE
 from module.island.order import IslandOrder, get_season_order_id
@@ -357,7 +360,11 @@ class TestSeasonOrderScheduling:
         order.config = StoredOrderConfig(100046)
         order.device = object()
         order.ui_ensure = lambda _page: None
-        order.loop = lambda: iter([None])
+        order.loop = lambda *args, **kwargs: iter([None])
+        # Task-end dismiss loop: recognize the order page immediately so the
+        # scheduling test stays focused on the season-order rules.
+        order.appear = lambda *args, **kwargs: True
+        order.handle_island_additional = lambda: False
         order.detect_all_orders = lambda: None
         order.run_any_order = lambda: False
         order.season_orders = [object()]

@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 from datetime import timedelta
 from types import SimpleNamespace
 
@@ -66,7 +69,11 @@ def test_cooldown_fallback_does_not_read_unconfirmed_panel(monkeypatch):
     main = object.__new__(IslandOrder)
     delays = []
     main.config = SimpleNamespace(task_delay=lambda **kwargs: delays.append(kwargs))
-    main.device = SimpleNamespace(image=object())
+    main.device = SimpleNamespace(image=object(), click=lambda button: None)
+    # The task-end dismiss loop scans for the order page; recognize it at once
+    # so the fallback test stays focused on the cooldown path.
+    main.appear = lambda *args, **kwargs: True
+    main.handle_island_additional = lambda: False
     main.ui_ensure = lambda page: None
     main.detect_all_orders = lambda: None
     main.run_any_order = lambda: False

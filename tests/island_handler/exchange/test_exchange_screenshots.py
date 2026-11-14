@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportAttributeAccessIssue=false
 """Exchange recognition goldens; awaiting human review of collection/ images."""
 from module.base.utils import crop
 from module.island_handler.assets import ISLAND_EXCHANGE_SELECT_ALL, ISLAND_EXCHANGE_TOTAL_AMOUNT
