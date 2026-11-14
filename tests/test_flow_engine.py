@@ -1051,3 +1051,35 @@ def test_after_rule_extend_gated_on_handled(monkeypatch):
     engine._after_rule(state, rule, rule["action"], ctx, handled=True)
     assert state.timeout._start == clock.now  # handled: restarted
     assert state.timeout.limit == 1
+
+
+def test_reset_confirm_starvation_regression():
+    """A call_if rule evaluated every frame must not starve the exit confirm
+    timer when its handler finds nothing to do (2026-11-14 supply-pack buy
+    hang: the buy_confirm rule reset _sp_confirm unconditionally, so the
+    state could never exit and the task died on the 60s stuck guard)."""
+    from module.base.timer import Timer
+
+    device = FakeDevice()
+    owner = ScriptedOwner(device, [{"present": ()}])
+    owner._sp_confirm = Timer(0.05, count=3).start()
+
+    def sp_end(ctx, args=None, **kw):
+        return owner._sp_confirm.reached()
+
+    def never_handles(ctx, args=None, **kw):
+        return False
+
+    flow = _flow({
+        "entry": {
+            "exit": {"check": {"custom": sp_end}, "on_success": {"exit": True}},
+            "rules": [
+                {"name": "stub", "action": {"call_if": never_handles},
+                 "reset_confirm": "_sp_confirm"},
+            ],
+            # Backstop: if the timer starves again, the state leaves via the
+            # timeout with a sentinel value instead of hanging the suite.
+            "on_timeout": {"seconds": 5, "mode": "exit", "value": "timeout"},
+        },
+    })
+    assert FlowEngine(owner=owner, device=device).run(flow) is True

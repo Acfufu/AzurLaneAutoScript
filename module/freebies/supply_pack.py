@@ -35,8 +35,10 @@ def _sp_click(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
 
 
 def _sp_buy_confirm(ctx: Any, args: dict[str, Any] | None = None, **kw: Any) -> bool:
+    # No unconditional reset here: the engine resets _sp_confirm via the
+    # rule's reset_confirm only when this handler actually clicked (handled),
+    # mirroring the original `if self.appear_then_click(...): reset()` flow.
     owner = ctx.owner
-    owner._sp_confirm.reset()
     return owner.appear_then_click(BUY_CONFIRM, offset=(20, 20), interval=3)
 
 
@@ -105,6 +107,27 @@ def _get_oil_flow() -> dict[str, Any]:
 
 
 class SupplyPack(CampaignStatus):
+    def supply_pack_find(self, supply_pack, skip_first_screenshot=True):
+        """
+        Find a supply pack with at most 8 leftward swipes (upstream ad86301:
+        the weekly pack does not necessarily sit on the first shop page).
+
+        Returns:
+            bool: If found.
+        """
+        for _ in range(9):
+            if skip_first_screenshot:
+                skip_first_screenshot = False
+            else:
+                self.device.screenshot()
+
+            if self.appear(supply_pack, offset=(0, -20, 400, 20)):
+                return True
+            self.device.swipe_vector((-400, 0), box=(230, 200, 1060, 600))
+
+        logger.warning(f'Supply pack {supply_pack} not found after 8 swipes')
+        return False
+
     def supply_pack_buy(self, supply_pack, skip_first_screenshot=True):
         """
         Args:
@@ -117,6 +140,8 @@ class SupplyPack(CampaignStatus):
         from module.flow.runtime import run_flow
 
         logger.hr("Supply pack buy")
+        if not self.supply_pack_find(supply_pack, skip_first_screenshot=skip_first_screenshot):
+            return False
         [self.interval_clear(asset) for asset in [GET_ITEMS_1, GET_ITEMS_2, supply_pack, BUY_CONFIRM]]
 
         logger.info(f"Buying {supply_pack}")

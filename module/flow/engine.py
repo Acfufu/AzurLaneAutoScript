@@ -476,8 +476,12 @@ class FlowEngine:
         if action and action.get("reset_timeout") and state.timeout is not None:
             # original `timeout.reset()` semantics (e.g. keep waiting while not in map)
             state.timeout = state.timeout.reset()
-        if rule.get("reset_confirm"):
-            # original confirm_timer reset on every handled action
+        if handled and rule.get("reset_confirm"):
+            # original confirm_timer reset on every handled action — gated on
+            # `handled` so a bare evaluation that found nothing to do never
+            # starves the confirm timer (regression 2026-11-14: the buy_confirm
+            # rule evaluated every frame reset _sp_confirm unconditionally and
+            # the supply-pack buy state could never exit).
             timer = getattr(ctx.owner, rule["reset_confirm"], None)
             if timer is not None:
                 timer.reset()
