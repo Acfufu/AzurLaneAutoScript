@@ -820,7 +820,7 @@ class IslandRecipe(IslandExchange, IslandShop):
                         {ingredient_key: delta}, keep=self.get_fish_keep_items())
                     # Exchange leaves the recipe menu. Return to production management and
                     # restart so the next attempt rescans recipe stocks and ingredient state.
-                    self.ui_back(check_button=page_island.check_button)
+                    self.ui_back(check_button=page_island.check_button, additional=self.handle_island_additional)
                     self.ui_goto(page_island_manage)
                     raise IslandProductionRestart(item_id=ingredient_key, success=exchange_success)
                 if ingredient_key in DIC_ISLAND_SHOP_ITEM_TO_RECIPE:
@@ -848,11 +848,11 @@ class IslandRecipe(IslandExchange, IslandShop):
                         # and restart the ingredient preparation after buying flour,
                         # since flour purchase requires going into shop page and back,
                         # which may cause the recipe page to lose the set recipe and ingredient states.
-                        self.ui_back(check_button=page_island.check_button)
+                        self.ui_back(check_button=page_island.check_button, additional=self.handle_island_additional)
                         self.ui_goto(page_island_manage)
                         raise IslandProductionRestart(item_id=ingredient_key, success=buy_success)
                     else:
-                        self.ui_back(check_button=self.is_in_recipe_menu)
+                        self.ui_back(check_button=self.is_in_recipe_menu, additional=self.handle_island_additional)
                     if not success:
                         logger.warning(
                             f'Failed to buy ingredient {item_name_with_id(ingredient_key)} from shop, '

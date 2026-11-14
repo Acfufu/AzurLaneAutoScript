@@ -5,6 +5,7 @@ from jellyfish import levenshtein_distance
 import module.config.server as server
 from module.base.button import ButtonGrid
 from module.base.decorator import cached_property, del_cached_property
+from module.base.timer import Timer
 from module.island.data import DIC_ISLAND_SHOP, DIC_ISLAND_SHOP_ITEM_TO_RECIPE, DIC_ISLAND_SHOP_RECIPE
 from module.island.utils import (
     get_configured_season,
@@ -208,14 +209,21 @@ class IslandShop(IslandShopUI):
             if self.appear(BACK_ARROW_WHITE, offset=(20, 20), interval=2):
                 self.device.click(button)
         self.island_shop_buy_ensure_amount(amount)
+        # A purchase always lands on a success popup that only closes on a blank
+        # click, and it renders about 2s after the confirm click -- late enough
+        # for the back arrow to reappear first. Hold the exit for a grace window
+        # so the popup gets handled here; breaking early left it starving every
+        # wait in the caller's ui_back (GameStuckError, error/1794643647547).
+        confirm_timer = Timer(3).start()
         for _ in self.loop():
             if self.handle_island_additional():
                 self.interval_reset(BACK_ARROW_WHITE)
                 continue
             if self.appear_then_click(ISLAND_SHOP_BUY_CONFIRM, offset=(20, 20), interval=3):
                 self.interval_reset(BACK_ARROW_WHITE)
+                confirm_timer.reset()
                 continue
-            if self.appear(BACK_ARROW_WHITE, offset=(20, 20), interval=2):
+            if self.appear(BACK_ARROW_WHITE, offset=(20, 20), interval=2) and confirm_timer.reached():
                 break
 
     def island_shop_buy_in_page(self, recipe_id, amount=1):

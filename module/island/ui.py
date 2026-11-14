@@ -215,11 +215,12 @@ class NestedNavbar:
 
 
 class IslandUI(UI):
-    def ui_back(self, check_button, appear_button=None, offset=(30, 30), retry_wait=10, skip_first_screenshot=False):
+    def ui_back(self, check_button, appear_button=None, offset=(30, 30), retry_wait=10, skip_first_screenshot=False, additional=None):
         return self.ui_click(
             click_button=BACK_ARROW_WHITE,
             check_button=check_button,
             appear_button=appear_button,
+            additional=additional,
             offset=offset,
             retry_wait=retry_wait,
             skip_first_screenshot=skip_first_screenshot,
