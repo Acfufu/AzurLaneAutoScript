@@ -21,6 +21,7 @@ class ConfigGenerator(CodeGenerationMixin, EventTableMixin, DeployTemplatesMixin
         _ = self.menu
         _ = self.event
         self.insert_event()
+        self.insert_island_season()
         self.insert_package()
         self.insert_server()
         write_file(filepath_args(), self.args)
@@ -119,6 +120,13 @@ class ConfigUpdater:
             default_stage(task, 'D3')
         for task in family_tasks('coalition'):
             default_stage(task, 'area1-normal')
+
+        # Update to latest island season (upstream fb07b65ec)
+        season_path = 'IslandGeneral.IslandGeneral.Season'
+        seasons = deep_get(self.args, keys=f'{season_path}.option_{server}', default=[])
+        selected_season = deep_get(old, keys=season_path)
+        if seasons and selected_season not in seasons:
+            deep_set(new, keys=season_path, value=seasons[0])
 
         if not is_template:
             new = self.config_redirect(old, new)

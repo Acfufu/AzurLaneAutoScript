@@ -1,5 +1,6 @@
 """Event table parsing/insertion (split from config_updater.py, Phase 5.1)."""
 import re
+from copy import deepcopy
 
 from module.base.decorator import cached_property
 from module.base.timer import timer
@@ -44,6 +45,29 @@ class Event:
 
     def __lt__(self, other):
         return str(self) < str(other)
+
+    def __hash__(self):
+        return hash(str(self))
+
+
+class IslandSeason:
+    def __init__(self, text):
+        self.start_date, self.end_date, self.namespace, self.name, cn, en, jp, tw \
+            = [cell.strip() for cell in text.strip('| \n').split('|')]
+        self.namespace = self.namespace.replace(' ', '_')
+        self.names = {
+            'cn': cn.replace('、', ''),
+            'en': en.replace(',', '').replace("'", '').replace('\\', ''),
+            'jp': jp.replace('、', ''),
+            'tw': tw.replace('、', ''),
+        }
+        self.names = {server: name for server, name in self.names.items() if name != '-'}
+
+    def __str__(self):
+        return self.namespace
+
+    def __eq__(self, other):
+        return str(self) == str(other)
 
     def __hash__(self):
         return hash(str(self))
@@ -148,3 +172,37 @@ class EventTableMixin:
             if task not in family_tasks('war_archives'):
                 deep_set(self.args, keys=f'{task}.Campaign.Event.option_bold', value=options)
             deep_set(self.args, keys=f'{task}.Campaign.Event.option', value=options)
+
+    @cached_property
+    def island_season(self):
+        """Read released season namespaces and names from the island list."""
+        with open('./module/island/README.md', encoding='utf-8') as f:
+            rows = [IslandSeason(text) for text in f if re.match(r'^\|\s*\d{8}\s*\|', text)]
+        return sorted(rows, key=lambda season: season.start_date, reverse=True)
+
+    def insert_island_season(self):
+        argument = self.argument['IslandGeneral']['Season']
+        for server in SERVER_TO_LANG:
+            argument[f'option_{server}'] = [
+                season.namespace for season in self.island_season if server in season.names
+            ][:1]
+        options = sorted({
+            namespace for server in SERVER_TO_LANG
+            for namespace in argument[f'option_{server}']
+        })
+        argument['option'] = options
+        argument['option_bold'] = options
+        argument['value'] = argument['option_cn'][0]
+        deep_set(self.args, keys='IslandGeneral.IslandGeneral.Season', value=deepcopy(argument))
+
+    def insert_island_season_names(self, i18n, lang):
+        # Names come from SameLanguageServer > en > cn > jp > tw.
+        names = {}
+        for server in [LANG_TO_SERVER.get(lang), 'en', 'cn', 'jp', 'tw']:
+            for season in self.island_season:
+                name = season.names.get(server)
+                if name:
+                    names.setdefault(season.namespace, name)
+        for season in sorted(self.island_season, key=lambda season: season.namespace):
+            name = names.get(season.namespace, season.namespace)
+            deep_set(i18n, keys=f'IslandGeneral.Season.{season.namespace}', value=name)

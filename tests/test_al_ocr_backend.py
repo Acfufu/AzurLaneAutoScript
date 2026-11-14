@@ -87,12 +87,19 @@ def make_static_ocr():
     ocr = AlOcr.__new__(AlOcr)
     ocr._model_loaded = True
     ocr._alphabet = [None, "A", "B"]
-    ocr._inv_alph_dict = {"A": 1, "B": 2}
+    ocr._inv_alph_dict = {"A": 1, "B": 2}  # type: ignore[assignment] (double; upstream _read_charset is untyped)
     ocr._cand_alph_idx = None
     ocr._static_width = STATIC_W
-    ocr._session = FakeSession()
+    ocr._session = FakeSession()  # type: ignore[assignment] (double substitutes for onnxruntime InferenceSession)
     ocr._net_prefix = None
     return ocr
+
+
+def _fake_feeds(ocr) -> list:
+    """Feeds recorded by the FakeSession, narrowed off the declared session type."""
+    session = ocr._session
+    assert isinstance(session, FakeSession)
+    return session.inputs
 
 
 def white_image(width, height=32):
@@ -104,7 +111,7 @@ def test_static_path_pads_narrow_crop_to_fixed_width():
     # A 100px-wide crop at h32 stays 100 after preprocess; the feed must be
     # the static (1, 1, 32, 640) tensor.
     result = ocr.ocr_for_single_lines([white_image(100)])
-    assert ocr._session.inputs[0].shape == (1, 1, 32, STATIC_W)
+    assert _fake_feeds(ocr)[0].shape == (1, 1, 32, STATIC_W)
     # Blank probs decode to no characters, but the wrapper stays list-shaped.
     assert result == [[]]
 
@@ -114,15 +121,16 @@ def test_static_path_caps_crop_wider_than_fixed_width():
     # Crops wider than 640 cannot exist from a 1280px screen, but must not
     # crash: they are scaled down to the fixed width.
     ocr.ocr_for_single_lines([white_image(STATIC_W * 2)])
-    assert ocr._session.inputs[0].shape == (1, 1, 32, STATIC_W)
+    assert _fake_feeds(ocr)[0].shape == (1, 1, 32, STATIC_W)
 
 
 def test_static_path_runs_one_input_per_call():
     ocr = make_static_ocr()
     ocr.ocr_for_single_lines([white_image(50), white_image(120)])
     # The static model is N=1: a batch of two becomes two (1, 32, 640) feeds.
-    assert len(ocr._session.inputs) == 2
-    assert all(feed.shape == (1, 1, 32, STATIC_W) for feed in ocr._session.inputs)
+    feeds = _fake_feeds(ocr)
+    assert len(feeds) == 2
+    assert all(feed.shape == (1, 1, 32, STATIC_W) for feed in feeds)
 
 
 # ---- real-model parity (local Apple Silicon only) ---------------------------
@@ -177,5 +185,7 @@ def test_ane_backend_parity_with_cpu():
     from_ane = ane.ocr_for_single_lines(list(crops))
 
     assert ane._static_width == STATIC_W
-    assert ane._session.get_providers()[0] == "CoreMLExecutionProvider"
+    ane_session = ane._session
+    assert ane_session is not None
+    assert ane_session.get_providers()[0] == "CoreMLExecutionProvider"
     assert from_cpu == from_ane

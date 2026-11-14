@@ -62,3 +62,4 @@ WAR_ARCHIVES_SP_OFF = Button(area=(1012, 43, 1095, 71), color=(40, 42, 56), butt
 WAR_ARCHIVES_SP_ON = Button(area=(1010, 43, 1095, 71), color=(77, 95, 152), button=(1010, 43, 1095, 71), file='./assets/cn/war_archives/WAR_ARCHIVES_SP_ON.png')
 TEMPLATE_TEMPESTA_AND_ISLAS_DE_LIBERTAD = Template(file='./assets/cn/war_archives/TEMPLATE_TEMPESTA_AND_ISLAS_DE_LIBERTAD.png')
 TEMPLATE_TEMPESTA_AND_THE_SLEEPING_SEA = Template(file='./assets/cn/war_archives/TEMPLATE_TEMPESTA_AND_THE_SLEEPING_SEA.png')
+TEMPLATE_THE_FOOLS_SCALES = Template(file='./assets/cn/war_archives/TEMPLATE_THE_FOOLS_SCALES.png')

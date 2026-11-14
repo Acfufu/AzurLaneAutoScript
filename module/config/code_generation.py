@@ -258,6 +258,7 @@ class CodeGenerationMixin:
         for event in sorted(self.event):
             name = events.get(event.directory, event.directory)
             deep_set(new, keys=f'Campaign.Event.{event.directory}', value=name)
+        self.insert_island_season_names(new, lang)
         # Package names
         for package, server in VALID_PACKAGE.items():
             path = ['Emulator', 'PackageName', package]

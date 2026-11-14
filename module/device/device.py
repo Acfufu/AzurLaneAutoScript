@@ -15,6 +15,7 @@ from module.base.timer import Timer
 from module.config.utils import get_server_next_update
 from module.device.app_control import AppControl
 from module.device.control import Control
+from module.device.input import Input
 from module.device.screenshot import Screenshot
 from module.exception import (
     EmulatorNotRunningError,
@@ -67,12 +68,13 @@ def show_function_call():
     logger.info("Function calls:" + "".join(func_list))
 
 
-class Device(Screenshot, Control, AppControl):
+class Device(Screenshot, Control, AppControl, Input):
     """Concrete device backend; implements the DeviceBase contract (module/device/base.py).
 
     Capabilities are composed from mixins: Screenshot (adb/wsa/droidcast/
     ascreencap/scrcpy/nemu_ipc/ldopengl), Control (hermit/minitouch/scrcpy/
-    maatouch/nemu_ipc), AppControl (adb/wsa/uiautomator2).
+    maatouch/nemu_ipc), AppControl (adb/wsa/uiautomator2),
+    Input (adb/fastinput-ime text input and clipboard).
     """
     _screen_size_checked = False
     detect_record = set()

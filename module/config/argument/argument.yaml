@@ -768,6 +768,11 @@ OpsiHazard1Leveling:
 
 # =================== Island ====================
 
+IslandGeneral:
+  Season:
+    type: select
+    value: ''
+    option: []
 IslandProduction:
   HardFloorItems:
     type: textarea
@@ -786,6 +791,7 @@ IslandProduction:
     value: |-
       {}
   SkipBufferSurplus: true
+  UseWorkerjuuByDefault: true
 IslandOrder:
   StuckSeasonOrderId: 0
 IslandFreebie:

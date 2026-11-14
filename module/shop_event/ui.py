@@ -1,4 +1,5 @@
 import re
+from contextlib import suppress
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -20,25 +21,23 @@ from module.shop_event.assets import *  # noqa: F403  (data-bundle star import)
 from module.ui.navbar import Navbar
 from module.ui.ui import UI
 
-EVENT_SHOP_SCROLL = ShopScroll(EVENT_SHOP_SCROLL_AREA, color=(44, 48, 56), name="EVENT_SHOP_SCROLL")
+EVENT_SHOP_SCROLL = ShopScroll(
+    EVENT_SHOP_SCROLL_AREA,
+    color=(44, 48, 56),
+    name="EVENT_SHOP_SCROLL"
+)
 EVENT_SHOP_SCROLL.drag_threshold = 0.08
 EVENT_SHOP_SCROLL.edge_threshold = 0.1
 
-
-if server.server == "tw":
+if server.server == 'tw':
     EVENT_SHOP_DEADLINE_COLOR = (102, 204, 255)
 else:
     EVENT_SHOP_DEADLINE_COLOR = (96, 162, 62)
-OCR_EVENT_SHOP_DEADLINE = Ocr(
-    SHOP_EVENT_DEADLINE,
-    lang="cnocr",
-    letter=EVENT_SHOP_DEADLINE_COLOR,
-    alphabet="0123456789.:~-",
-    name="OCR_EVENT_SHOP_DEADLINE",
-)
+OCR_EVENT_SHOP_DEADLINE = Ocr(SHOP_EVENT_DEADLINE, lang='cnocr', letter=EVENT_SHOP_DEADLINE_COLOR,
+                              alphabet='0123456789.:~-', name="OCR_EVENT_SHOP_DEADLINE")
 
-OCR_EVENT_SHOP_PT = Digit(SHOP_OCR_BALANCE, letter=(100, 100, 100), name="OCR_EVENT_SHOP_PT")
-OCR_EVENT_SHOP_URPT = Digit(SHOP_OCR_BALANCE_SECOND, letter=(100, 100, 100), name="OCR_EVENT_SHOP_URPT")
+OCR_EVENT_SHOP_PT = Digit(SHOP_OCR_BALANCE, letter=(100, 100, 100), name='OCR_EVENT_SHOP_PT')
+OCR_EVENT_SHOP_URPT = Digit(SHOP_OCR_BALANCE_SECOND, letter=(100, 100, 100), name='OCR_EVENT_SHOP_URPT')
 
 
 class EventShopUI(UI):
@@ -52,14 +51,13 @@ class EventShopUI(UI):
         count = (area[2] - area[0] + gap_x) // (len(index) + gap_x)
         logger.info(f"Event shop tab count: {count}")
         delta_x = (area[2] - area[0] + gap_x) // count - gap_x
-        grid = ButtonGrid((206, 92), (delta_x + gap_x, 44), (delta_x, 44), (count, 1), "EVENT_SHOP_TAB_GRID")
-        navbar = Navbar(
-            grids=grid,
-            active_color=(232, 238, 240),
-            inactive_color=(127, 141, 151),
-            active_count=delta_x * (area[3] - area[1]) // 2,
-            inactive_count=delta_x * (area[3] - area[1]) // 2,
-        )
+        grid = ButtonGrid((206, 92), (delta_x + gap_x, 44),
+                          (delta_x, 44), (count, 1),
+                          "EVENT_SHOP_TAB_GRID")
+        navbar = Navbar(grids=grid,
+                        active_color=(232, 238, 240), inactive_color=(127, 141, 151),
+                        active_count=delta_x * (area[3] - area[1]) // 2,
+                        inactive_count=delta_x * (area[3] - area[1]) // 2)
         return count, navbar
 
     @cached_property
@@ -78,17 +76,50 @@ class EventShopUI(UI):
         Returns:
             datetime | None:
         """
-        period = OCR_EVENT_SHOP_DEADLINE.ocr(self.device.image)
+        raw = OCR_EVENT_SHOP_DEADLINE.ocr(self.device.image)
         # OCR result is like ":2026.8.13~2026.9.323:59:59", remove "23:59:59"
-        period, _, _ = period.partition("23:59:59")
-        pattern = r"(\d{4})\.(\d{1,2})\.(\d{1,2})"
-        matches = re.findall(pattern, period)
-        if not matches or len(matches) < 2:
-            logger.warning(f"Failed to read event deadline: {period}")
+        # EN shop during 1st capsule rerun had no year and different ending time ":10.8-10.2214:59:59"
+        hour, minute, second = 23, 59, 59
+        period = raw
+        match = re.search(r'(\d{2}):(\d{2}):(\d{2})\s*$', raw)
+        if match:
+            hour, minute, second = [int(x) for x in match.groups()]
+            period = raw[:match.start()]
+        else:
+            logger.warning(f"No HH:MM:SS in event deadline OCR, assuming 23:59:59: {raw}")
+
+        matches = re.findall(r'(?:(\d{4})\.)?(\d{1,2})\.(\d{1,2})', period)
+        if len(matches) < 2:
+            logger.warning(f"Failed to read event deadline: {raw}")
             return None
-        y, m, d = matches[-1]
-        deadline = datetime(int(y), int(m), int(d)) + timedelta(days=1)  # server deadline
-        return deadline
+        year, month, day = matches[-1]
+
+        server_now = datetime.now() - server_time_offset()
+        if year:
+            years = [int(year)]
+        else:
+            years = [server_now.year - 1, server_now.year, server_now.year + 1]
+            logger.warning(f"Event deadline has no year, guessing around {server_now.year}: {raw}")
+
+        candidates = []
+        for y in years:
+            with suppress(ValueError):
+                candidates.append(datetime(y, int(month), int(day), hour, minute, second))
+        if not candidates:
+            logger.warning(f"Invalid event deadline: {raw}")
+            return None
+        # Without a year, take the candidate closest to now
+        deadline = min(candidates, key=lambda t: abs(t - server_now))
+        # if guess is not within 90 days, use current year
+        if not year and abs(deadline - server_now) > timedelta(days=90):
+            logger.warning(f"Guessed event deadline {deadline} is more than 90 days from now, "
+                           f"using current year {server_now.year}")
+            try:
+                deadline = datetime(server_now.year, int(month), int(day), hour, minute, second)
+            except ValueError:
+                logger.warning(f"Invalid event deadline: {raw}")
+                return None
+        return deadline + timedelta(seconds=1)
 
     @cached_property
     def is_event_ended(self):
@@ -113,12 +144,14 @@ class EventShopUI(UI):
                 logger.info("Event shop loaded.")
                 break
             if ensure_timeout.reached():
-                raise GameStuckError("Waiting too long for EventShop to appear.")
+                raise GameStuckError('Waiting too long for EventShop to appear.')
         return True
 
     @cached_property
     def is_pt_reversed(self):
-        blacklist = [SHOP_EVENT_20240521]
+        blacklist = [
+            SHOP_EVENT_20240521
+        ]
         return self.ui_process_check_button(check_button=blacklist)
 
     def event_shop_get_pt(self):
@@ -149,13 +182,13 @@ class EventShopUI(UI):
                 self.device.screenshot()
 
             if timeout.reached():
-                logger.warning("Get oil timeout")
+                logger.warning('Get oil timeout')
                 break
 
             if not self.appear(SHOP_OCR_OIL_CHECK, offset=(10, 2)):
-                logger.info("No oil icon")
+                logger.info('No oil icon')
                 continue
-            ocr = Digit(SHOP_OCR_OIL, name="OCR_OIL", letter=(247, 247, 247), threshold=128)
+            ocr = Digit(SHOP_OCR_OIL, name='OCR_OIL', letter=(247, 247, 247), threshold=128)
             amount = ocr.ocr(self.device.image)
             if amount >= 100:
                 break
@@ -164,8 +197,8 @@ class EventShopUI(UI):
 
     def handle_get_meowfficer(self):
         if self.appear(MEOWFFICER_GET_CHECK, offset=(40, 40), interval=3):
-            logger.info("Getting Meowfficer rewards.")
-            SWITCH_LOCK.set("lock", main=self)
+            logger.info('Getting Meowfficer rewards.')
+            SWITCH_LOCK.set('lock', main=self)
             # Wait until info bar disappears
             self.ensure_no_info_bar(timeout=1)
             self.device.click(MEOWFFICER_TRAIN_CLICK_SAFE_AREA)
