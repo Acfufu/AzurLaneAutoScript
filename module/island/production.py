@@ -23,6 +23,7 @@ from module.island_handler.restaurant_config import (
 from module.logger import logger
 from module.map_detection.utils import Points
 from module.ui.page import page_island, page_island_manage
+from module.ui_white.assets import BACK_ARROW_WHITE
 
 ANCHOR_AREA = (452, 7, 481, 36)
 DETECT_AREA = (192, 69, 1221, 653)
@@ -34,6 +35,8 @@ SLOT_SIZE = (86, 86)
 SLOT_DELTA = (95 - 1/3, 0)
 TICK_AREA = (30, 35, 52, 51)
 CHARACTER_SELECT_TITLE_AREA = (515, 144, 765, 202)
+# Inside the blue dispatch button of the slot setup window, clear of its caption text
+PRODUCT_DISPATCH_BUTTON_AREA = (500, 605, 560, 645)
 
 
 def production_slot_name_with_id(slot_id):
@@ -194,6 +197,13 @@ class IslandProduction(IslandRecipe, IslandDock):
     def is_enter_window_shown(self):
         return self.image_color_count(CHARACTER_SELECT_TITLE_AREA, (62, 193, 255), threshold=30, count=6000)
 
+    def is_product_select_shown(self):
+        # The slot setup window (choose product + worker) does not match the
+        # worker-select title probe, but always carries the bright-blue dispatch
+        # button. An emptied slot re-opened this window after its reward was
+        # claimed and starved the claim loop (GameStuckError, error/1794643049874).
+        return self.image_color_count(PRODUCT_DISPATCH_BUTTON_AREA, (57, 189, 255), threshold=30, count=2000)
+
     def claim_slot_reward(self, slot_button: Button):
         if not self.is_slot_finished(slot_button):
             logger.warning(f'Slot {slot_button} is not finished, cannot receive reward')
@@ -210,6 +220,8 @@ class IslandProduction(IslandRecipe, IslandDock):
                 break
         for _ in self.loop():
             if self.handle_island_additional():
+                continue
+            if self.is_product_select_shown() and self.appear_then_click(BACK_ARROW_WHITE, offset=(20, 20), interval=2):
                 continue
             if self.is_enter_window_shown() or self.appear(ISLAND_PRODUCTION_RERUN, offset=(20, 20)):
                 self.device.click(ISLAND_CLICK_SAFE_AREA)
