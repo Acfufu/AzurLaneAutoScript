@@ -4,7 +4,8 @@ import subprocess
 import typing as t
 from dataclasses import dataclass
 
-import psutil
+# psutil is imported on demand inside kill_process_by_regex (upstream 2026.11:
+# it costs about 11ms and is only used there, keep it off the startup path).
 
 from module.base.decorator import cached_property, run_once
 from module.base.timer import Timer
@@ -98,6 +99,10 @@ class PlatformWindows(PlatformBase, EmulatorManager):
         Returns:
             int: Number of processes killed
         """
+        # Import psutil on demand, it costs about 11ms and is only used here,
+        # keeping it out of the startup path of the device stack
+        import psutil
+
         count = 0
 
         for proc in psutil.process_iter():

@@ -12,7 +12,7 @@ from module.island.utils import ceil_with_epsilon, load_item_mapping, normalize_
 from module.logger import logger
 
 WAITRESS_NONE = 'none'
-WAITRESS_ANY = 'any'
+WAITRESS_BUSINESS_GRADE = 'business_grade'
 
 
 # Keep the option/bonus data in one place.  ``waitress_effects`` values are
@@ -99,7 +99,7 @@ def get_config_key(restaurant_id, key):
 def get_waitress_options(restaurant_id):
     # Tuple concatenation, not unpacking: this is a fixed two-element prefix
     # joined to generated data, and the concat form states that directly.
-    return (WAITRESS_NONE, WAITRESS_ANY) + tuple(  # noqa: RUF005
+    return (WAITRESS_NONE, WAITRESS_BUSINESS_GRADE) + tuple(  # noqa: RUF005
         get_restaurant_config(restaurant_id)['waitress_options']
     )
 
@@ -108,7 +108,7 @@ def _waitress_sort_key(restaurant_id, value):
     config = get_restaurant_config(restaurant_id)
     if value == WAITRESS_NONE:
         return (2, 0)
-    if value == WAITRESS_ANY:
+    if value == WAITRESS_BUSINESS_GRADE:
         return (1, 0)
     try:
         index = config['waitress_options'].index(value)
@@ -134,7 +134,7 @@ def normalize_waitress_slots(restaurant_id, values):
             message = f'Invalid waitress value for restaurant {restaurant_id}: {value}'
             logger.error(message)
             raise RequestHumanTakeover(message)
-        if value not in (WAITRESS_NONE, WAITRESS_ANY):
+        if value not in (WAITRESS_NONE, WAITRESS_BUSINESS_GRADE):
             if value in seen_named:
                 message = f'Duplicate named waitress for restaurant {restaurant_id}: {value}'
                 logger.error(message)
@@ -168,7 +168,7 @@ def is_restaurant_enabled(slots):
 def get_selected_named_waitresses(slots):
     return {
         value for value in slots
-        if value not in (WAITRESS_NONE, WAITRESS_ANY)
+        if value not in (WAITRESS_NONE, WAITRESS_BUSINESS_GRADE)
     }
 
 

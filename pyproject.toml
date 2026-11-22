@@ -127,6 +127,14 @@ ignore = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Put the repository root on sys.path, so the tests import ``module`` and the
+# screenshot plugin registers from tests/conftest.py, whichever pytest entry
+# point is used. The ini option is applied before the initial conftests load.
+pythonpath = ["."]
+# Keep the temporary directory of the failed tests only, most of the suite uses
+# tmp_path for the parcel fixtures and the screenshot lookups.
+tmp_path_retention_count = 1
+tmp_path_retention_policy = "failed"
 # Upstream's screenshot-golden tests (tests/island*, tests/island_handler/*) rely on the
 # pytest hooks in module/testing/screenshot.py; register it as a plugin here so the
 # whole suite can run under one pytest invocation.

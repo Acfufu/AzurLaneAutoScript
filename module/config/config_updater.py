@@ -54,9 +54,18 @@ class ConfigUpdater:
     # already commented out; migrations are far past their expiry window).
     # Add entries here as `(source, target)` or `(source, target, update_func)`.
     redirection: list = [
-        # 2026.10.29 (upstream 888892972): Manjuu renamed to Workerjuu
-        ('IslandProduction.IslandProduction.UseManjuuByDefault',
-         'IslandProduction.IslandProduction.UseWorkerjuuByDefault'),
+        # 2026.10.29 (upstream 888892972): Manjuu renamed to Workerjuu —
+        # UseManjuuByDefault never shipped, UseWorkerjuuByDefault is a new
+        # key, so there is nothing to migrate and the redirect stays disabled.
+    ]
+    redirection += [
+        (
+            f'IslandBusiness.IslandRestaurant.{restaurant}Waitress{slot}',
+            f'IslandBusiness.IslandRestaurant.{restaurant}Waitress{slot}',
+            island_waitress_redirect,
+        )
+        for restaurant in ('Koi', 'Bear', 'Eatery', 'Grill', 'Cafe')
+        for slot in (1, 2)
     ]
 
     @cached_property
