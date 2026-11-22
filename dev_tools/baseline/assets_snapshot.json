@@ -17220,6 +17220,170 @@
         "tw": "./assets/cn/combat_ui/PAUSE_Bullet.png"
       }
     },
+    "PAUSE_Angel": {
+      "area": {
+        "cn": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "en": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "jp": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "tw": [
+          1228,
+          25,
+          1246,
+          45
+        ]
+      },
+      "color": {
+        "cn": [
+          215,
+          154,
+          98
+        ],
+        "en": [
+          215,
+          154,
+          98
+        ],
+        "jp": [
+          215,
+          154,
+          98
+        ],
+        "tw": [
+          215,
+          154,
+          98
+        ]
+      },
+      "button": {
+        "cn": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "en": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "jp": [
+          1228,
+          25,
+          1246,
+          45
+        ],
+        "tw": [
+          1228,
+          25,
+          1246,
+          45
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/combat_ui/PAUSE_Angel.png",
+        "en": "./assets/cn/combat_ui/PAUSE_Angel.png",
+        "jp": "./assets/cn/combat_ui/PAUSE_Angel.png",
+        "tw": "./assets/cn/combat_ui/PAUSE_Angel.png"
+      }
+    },
+    "QUIT_Angel": {
+      "area": {
+        "cn": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "en": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "jp": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "tw": [
+          422,
+          534,
+          500,
+          553
+        ]
+      },
+      "color": {
+        "cn": [
+          167,
+          145,
+          141
+        ],
+        "en": [
+          167,
+          145,
+          141
+        ],
+        "jp": [
+          167,
+          145,
+          141
+        ],
+        "tw": [
+          167,
+          145,
+          141
+        ]
+      },
+      "button": {
+        "cn": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "en": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "jp": [
+          422,
+          534,
+          500,
+          553
+        ],
+        "tw": [
+          422,
+          534,
+          500,
+          553
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/combat_ui/QUIT_Angel.png",
+        "en": "./assets/cn/combat_ui/QUIT_Angel.png",
+        "jp": "./assets/cn/combat_ui/QUIT_Angel.png",
+        "tw": "./assets/cn/combat_ui/QUIT_Angel.png"
+      }
+    },
     "COMMISSION_ADVICE": {
       "area": {
         "cn": [
@@ -35178,6 +35342,334 @@
         "tw": "./assets/cn/guild/OCR_GUILD_OPERATIONS_PROGRESS.png"
       }
     },
+    "GUILD_MISSION_ACCEPT": {
+      "area": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "color": {
+        "cn": [
+          105,
+          124,
+          179
+        ],
+        "en": [
+          105,
+          124,
+          179
+        ],
+        "jp": [
+          115,
+          132,
+          177
+        ],
+        "tw": [
+          105,
+          124,
+          179
+        ]
+      },
+      "button": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/guild/GUILD_MISSION_ACCEPT.png",
+        "en": "./assets/cn/guild/GUILD_MISSION_ACCEPT.png",
+        "jp": "./assets/jp/guild/GUILD_MISSION_ACCEPT.png",
+        "tw": "./assets/cn/guild/GUILD_MISSION_ACCEPT.png"
+      }
+    },
+    "GUILD_MISSION_CLAIM": {
+      "area": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "color": {
+        "cn": [
+          105,
+          124,
+          179
+        ],
+        "en": [
+          105,
+          124,
+          179
+        ],
+        "jp": [
+          104,
+          123,
+          176
+        ],
+        "tw": [
+          105,
+          124,
+          179
+        ]
+      },
+      "button": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/guild/GUILD_MISSION_CLAIM.png",
+        "en": "./assets/cn/guild/GUILD_MISSION_CLAIM.png",
+        "jp": "./assets/jp/guild/GUILD_MISSION_CLAIM.png",
+        "tw": "./assets/cn/guild/GUILD_MISSION_CLAIM.png"
+      }
+    },
+    "GUILD_MISSION_FINISHED": {
+      "area": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1057,
+          288,
+          1198,
+          324
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "color": {
+        "cn": [
+          105,
+          124,
+          179
+        ],
+        "en": [
+          105,
+          124,
+          179
+        ],
+        "jp": [
+          90,
+          150,
+          144
+        ],
+        "tw": [
+          105,
+          124,
+          179
+        ]
+      },
+      "button": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1057,
+          288,
+          1198,
+          324
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/guild/GUILD_MISSION_FINISHED.png",
+        "en": "./assets/cn/guild/GUILD_MISSION_FINISHED.png",
+        "jp": "./assets/jp/guild/GUILD_MISSION_FINISHED.png",
+        "tw": "./assets/cn/guild/GUILD_MISSION_FINISHED.png"
+      }
+    },
+    "GUILD_MISSION_IN_PROGRESS": {
+      "area": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1127,
+          290,
+          1180,
+          310
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "color": {
+        "cn": [
+          105,
+          124,
+          179
+        ],
+        "en": [
+          105,
+          124,
+          179
+        ],
+        "jp": [
+          115,
+          120,
+          148
+        ],
+        "tw": [
+          105,
+          124,
+          179
+        ]
+      },
+      "button": {
+        "cn": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "en": [
+          1068,
+          279,
+          1224,
+          320
+        ],
+        "jp": [
+          1127,
+          290,
+          1180,
+          310
+        ],
+        "tw": [
+          1068,
+          279,
+          1224,
+          320
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/guild/GUILD_MISSION_IN_PROGRESS.png",
+        "en": "./assets/cn/guild/GUILD_MISSION_IN_PROGRESS.png",
+        "jp": "./assets/jp/guild/GUILD_MISSION_IN_PROGRESS.png",
+        "tw": "./assets/cn/guild/GUILD_MISSION_IN_PROGRESS.png"
+      }
+    },
     "AIR_STRIKE_CANCEL": {
       "area": {
         "cn": [
@@ -36499,10 +36991,10 @@
           607
         ],
         "en": [
-          834,
-          587,
-          899,
-          607
+          782,
+          589,
+          841,
+          606
         ],
         "jp": [
           834,
@@ -36524,9 +37016,9 @@
           106
         ],
         "en": [
-          104,
-          101,
-          106
+          91,
+          94,
+          102
         ],
         "jp": [
           104,
@@ -36547,10 +37039,10 @@
           607
         ],
         "en": [
-          834,
-          587,
-          899,
-          607
+          782,
+          589,
+          841,
+          606
         ],
         "jp": [
           834,
@@ -36567,7 +37059,7 @@
       },
       "file": {
         "cn": "./assets/cn/handler/AUTO_SEARCH_TITLE2.png",
-        "en": "./assets/cn/handler/AUTO_SEARCH_TITLE2.png",
+        "en": "./assets/en/handler/AUTO_SEARCH_TITLE2.png",
         "jp": "./assets/cn/handler/AUTO_SEARCH_TITLE2.png",
         "tw": "./assets/cn/handler/AUTO_SEARCH_TITLE2.png"
       }
@@ -41574,6 +42066,170 @@
         "tw": "./assets/cn/handler/MYSTERY_ITEM.png"
       }
     },
+    "NETWORK_DOWN_CHECK": {
+      "area": {
+        "cn": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "en": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "jp": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "tw": [
+          351,
+          171,
+          852,
+          218
+        ]
+      },
+      "color": {
+        "cn": [
+          86,
+          121,
+          175
+        ],
+        "en": [
+          86,
+          121,
+          175
+        ],
+        "jp": [
+          86,
+          121,
+          175
+        ],
+        "tw": [
+          86,
+          121,
+          175
+        ]
+      },
+      "button": {
+        "cn": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "en": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "jp": [
+          351,
+          171,
+          852,
+          218
+        ],
+        "tw": [
+          351,
+          171,
+          852,
+          218
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/handler/NETWORK_DOWN_CHECK.png",
+        "en": "./assets/cn/handler/NETWORK_DOWN_CHECK.png",
+        "jp": "./assets/cn/handler/NETWORK_DOWN_CHECK.png",
+        "tw": "./assets/cn/handler/NETWORK_DOWN_CHECK.png"
+      }
+    },
+    "NETWORK_DOWN_CONFIRM": {
+      "area": {
+        "cn": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "en": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "jp": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "tw": [
+          703,
+          482,
+          877,
+          540
+        ]
+      },
+      "color": {
+        "cn": [
+          96,
+          143,
+          200
+        ],
+        "en": [
+          96,
+          143,
+          200
+        ],
+        "jp": [
+          96,
+          143,
+          200
+        ],
+        "tw": [
+          96,
+          143,
+          200
+        ]
+      },
+      "button": {
+        "cn": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "en": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "jp": [
+          703,
+          482,
+          877,
+          540
+        ],
+        "tw": [
+          703,
+          482,
+          877,
+          540
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/handler/NETWORK_DOWN_CONFIRM.png",
+        "en": "./assets/cn/handler/NETWORK_DOWN_CONFIRM.png",
+        "jp": "./assets/cn/handler/NETWORK_DOWN_CONFIRM.png",
+        "tw": "./assets/cn/handler/NETWORK_DOWN_CONFIRM.png"
+      }
+    },
     "POPUP_CANCEL": {
       "area": {
         "cn": [
@@ -42381,10 +43037,10 @@
           488
         ],
         "tw": [
-          1057,
-          393,
-          1092,
-          496
+          968,
+          403,
+          994,
+          488
         ]
       },
       "file": {
@@ -43706,6 +44362,170 @@
         "tw": "./assets/tw/island/ISLAND_BUSINESS_EVENT_POPUP_CANCEL.png"
       }
     },
+    "ISLAND_BUY_SUCCESS_CHECK": {
+      "area": {
+        "cn": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "en": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "jp": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "tw": [
+          500,
+          168,
+          804,
+          264
+        ]
+      },
+      "color": {
+        "cn": [
+          202,
+          201,
+          198
+        ],
+        "en": [
+          202,
+          201,
+          198
+        ],
+        "jp": [
+          202,
+          201,
+          198
+        ],
+        "tw": [
+          202,
+          201,
+          198
+        ]
+      },
+      "button": {
+        "cn": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "en": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "jp": [
+          500,
+          168,
+          804,
+          264
+        ],
+        "tw": [
+          500,
+          168,
+          804,
+          264
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_BUY_SUCCESS_CHECK.png",
+        "en": "./assets/cn/island/ISLAND_BUY_SUCCESS_CHECK.png",
+        "jp": "./assets/cn/island/ISLAND_BUY_SUCCESS_CHECK.png",
+        "tw": "./assets/cn/island/ISLAND_BUY_SUCCESS_CHECK.png"
+      }
+    },
+    "ISLAND_BUY_SUCCESS_CLOSE": {
+      "area": {
+        "cn": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "en": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "jp": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "tw": [
+          560,
+          560,
+          720,
+          680
+        ]
+      },
+      "color": {
+        "cn": [
+          113,
+          109,
+          105
+        ],
+        "en": [
+          113,
+          109,
+          105
+        ],
+        "jp": [
+          113,
+          109,
+          105
+        ],
+        "tw": [
+          113,
+          109,
+          105
+        ]
+      },
+      "button": {
+        "cn": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "en": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "jp": [
+          560,
+          560,
+          720,
+          680
+        ],
+        "tw": [
+          560,
+          560,
+          720,
+          680
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_BUY_SUCCESS_CLOSE.png",
+        "en": "./assets/cn/island/ISLAND_BUY_SUCCESS_CLOSE.png",
+        "jp": "./assets/cn/island/ISLAND_BUY_SUCCESS_CLOSE.png",
+        "tw": "./assets/cn/island/ISLAND_BUY_SUCCESS_CLOSE.png"
+      }
+    },
     "ISLAND_CLICK_SAFE_AREA": {
       "area": {
         "cn": [
@@ -43868,6 +44688,88 @@
         "en": "./assets/cn/island/ISLAND_COLLECT_LOCATION_1.png",
         "jp": "./assets/cn/island/ISLAND_COLLECT_LOCATION_1.png",
         "tw": "./assets/cn/island/ISLAND_COLLECT_LOCATION_1.png"
+      }
+    },
+    "ISLAND_CULTIVATING_PLAN_CHECK": {
+      "area": {
+        "cn": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "en": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "jp": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "tw": [
+          850,
+          530,
+          1103,
+          595
+        ]
+      },
+      "color": {
+        "cn": [
+          101,
+          210,
+          246
+        ],
+        "en": [
+          101,
+          210,
+          246
+        ],
+        "jp": [
+          101,
+          210,
+          246
+        ],
+        "tw": [
+          101,
+          210,
+          246
+        ]
+      },
+      "button": {
+        "cn": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "en": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "jp": [
+          850,
+          530,
+          1103,
+          595
+        ],
+        "tw": [
+          850,
+          530,
+          1103,
+          595
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_CULTIVATING_PLAN_CHECK.png",
+        "en": "./assets/cn/island/ISLAND_CULTIVATING_PLAN_CHECK.png",
+        "jp": "./assets/cn/island/ISLAND_CULTIVATING_PLAN_CHECK.png",
+        "tw": "./assets/cn/island/ISLAND_CULTIVATING_PLAN_CHECK.png"
       }
     },
     "ISLAND_COLLECT_LOCATION_2": {
@@ -45756,6 +46658,252 @@
         "tw": "./assets/cn/island/ISLAND_ORDER_REQUIREMENTS_CHECK.png"
       }
     },
+    "ISLAND_ORDER_SPEED_UP_CHECK": {
+      "area": {
+        "cn": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "en": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "jp": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "tw": [
+          540,
+          85,
+          740,
+          160
+        ]
+      },
+      "color": {
+        "cn": [
+          116,
+          121,
+          117
+        ],
+        "en": [
+          116,
+          121,
+          117
+        ],
+        "jp": [
+          116,
+          121,
+          117
+        ],
+        "tw": [
+          116,
+          121,
+          117
+        ]
+      },
+      "button": {
+        "cn": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "en": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "jp": [
+          540,
+          85,
+          740,
+          160
+        ],
+        "tw": [
+          540,
+          85,
+          740,
+          160
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CHECK.png",
+        "en": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CHECK.png",
+        "jp": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CHECK.png",
+        "tw": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CHECK.png"
+      }
+    },
+    "ISLAND_ORDER_SPEED_UP_CLOSE": {
+      "area": {
+        "cn": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "en": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "jp": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "tw": [
+          1023,
+          86,
+          1065,
+          128
+        ]
+      },
+      "color": {
+        "cn": [
+          144,
+          153,
+          157
+        ],
+        "en": [
+          144,
+          153,
+          157
+        ],
+        "jp": [
+          144,
+          153,
+          157
+        ],
+        "tw": [
+          144,
+          153,
+          157
+        ]
+      },
+      "button": {
+        "cn": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "en": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "jp": [
+          1023,
+          86,
+          1065,
+          128
+        ],
+        "tw": [
+          1023,
+          86,
+          1065,
+          128
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CLOSE.png",
+        "en": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CLOSE.png",
+        "jp": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CLOSE.png",
+        "tw": "./assets/cn/island/ISLAND_ORDER_SPEED_UP_CLOSE.png"
+      }
+    },
+    "ISLAND_ORDER_SUBMIT_REFUSED": {
+      "area": {
+        "cn": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "en": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "jp": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "tw": [
+          390,
+          245,
+          890,
+          292
+        ]
+      },
+      "color": {
+        "cn": [
+          62,
+          66,
+          70
+        ],
+        "en": [
+          62,
+          66,
+          70
+        ],
+        "jp": [
+          62,
+          66,
+          70
+        ],
+        "tw": [
+          62,
+          66,
+          70
+        ]
+      },
+      "button": {
+        "cn": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "en": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "jp": [
+          390,
+          245,
+          890,
+          292
+        ],
+        "tw": [
+          390,
+          245,
+          890,
+          292
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_ORDER_SUBMIT_REFUSED.png",
+        "en": "./assets/cn/island/ISLAND_ORDER_SUBMIT_REFUSED.png",
+        "jp": "./assets/cn/island/ISLAND_ORDER_SUBMIT_REFUSED.png",
+        "tw": "./assets/cn/island/ISLAND_ORDER_SUBMIT_REFUSED.png"
+      }
+    },
     "ISLAND_PRODUCTION_RECEIVE": {
       "area": {
         "cn": [
@@ -46246,6 +47394,990 @@
         "en": "./assets/cn/island/ISLAND_SEASON_TASK_SCROLL_AREA.png",
         "jp": "./assets/cn/island/ISLAND_SEASON_TASK_SCROLL_AREA.png",
         "tw": "./assets/cn/island/ISLAND_SEASON_TASK_SCROLL_AREA.png"
+      }
+    },
+    "ISLAND_TRANSPORT_CLAIM": {
+      "area": {
+        "cn": [
+          933,
+          200,
+          1067,
+          236
+        ],
+        "en": [
+          935,
+          209,
+          1064,
+          229
+        ],
+        "jp": [
+          933,
+          200,
+          1067,
+          236
+        ],
+        "tw": [
+          966,
+          210,
+          1034,
+          227
+        ]
+      },
+      "color": {
+        "cn": [
+          71,
+          194,
+          255
+        ],
+        "en": [
+          115,
+          208,
+          255
+        ],
+        "jp": [
+          74,
+          195,
+          255
+        ],
+        "tw": [
+          125,
+          212,
+          255
+        ]
+      },
+      "button": {
+        "cn": [
+          933,
+          200,
+          1067,
+          236
+        ],
+        "en": [
+          935,
+          209,
+          1064,
+          229
+        ],
+        "jp": [
+          933,
+          200,
+          1067,
+          236
+        ],
+        "tw": [
+          966,
+          210,
+          1034,
+          227
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_CLAIM.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_CLAIM.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_CLAIM.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_CLAIM.png"
+      }
+    },
+    "ISLAND_TRANSPORT_DETAIL_CLOSE": {
+      "area": {
+        "cn": [
+          360,
+          160,
+          410,
+          188
+        ],
+        "en": [
+          363,
+          163,
+          440,
+          183
+        ],
+        "jp": [
+          360,
+          160,
+          410,
+          188
+        ],
+        "tw": [
+          360,
+          160,
+          410,
+          188
+        ]
+      },
+      "color": {
+        "cn": [
+          89,
+          89,
+          89
+        ],
+        "en": [
+          126,
+          126,
+          126
+        ],
+        "jp": [
+          89,
+          89,
+          89
+        ],
+        "tw": [
+          89,
+          89,
+          89
+        ]
+      },
+      "button": {
+        "cn": [
+          902,
+          156,
+          938,
+          191
+        ],
+        "en": [
+          363,
+          163,
+          440,
+          183
+        ],
+        "jp": [
+          902,
+          156,
+          938,
+          191
+        ],
+        "tw": [
+          360,
+          160,
+          410,
+          188
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_DETAIL_CLOSE.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_DETAIL_CLOSE.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_DETAIL_CLOSE.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_DETAIL_CLOSE.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_BACK": {
+      "area": {
+        "cn": [
+          474,
+          591,
+          632,
+          636
+        ],
+        "en": [
+          510,
+          599,
+          599,
+          626
+        ],
+        "jp": [
+          474,
+          591,
+          632,
+          636
+        ],
+        "tw": [
+          529,
+          602,
+          577,
+          626
+        ]
+      },
+      "color": {
+        "cn": [
+          190,
+          190,
+          190
+        ],
+        "en": [
+          206,
+          206,
+          205
+        ],
+        "jp": [
+          190,
+          190,
+          190
+        ],
+        "tw": [
+          209,
+          209,
+          209
+        ]
+      },
+      "button": {
+        "cn": [
+          474,
+          591,
+          632,
+          636
+        ],
+        "en": [
+          510,
+          599,
+          599,
+          626
+        ],
+        "jp": [
+          474,
+          591,
+          632,
+          636
+        ],
+        "tw": [
+          529,
+          602,
+          577,
+          626
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_BACK.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_LIST_BACK.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_LIST_BACK.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_LIST_BACK.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_CHECK": {
+      "area": {
+        "cn": [
+          407,
+          76,
+          533,
+          106
+        ],
+        "en": [
+          406,
+          72,
+          535,
+          110
+        ],
+        "jp": [
+          407,
+          76,
+          533,
+          106
+        ],
+        "tw": [
+          406,
+          75,
+          532,
+          107
+        ]
+      },
+      "color": {
+        "cn": [
+          130,
+          130,
+          130
+        ],
+        "en": [
+          187,
+          188,
+          187
+        ],
+        "jp": [
+          152,
+          152,
+          152
+        ],
+        "tw": [
+          135,
+          135,
+          136
+        ]
+      },
+      "button": {
+        "cn": [
+          407,
+          76,
+          533,
+          106
+        ],
+        "en": [
+          406,
+          72,
+          535,
+          110
+        ],
+        "jp": [
+          407,
+          76,
+          533,
+          106
+        ],
+        "tw": [
+          406,
+          75,
+          532,
+          107
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_CHECK.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_LIST_CHECK.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_LIST_CHECK.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_LIST_CHECK.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_CONFIRM": {
+      "area": {
+        "cn": [
+          668,
+          591,
+          825,
+          636
+        ],
+        "en": [
+          696,
+          599,
+          797,
+          624
+        ],
+        "jp": [
+          668,
+          591,
+          825,
+          636
+        ],
+        "tw": [
+          723,
+          601,
+          771,
+          625
+        ]
+      },
+      "color": {
+        "cn": [
+          67,
+          192,
+          255
+        ],
+        "en": [
+          121,
+          210,
+          255
+        ],
+        "jp": [
+          68,
+          192,
+          255
+        ],
+        "tw": [
+          120,
+          211,
+          255
+        ]
+      },
+      "button": {
+        "cn": [
+          668,
+          591,
+          825,
+          636
+        ],
+        "en": [
+          696,
+          599,
+          797,
+          624
+        ],
+        "jp": [
+          668,
+          591,
+          825,
+          636
+        ],
+        "tw": [
+          723,
+          601,
+          771,
+          625
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_CONFIRM.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_LIST_CONFIRM.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_LIST_CONFIRM.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_LIST_CONFIRM.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_ENTER": {
+      "area": {
+        "cn": [
+          806,
+          662,
+          1000,
+          692
+        ],
+        "en": [
+          806,
+          661,
+          979,
+          693
+        ],
+        "jp": [
+          806,
+          662,
+          1000,
+          692
+        ],
+        "tw": [
+          806,
+          661,
+          975,
+          694
+        ]
+      },
+      "color": {
+        "cn": [
+          203,
+          234,
+          248
+        ],
+        "en": [
+          202,
+          229,
+          243
+        ],
+        "jp": [
+          198,
+          230,
+          245
+        ],
+        "tw": [
+          197,
+          232,
+          243
+        ]
+      },
+      "button": {
+        "cn": [
+          806,
+          662,
+          1000,
+          692
+        ],
+        "en": [
+          806,
+          661,
+          979,
+          693
+        ],
+        "jp": [
+          806,
+          662,
+          1000,
+          692
+        ],
+        "tw": [
+          806,
+          661,
+          975,
+          694
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_ENTER.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_LIST_ENTER.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_LIST_ENTER.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_LIST_ENTER.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_REFRESH": {
+      "area": {
+        "cn": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "en": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "jp": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "tw": [
+          815,
+          86,
+          888,
+          112
+        ]
+      },
+      "color": {
+        "cn": [
+          68,
+          193,
+          255
+        ],
+        "en": [
+          68,
+          193,
+          255
+        ],
+        "jp": [
+          68,
+          193,
+          255
+        ],
+        "tw": [
+          68,
+          193,
+          255
+        ]
+      },
+      "button": {
+        "cn": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "en": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "jp": [
+          815,
+          86,
+          888,
+          112
+        ],
+        "tw": [
+          815,
+          86,
+          888,
+          112
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH.png",
+        "en": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH.png",
+        "jp": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH.png",
+        "tw": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH.png"
+      }
+    },
+    "ISLAND_TRANSPORT_LIST_REFRESH_COOLDOWN": {
+      "area": {
+        "cn": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "en": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "jp": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "tw": [
+          675,
+          80,
+          714,
+          119
+        ]
+      },
+      "color": {
+        "cn": [
+          112,
+          112,
+          112
+        ],
+        "en": [
+          112,
+          112,
+          112
+        ],
+        "jp": [
+          112,
+          112,
+          112
+        ],
+        "tw": [
+          112,
+          112,
+          112
+        ]
+      },
+      "button": {
+        "cn": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "en": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "jp": [
+          675,
+          80,
+          714,
+          119
+        ],
+        "tw": [
+          675,
+          80,
+          714,
+          119
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH_COOLDOWN.png",
+        "en": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH_COOLDOWN.png",
+        "jp": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH_COOLDOWN.png",
+        "tw": "./assets/cn/island/ISLAND_TRANSPORT_LIST_REFRESH_COOLDOWN.png"
+      }
+    },
+    "ISLAND_TRANSPORT_SUBMIT": {
+      "area": {
+        "cn": [
+          1141,
+          168,
+          1173,
+          282
+        ],
+        "en": [
+          1139,
+          168,
+          1184,
+          282
+        ],
+        "jp": [
+          1141,
+          168,
+          1173,
+          282
+        ],
+        "tw": [
+          1147,
+          180,
+          1169,
+          273
+        ]
+      },
+      "color": {
+        "cn": [
+          97,
+          202,
+          255
+        ],
+        "en": [
+          70,
+          193,
+          254
+        ],
+        "jp": [
+          82,
+          197,
+          255
+        ],
+        "tw": [
+          106,
+          206,
+          255
+        ]
+      },
+      "button": {
+        "cn": [
+          1141,
+          168,
+          1173,
+          282
+        ],
+        "en": [
+          1139,
+          168,
+          1184,
+          282
+        ],
+        "jp": [
+          1141,
+          168,
+          1173,
+          282
+        ],
+        "tw": [
+          1147,
+          180,
+          1169,
+          273
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_SUBMIT.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_SUBMIT.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_SUBMIT.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_SUBMIT.png"
+      }
+    },
+    "ISLAND_TRANSPORT_SWAP": {
+      "area": {
+        "cn": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "en": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "jp": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "tw": [
+          1014,
+          209,
+          1063,
+          231
+        ]
+      },
+      "color": {
+        "cn": [
+          74,
+          193,
+          252
+        ],
+        "en": [
+          74,
+          193,
+          252
+        ],
+        "jp": [
+          74,
+          193,
+          252
+        ],
+        "tw": [
+          74,
+          193,
+          252
+        ]
+      },
+      "button": {
+        "cn": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "en": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "jp": [
+          1014,
+          209,
+          1063,
+          231
+        ],
+        "tw": [
+          1014,
+          209,
+          1063,
+          231
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_SWAP.png",
+        "en": "./assets/cn/island/ISLAND_TRANSPORT_SWAP.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_SWAP.png",
+        "tw": "./assets/cn/island/ISLAND_TRANSPORT_SWAP.png"
+      }
+    },
+    "ISLAND_TRANSPORT_VIEW_CONTENT": {
+      "area": {
+        "cn": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "en": [
+          1078,
+          661,
+          1250,
+          693
+        ],
+        "jp": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "tw": [
+          1084,
+          668,
+          1192,
+          687
+        ]
+      },
+      "color": {
+        "cn": [
+          197,
+          197,
+          197
+        ],
+        "en": [
+          200,
+          200,
+          199
+        ],
+        "jp": [
+          196,
+          197,
+          195
+        ],
+        "tw": [
+          185,
+          186,
+          187
+        ]
+      },
+      "button": {
+        "cn": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "en": [
+          1078,
+          661,
+          1250,
+          693
+        ],
+        "jp": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "tw": [
+          1084,
+          668,
+          1192,
+          687
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_VIEW_CONTENT.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_VIEW_CONTENT.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_VIEW_CONTENT.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_VIEW_CONTENT.png"
+      }
+    },
+    "ISLAND_TRANSPORT_VIEW_REWARD": {
+      "area": {
+        "cn": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "en": [
+          1057,
+          660,
+          1209,
+          694
+        ],
+        "jp": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "tw": [
+          1057,
+          662,
+          1222,
+          693
+        ]
+      },
+      "color": {
+        "cn": [
+          204,
+          205,
+          204
+        ],
+        "en": [
+          187,
+          188,
+          188
+        ],
+        "jp": [
+          201,
+          203,
+          203
+        ],
+        "tw": [
+          201,
+          206,
+          200
+        ]
+      },
+      "button": {
+        "cn": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "en": [
+          1057,
+          660,
+          1209,
+          694
+        ],
+        "jp": [
+          1056,
+          662,
+          1250,
+          692
+        ],
+        "tw": [
+          1057,
+          662,
+          1222,
+          693
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/island/ISLAND_TRANSPORT_VIEW_REWARD.png",
+        "en": "./assets/en/island/ISLAND_TRANSPORT_VIEW_REWARD.png",
+        "jp": "./assets/jp/island/ISLAND_TRANSPORT_VIEW_REWARD.png",
+        "tw": "./assets/tw/island/ISLAND_TRANSPORT_VIEW_REWARD.png"
       }
     },
     "ISLAND_DOCK_CHARACTER_CONFIRM": {
@@ -60115,10 +62247,10 @@
           269
         ],
         "en": [
-          93,
-          254,
-          161,
-          268
+          88,
+          252,
+          166,
+          274
         ],
         "jp": [
           89,
@@ -60140,9 +62272,9 @@
           112
         ],
         "en": [
-          100,
-          103,
-          104
+          109,
+          109,
+          111
         ],
         "jp": [
           115,
@@ -60163,10 +62295,10 @@
           269
         ],
         "en": [
-          93,
-          254,
-          161,
-          268
+          88,
+          252,
+          166,
+          274
         ],
         "jp": [
           89,
@@ -60279,10 +62411,10 @@
           336
         ],
         "en": [
-          82,
-          254,
-          173,
-          268
+          74,
+          319,
+          182,
+          340
         ],
         "jp": [
           89,
@@ -60304,9 +62436,9 @@
           121
         ],
         "en": [
-          103,
-          104,
-          103
+          117,
+          120,
+          122
         ],
         "jp": [
           92,
@@ -60327,10 +62459,10 @@
           336
         ],
         "en": [
-          82,
-          254,
-          173,
-          268
+          74,
+          319,
+          182,
+          340
         ],
         "jp": [
           89,
@@ -60361,10 +62493,10 @@
           269
         ],
         "en": [
-          98,
-          252,
-          158,
-          268
+          90,
+          250,
+          165,
+          271
         ],
         "jp": [
           89,
@@ -60386,9 +62518,9 @@
           114
         ],
         "en": [
-          96,
-          97,
-          101
+          114,
+          114,
+          117
         ],
         "jp": [
           110,
@@ -60409,10 +62541,10 @@
           269
         ],
         "en": [
-          98,
-          252,
-          158,
-          268
+          90,
+          250,
+          165,
+          271
         ],
         "jp": [
           89,
@@ -60443,10 +62575,10 @@
           269
         ],
         "en": [
-          92,
-          253,
-          164,
-          268
+          86,
+          252,
+          168,
+          270
         ],
         "jp": [
           89,
@@ -60468,9 +62600,9 @@
           94
         ],
         "en": [
-          103,
-          109,
-          108
+          127,
+          129,
+          130
         ],
         "jp": [
           118,
@@ -60491,10 +62623,10 @@
           269
         ],
         "en": [
-          92,
-          253,
-          164,
-          268
+          86,
+          252,
+          168,
+          270
         ],
         "jp": [
           89,
@@ -60525,10 +62657,10 @@
           269
         ],
         "en": [
-          81,
+          70,
           252,
-          175,
-          272
+          184,
+          274
         ],
         "jp": [
           89,
@@ -60550,9 +62682,9 @@
           118
         ],
         "en": [
-          81,
-          83,
-          87
+          112,
+          111,
+          115
         ],
         "jp": [
           115,
@@ -60573,10 +62705,10 @@
           269
         ],
         "en": [
-          81,
+          70,
           252,
-          175,
-          272
+          184,
+          274
         ],
         "jp": [
           89,
@@ -65972,9 +68104,9 @@
           161
         ],
         "tw": [
-          152,
-          153,
-          156
+          154,
+          155,
+          158
         ]
       },
       "button": {
@@ -66007,7 +68139,7 @@
         "cn": "./assets/cn/os_handler/MISSION_CHECKOUT.png",
         "en": "./assets/en/os_handler/MISSION_CHECKOUT.png",
         "jp": "./assets/jp/os_handler/MISSION_CHECKOUT.png",
-        "tw": "./assets/cn/os_handler/MISSION_CHECKOUT.png"
+        "tw": "./assets/tw/os_handler/MISSION_CHECKOUT.png"
       }
     },
     "MISSION_ENTER": {
@@ -66102,9 +68234,9 @@
         ],
         "en": [
           1029,
-          205,
+          201,
           1112,
-          232
+          228
         ],
         "jp": [
           1026,
@@ -66126,8 +68258,8 @@
           191
         ],
         "en": [
-          84,
-          132,
+          89,
+          135,
           193
         ],
         "jp": [
@@ -66150,9 +68282,9 @@
         ],
         "en": [
           1029,
-          205,
+          201,
           1112,
-          232
+          228
         ],
         "jp": [
           1026,
@@ -67173,8 +69305,8 @@
           258
         ],
         "jp": [
-          1162,
-          230,
+          1154,
+          228,
           1238,
           258
         ],
@@ -67197,9 +69329,9 @@
           114
         ],
         "jp": [
-          43,
-          77,
-          114
+          47,
+          81,
+          117
         ],
         "tw": [
           43,
@@ -67221,8 +69353,8 @@
           258
         ],
         "jp": [
-          1162,
-          230,
+          1154,
+          228,
           1238,
           258
         ],
@@ -67236,7 +69368,7 @@
       "file": {
         "cn": "./assets/cn/os_handler/OS_ADAPTABILITY_ATTACK.png",
         "en": "./assets/cn/os_handler/OS_ADAPTABILITY_ATTACK.png",
-        "jp": "./assets/cn/os_handler/OS_ADAPTABILITY_ATTACK.png",
+        "jp": "./assets/jp/os_handler/OS_ADAPTABILITY_ATTACK.png",
         "tw": "./assets/cn/os_handler/OS_ADAPTABILITY_ATTACK.png"
       }
     },
@@ -67255,9 +69387,9 @@
           311
         ],
         "jp": [
-          1161,
-          283,
-          1237,
+          1154,
+          281,
+          1238,
           311
         ],
         "tw": [
@@ -67279,9 +69411,9 @@
           108
         ],
         "jp": [
-          47,
+          46,
           75,
-          108
+          107
         ],
         "tw": [
           47,
@@ -67303,9 +69435,9 @@
           311
         ],
         "jp": [
-          1161,
-          283,
-          1237,
+          1154,
+          281,
+          1238,
           311
         ],
         "tw": [
@@ -67318,7 +69450,7 @@
       "file": {
         "cn": "./assets/cn/os_handler/OS_ADAPTABILITY_DURABILITY.png",
         "en": "./assets/cn/os_handler/OS_ADAPTABILITY_DURABILITY.png",
-        "jp": "./assets/cn/os_handler/OS_ADAPTABILITY_DURABILITY.png",
+        "jp": "./assets/jp/os_handler/OS_ADAPTABILITY_DURABILITY.png",
         "tw": "./assets/cn/os_handler/OS_ADAPTABILITY_DURABILITY.png"
       }
     },
@@ -67337,8 +69469,8 @@
           364
         ],
         "jp": [
-          1162,
-          336,
+          1154,
+          334,
           1238,
           364
         ],
@@ -67361,9 +69493,9 @@
           105
         ],
         "jp": [
-          47,
-          72,
-          105
+          48,
+          76,
+          109
         ],
         "tw": [
           47,
@@ -67385,8 +69517,8 @@
           364
         ],
         "jp": [
-          1162,
-          336,
+          1154,
+          334,
           1238,
           364
         ],
@@ -67400,7 +69532,7 @@
       "file": {
         "cn": "./assets/cn/os_handler/OS_ADAPTABILITY_RECOVER.png",
         "en": "./assets/cn/os_handler/OS_ADAPTABILITY_RECOVER.png",
-        "jp": "./assets/cn/os_handler/OS_ADAPTABILITY_RECOVER.png",
+        "jp": "./assets/jp/os_handler/OS_ADAPTABILITY_RECOVER.png",
         "tw": "./assets/cn/os_handler/OS_ADAPTABILITY_RECOVER.png"
       }
     },
@@ -68943,10 +71075,10 @@
           549
         ],
         "jp": [
-          699,
-          481,
-          872,
-          538
+          775,
+          498,
+          850,
+          519
         ],
         "tw": [
           687,
@@ -68958,7 +71090,7 @@
       "file": {
         "cn": "./assets/cn/os_handler/STORAGE_USE.png",
         "en": "./assets/en/os_handler/STORAGE_USE.png",
-        "jp": "./assets/jp/os_handler/STORAGE_USE.png",
+        "jp": "./assets/jp/os_handler/STORAGE_USE.gif",
         "tw": "./assets/cn/os_handler/STORAGE_USE.png"
       }
     },
@@ -69065,9 +71197,9 @@
           315
         ],
         "tw": [
-          475,
+          470,
           332,
-          556,
+          554,
           354
         ]
       },
@@ -69088,9 +71220,9 @@
           139
         ],
         "tw": [
-          141,
-          147,
-          159
+          139,
+          146,
+          155
         ]
       },
       "button": {
@@ -69113,9 +71245,9 @@
           315
         ],
         "tw": [
-          475,
+          470,
           332,
-          556,
+          554,
           354
         ]
       },
@@ -69148,9 +71280,9 @@
         ],
         "tw": [
           516,
-          380,
+          372,
           536,
-          394
+          386
         ]
       },
       "color": {
@@ -69170,9 +71302,9 @@
           75
         ],
         "tw": [
-          95,
-          134,
-          74
+          100,
+          139,
+          78
         ]
       },
       "button": {
@@ -69196,16 +71328,16 @@
         ],
         "tw": [
           516,
-          380,
+          372,
           536,
-          394
+          386
         ]
       },
       "file": {
         "cn": "./assets/cn/os_handler/STRATEGIC_SEARCH_DEVICE_CONTINUE.png",
         "en": "./assets/en/os_handler/STRATEGIC_SEARCH_DEVICE_CONTINUE.png",
         "jp": "./assets/jp/os_handler/STRATEGIC_SEARCH_DEVICE_CONTINUE.png",
-        "tw": "./assets/cn/os_handler/STRATEGIC_SEARCH_DEVICE_CONTINUE.png"
+        "tw": "./assets/tw/os_handler/STRATEGIC_SEARCH_DEVICE_CONTINUE.png"
       }
     },
     "STRATEGIC_SEARCH_DEVICE_STOP": {
@@ -69230,9 +71362,9 @@
         ],
         "tw": [
           443,
-          380,
+          372,
           463,
-          394
+          386
         ]
       },
       "color": {
@@ -69252,9 +71384,9 @@
           76
         ],
         "tw": [
-          95,
-          134,
-          74
+          100,
+          139,
+          78
         ]
       },
       "button": {
@@ -69278,16 +71410,16 @@
         ],
         "tw": [
           443,
-          380,
+          372,
           463,
-          394
+          386
         ]
       },
       "file": {
         "cn": "./assets/cn/os_handler/STRATEGIC_SEARCH_DEVICE_STOP.png",
         "en": "./assets/en/os_handler/STRATEGIC_SEARCH_DEVICE_STOP.png",
         "jp": "./assets/jp/os_handler/STRATEGIC_SEARCH_DEVICE_STOP.png",
-        "tw": "./assets/cn/os_handler/STRATEGIC_SEARCH_DEVICE_STOP.png"
+        "tw": "./assets/tw/os_handler/STRATEGIC_SEARCH_DEVICE_STOP.png"
       }
     },
     "STRATEGIC_SEARCH_MAP_OPTION_OFF": {
@@ -69388,9 +71520,9 @@
         ],
         "jp": [
           766,
-          457,
-          789,
-          470
+          406,
+          790,
+          426
         ],
         "tw": [
           516,
@@ -69411,9 +71543,9 @@
           68
         ],
         "jp": [
-          91,
-          127,
-          75
+          94,
+          119,
+          84
         ],
         "tw": [
           94,
@@ -69436,9 +71568,9 @@
         ],
         "jp": [
           766,
-          457,
-          789,
-          470
+          406,
+          790,
+          426
         ],
         "tw": [
           516,
@@ -69469,10 +71601,10 @@
           466
         ],
         "jp": [
-          568,
-          457,
-          590,
-          470
+          567,
+          406,
+          591,
+          426
         ],
         "tw": [
           443,
@@ -69493,9 +71625,9 @@
           66
         ],
         "jp": [
-          92,
-          129,
-          75
+          94,
+          119,
+          84
         ],
         "tw": [
           94,
@@ -69517,10 +71649,10 @@
           466
         ],
         "jp": [
-          568,
-          457,
-          590,
-          470
+          567,
+          406,
+          591,
+          426
         ],
         "tw": [
           443,
@@ -70043,10 +72175,10 @@
           350
         ],
         "jp": [
-          850,
-          342,
-          871,
-          358
+          849,
+          284,
+          873,
+          303
         ],
         "tw": [
           747,
@@ -70067,9 +72199,9 @@
           67
         ],
         "jp": [
-          92,
-          129,
-          75
+          95,
+          122,
+          85
         ],
         "tw": [
           95,
@@ -70091,10 +72223,10 @@
           350
         ],
         "jp": [
-          850,
-          342,
-          871,
-          358
+          849,
+          284,
+          873,
+          303
         ],
         "tw": [
           747,
@@ -70125,10 +72257,10 @@
           350
         ],
         "jp": [
-          580,
-          341,
-          602,
-          358
+          579,
+          284,
+          603,
+          303
         ],
         "tw": [
           548,
@@ -70149,9 +72281,9 @@
           67
         ],
         "jp": [
-          92,
-          123,
-          77
+          95,
+          122,
+          85
         ],
         "tw": [
           96,
@@ -70173,10 +72305,10 @@
           350
         ],
         "jp": [
-          580,
-          341,
-          602,
-          358
+          579,
+          284,
+          603,
+          303
         ],
         "tw": [
           548,
@@ -70190,6 +72322,88 @@
         "en": "./assets/en/os_handler/STRATEGIC_SEARCH_ZONEMODE_REPEAT.png",
         "jp": "./assets/jp/os_handler/STRATEGIC_SEARCH_ZONEMODE_REPEAT.png",
         "tw": "./assets/cn/os_handler/STRATEGIC_SEARCH_ZONEMODE_REPEAT.png"
+      }
+    },
+    "STRATEGIC_SEARCH_MERCHANT_CHECK": {
+      "area": {
+        "cn": [
+          407,
+          403,
+          597,
+          425
+        ],
+        "en": [
+          407,
+          403,
+          597,
+          425
+        ],
+        "jp": [
+          407,
+          369,
+          558,
+          391
+        ],
+        "tw": [
+          407,
+          403,
+          597,
+          425
+        ]
+      },
+      "color": {
+        "cn": [
+          136,
+          144,
+          153
+        ],
+        "en": [
+          136,
+          144,
+          153
+        ],
+        "jp": [
+          135,
+          143,
+          152
+        ],
+        "tw": [
+          136,
+          144,
+          153
+        ]
+      },
+      "button": {
+        "cn": [
+          407,
+          403,
+          597,
+          425
+        ],
+        "en": [
+          407,
+          403,
+          597,
+          425
+        ],
+        "jp": [
+          407,
+          369,
+          558,
+          391
+        ],
+        "tw": [
+          407,
+          403,
+          597,
+          425
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/os_handler/STRATEGIC_SEARCH_MERCHANT_CHECK.png",
+        "en": "./assets/cn/os_handler/STRATEGIC_SEARCH_MERCHANT_CHECK.png",
+        "jp": "./assets/jp/os_handler/STRATEGIC_SEARCH_MERCHANT_CHECK.png",
+        "tw": "./assets/cn/os_handler/STRATEGIC_SEARCH_MERCHANT_CHECK.png"
       }
     },
     "OS_SHOP_CHECK": {
@@ -95530,6 +97744,88 @@
         "tw": "./assets/cn/shop_event/SHOP_OCR_BALANCE_SECOND.png"
       }
     },
+    "SHOP_EVENT_BUY_CONFIRM": {
+      "area": {
+        "cn": [
+          703,
+          483,
+          876,
+          540
+        ],
+        "en": [
+          708,
+          487,
+          872,
+          534
+        ],
+        "jp": [
+          703,
+          483,
+          876,
+          540
+        ],
+        "tw": [
+          703,
+          483,
+          876,
+          540
+        ]
+      },
+      "color": {
+        "cn": [
+          94,
+          142,
+          203
+        ],
+        "en": [
+          119,
+          161,
+          213
+        ],
+        "jp": [
+          94,
+          142,
+          203
+        ],
+        "tw": [
+          94,
+          142,
+          203
+        ]
+      },
+      "button": {
+        "cn": [
+          703,
+          483,
+          876,
+          540
+        ],
+        "en": [
+          708,
+          487,
+          872,
+          534
+        ],
+        "jp": [
+          703,
+          483,
+          876,
+          540
+        ],
+        "tw": [
+          703,
+          483,
+          876,
+          540
+        ]
+      },
+      "file": {
+        "cn": "./assets/cn/shop_event/SHOP_EVENT_BUY_CONFIRM.png",
+        "en": "./assets/en/shop_event/SHOP_EVENT_BUY_CONFIRM.png",
+        "jp": "./assets/cn/shop_event/SHOP_EVENT_BUY_CONFIRM.png",
+        "tw": "./assets/cn/shop_event/SHOP_EVENT_BUY_CONFIRM.png"
+      }
+    },
     "OCR_SIGNAL": {
       "area": {
         "cn": [
@@ -103740,9 +106036,9 @@
         ],
         "en": [
           201,
-          132,
-          264,
-          184
+          135,
+          409,
+          191
         ],
         "jp": [
           199,
@@ -103764,9 +106060,9 @@
           184
         ],
         "en": [
-          195,
-          195,
-          193
+          205,
+          205,
+          202
         ],
         "jp": [
           195,
@@ -103788,9 +106084,9 @@
         ],
         "en": [
           201,
-          132,
-          264,
-          184
+          135,
+          409,
+          191
         ],
         "jp": [
           199,
@@ -107013,10 +109309,10 @@
     "SUPPLY_PACK_CHECK": {
       "area": {
         "cn": [
-          60,
-          232,
-          104,
-          265
+          16,
+          368,
+          156,
+          398
         ],
         "en": [
           60,
@@ -107039,9 +109335,9 @@
       },
       "color": {
         "cn": [
-          120,
+          115,
           193,
-          236
+          235
         ],
         "en": [
           121,
@@ -107061,10 +109357,10 @@
       },
       "button": {
         "cn": [
-          60,
-          232,
-          104,
-          265
+          2,
+          358,
+          178,
+          414
         ],
         "en": [
           60,
@@ -109069,9 +111365,9 @@
           513
         ],
         "en": [
-          471,
-          492,
-          547,
+          468,
+          491,
+          551,
           513
         ],
         "jp": [
@@ -109094,9 +111390,9 @@
           214
         ],
         "en": [
-          205,
-          206,
-          205
+          213,
+          213,
+          213
         ],
         "jp": [
           202,
@@ -109117,9 +111413,9 @@
           513
         ],
         "en": [
-          471,
-          492,
-          547,
+          468,
+          491,
+          551,
           513
         ],
         "jp": [
@@ -109151,10 +111447,10 @@
           515
         ],
         "en": [
-          727,
-          495,
-          810,
-          515
+          720,
+          493,
+          818,
+          514
         ],
         "jp": [
           743,
@@ -109176,8 +111472,8 @@
           255
         ],
         "en": [
-          107,
-          207,
+          136,
+          217,
           255
         ],
         "jp": [
@@ -109199,10 +111495,10 @@
           515
         ],
         "en": [
-          727,
-          495,
-          810,
-          515
+          720,
+          493,
+          818,
+          514
         ],
         "jp": [
           743,
@@ -110744,6 +113040,22 @@
         "tw": "./assets/tw/island/TEMPLATE_ISLAND_SEASON_TASK_OBTAINED.png"
       }
     },
+    "TEMPLATE_ISLAND_TRANSPORT_LIST_ANCHOR": {
+      "file": {
+        "cn": "./assets/cn/island/TEMPLATE_ISLAND_TRANSPORT_LIST_ANCHOR.png",
+        "en": "./assets/cn/island/TEMPLATE_ISLAND_TRANSPORT_LIST_ANCHOR.png",
+        "jp": "./assets/jp/island/TEMPLATE_ISLAND_TRANSPORT_LIST_ANCHOR.png",
+        "tw": "./assets/cn/island/TEMPLATE_ISLAND_TRANSPORT_LIST_ANCHOR.png"
+      }
+    },
+    "TEMPLATE_ISLAND_PRODUCTION_SLOT_TICK": {
+      "file": {
+        "cn": "./assets/cn/island/TEMPLATE_ISLAND_PRODUCTION_SLOT_TICK.png",
+        "en": "./assets/cn/island/TEMPLATE_ISLAND_PRODUCTION_SLOT_TICK.png",
+        "jp": "./assets/cn/island/TEMPLATE_ISLAND_PRODUCTION_SLOT_TICK.png",
+        "tw": "./assets/cn/island/TEMPLATE_ISLAND_PRODUCTION_SLOT_TICK.png"
+      }
+    },
     "TEMPLATE_ISLAND_DOCK_CARD_ANCHOR": {
       "file": {
         "cn": "./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_CARD_ANCHOR.png",
@@ -110806,6 +113118,14 @@
         "en": "./assets/cn/island_handler/TEMPLATE_ISLAND_RECIPE_ANCHOR.png",
         "jp": "./assets/cn/island_handler/TEMPLATE_ISLAND_RECIPE_ANCHOR.png",
         "tw": "./assets/cn/island_handler/TEMPLATE_ISLAND_RECIPE_ANCHOR.png"
+      }
+    },
+    "TEMPLATE_ISLAND_DOCK_CARD_ANCHOR_GREEN": {
+      "file": {
+        "cn": "./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_CARD_ANCHOR_GREEN.png",
+        "en": "./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_CARD_ANCHOR_GREEN.png",
+        "jp": "./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_CARD_ANCHOR_GREEN.png",
+        "tw": "./assets/cn/island_handler/TEMPLATE_ISLAND_DOCK_CARD_ANCHOR_GREEN.png"
       }
     },
     "TEMPLATE_EMPTY_HP": {
@@ -114006,6 +116326,14 @@
         "en": "./assets/cn/war_archives/TEMPLATE_TEMPESTA_AND_THE_SLEEPING_SEA.png",
         "jp": "./assets/cn/war_archives/TEMPLATE_TEMPESTA_AND_THE_SLEEPING_SEA.png",
         "tw": "./assets/cn/war_archives/TEMPLATE_TEMPESTA_AND_THE_SLEEPING_SEA.png"
+      }
+    },
+    "TEMPLATE_THE_FOOLS_SCALES": {
+      "file": {
+        "cn": "./assets/cn/war_archives/TEMPLATE_THE_FOOLS_SCALES.png",
+        "en": "./assets/cn/war_archives/TEMPLATE_THE_FOOLS_SCALES.png",
+        "jp": "./assets/cn/war_archives/TEMPLATE_THE_FOOLS_SCALES.png",
+        "tw": "./assets/cn/war_archives/TEMPLATE_THE_FOOLS_SCALES.png"
       }
     }
   },

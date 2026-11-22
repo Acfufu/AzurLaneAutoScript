@@ -132,7 +132,7 @@ def test_dedicated_skill_on_later_page_beats_shared_and_general_workers(producti
     assert main.production_dock is None
 
 
-@pytest.mark.parametrize('place_id,earlier,identity', [
+@pytest.mark.parametrize(('place_id', 'earlier', 'identity'), [
     (602, 'Laffey', 'Chang_Feng'),
     (705, 'Agir', 'Laffey'),
 ])
@@ -191,7 +191,7 @@ def test_discovery_selects_shared_workers_before_general_fallback(production, pl
     assert ('select', old_shared.button) not in events
 
 
-@pytest.mark.parametrize('identity,emotion_limit', [
+@pytest.mark.parametrize(('identity', 'emotion_limit'), [
     ('Laffey', 150), ('Royal_Fortune', 150), ('Le_Malin', 130),
 ])
 def test_general_fallback_accepts_unrestricted_workers_in_native_order(production, identity, emotion_limit):
@@ -209,7 +209,7 @@ def test_general_fallback_accepts_unrestricted_workers_in_native_order(productio
     assert [search.get('reverse', False) for search in searches] == [False, True]
 
 
-@pytest.mark.parametrize('place_id,specialists,fallback,pass_count', [
+@pytest.mark.parametrize(('place_id', 'specialists', 'fallback', 'pass_count'), [
     (604, [('Agir', 150), ('Explorer', 150)], 'Laffey', 2),
     (706, [('Yat_Sen', 149)], 'Royal_Fortune', 2),
     (601, [('Nagato', 150)], 'Laffey', 2),
@@ -407,7 +407,7 @@ def test_failed_human_search_does_not_suppress_later_places(production):
 
 
 def test_ingredient_restart_retries_human_workers(production, monkeypatch):
-    main, events, slot, finish = production
+    main, events, _slot, finish = production
     main.config.IslandProduction_UseWorkerjuuByDefault = False
     workers = iter((None, character('Chen_Hai')))
 

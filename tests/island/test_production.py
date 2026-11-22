@@ -1,9 +1,11 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 """Screenshot golden results; awaiting human review of collection/ images."""
 import cv2
 
-from module.testing.screenshot import image
-
 from module.island.production import IslandProduction
+from module.testing.screenshot import image
 
 
 class TestOverviewJP:
@@ -12,14 +14,14 @@ class TestOverviewJP:
         # The uncached reader describes this frame without entering a screenshot retry loop.
         main.production_grid = main.get_production_grid()
         names = main.get_production_codename()
-        actual = dict(
-            places=[dict(area=button.area, place_id=place_id)
+        actual = {
+            'places': [{'area': button.area, 'place_id': place_id}
                     for button, place_id in zip(main.production_grid.buttons, names)],
-            slots={place_id: [dict(area=button.area, finished=main.is_slot_finished(button),
-                                   empty=main.is_slot_empty(button)) for button in grid.buttons]
+            'slots': {place_id: [{'area': button.area, 'finished': main.is_slot_finished(button),
+                                   'empty': main.is_slot_empty(button)} for button in grid.buttons]
                    for place_id, grid in main.get_production_slot_grids().items()},
-            enter_window=main.is_enter_window_shown(),
-        )
+            'enter_window': main.is_enter_window_shown(),
+        }
         regions = [(entry['area'], 'place #{} id={}'.format(index, entry['place_id']))
                    for index, entry in enumerate(actual['places'])]
         regions += [(entry['area'], '{} #{} finished={} empty={}'.format(
@@ -69,14 +71,14 @@ class TestOverviewJP:
         # The uncached reader describes this frame without entering a screenshot retry loop.
         main.production_grid = main.get_production_grid()
         names = main.get_production_codename()
-        actual = dict(
-            places=[dict(area=button.area, place_id=place_id)
+        actual = {
+            'places': [{'area': button.area, 'place_id': place_id}
                     for button, place_id in zip(main.production_grid.buttons, names)],
-            slots={place_id: [dict(area=button.area, finished=main.is_slot_finished(button),
-                                   empty=main.is_slot_empty(button)) for button in grid.buttons]
+            'slots': {place_id: [{'area': button.area, 'finished': main.is_slot_finished(button),
+                                   'empty': main.is_slot_empty(button)} for button in grid.buttons]
                    for place_id, grid in main.get_production_slot_grids().items()},
-            enter_window=main.is_enter_window_shown(),
-        )
+            'enter_window': main.is_enter_window_shown(),
+        }
         regions = [(entry['area'], 'place #{} id={}'.format(index, entry['place_id']))
                    for index, entry in enumerate(actual['places'])]
         regions += [(entry['area'], '{} #{} finished={} empty={}'.format(
@@ -142,14 +144,14 @@ class TestOverviewCN:
         # The uncached reader describes this frame without entering a screenshot retry loop.
         main.production_grid = main.get_production_grid()
         names = main.get_production_codename()
-        actual = dict(
-            places=[dict(area=button.area, place_id=place_id)
+        actual = {
+            'places': [{'area': button.area, 'place_id': place_id}
                     for button, place_id in zip(main.production_grid.buttons, names)],
-            slots={place_id: [dict(area=button.area, finished=main.is_slot_finished(button),
-                                   empty=main.is_slot_empty(button)) for button in grid.buttons]
+            'slots': {place_id: [{'area': button.area, 'finished': main.is_slot_finished(button),
+                                   'empty': main.is_slot_empty(button)} for button in grid.buttons]
                    for place_id, grid in main.get_production_slot_grids().items()},
-            enter_window=main.is_enter_window_shown(),
-        )
+            'enter_window': main.is_enter_window_shown(),
+        }
         regions = [(entry['area'], 'place #{} id={}'.format(index, entry['place_id']))
                    for index, entry in enumerate(actual['places'])]
         regions += [(entry['area'], '{} #{} finished={} empty={}'.format(

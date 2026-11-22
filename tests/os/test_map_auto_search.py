@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 from functools import partial
 from types import SimpleNamespace
 from unittest.mock import Mock, call
@@ -64,7 +67,7 @@ def make_auto_search(monkeypatch, frames):
     [{'auto': 'unknown'}] * 80,
 ], ids=['unchanged', 'loading', 'unknown-auto'])
 def test_auto_search_without_progress_triggers_stuck_guard(monkeypatch, frames):
-    main, clock = make_auto_search(monkeypatch, [{'progress': True}] + frames)
+    main, clock = make_auto_search(monkeypatch, [{'progress': True}, *frames])
 
     with pytest.raises(GameStuckError):
         map_module.OSMap.os_auto_search_daemon(main)
@@ -83,7 +86,7 @@ def test_auto_search_allows_continuous_wandering(monkeypatch):
     assert main.device.stuck_record_clear.call_count == 61
 
 
-@pytest.mark.parametrize('transition,transition_calls', [
+@pytest.mark.parametrize(('transition', 'transition_calls'), [
     ({'page': 'loading'}, [call(reset=True)]),
     ({'auto': 'off'}, [call(reset=True)]),
     ({'auto': 'disabled'}, [call(reset=True)]),
@@ -98,4 +101,4 @@ def test_auto_search_resets_counter_only_on_transitions(monkeypatch, transition,
 
     assert map_module.OSMap.os_auto_search_daemon(main) == int(transition.get('combat', False))
 
-    assert main.walk_counter_changed.call_args_list == [call(reset=True), call()] + transition_calls + [call()]
+    assert main.walk_counter_changed.call_args_list == [call(reset=True), call(), *transition_calls, call()]

@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 # psutil is imported on demand inside kill_process_by_regex (upstream 2026.11:
 # it costs about 11ms and is only used there, keep it off the startup path).
-
 from module.base.decorator import cached_property, run_once
 from module.base.timer import Timer
 from module.device.connection import AdbDeviceWithStatus

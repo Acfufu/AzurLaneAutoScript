@@ -1,3 +1,6 @@
+# Test doubles attach fake attributes to real classes, which is the point of a
+# double but not something a type checker can verify.
+# pyright: reportArgumentType=false, reportAttributeAccessIssue=false
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -6,7 +9,6 @@ import pytest
 from PIL import Image
 
 from module.os.camera import OSCamera
-
 
 SCREENSHOTS = Path(__file__).resolve().parents[2] / 'collection' / 'os' / 'fleet_walk'
 
@@ -32,7 +34,7 @@ def check_walk_counter(camera, image):
     return camera.walk_counter_changed()
 
 
-@pytest.mark.parametrize('first,later,changed', [
+@pytest.mark.parametrize(('first', 'later', 'changed'), [
     ('stalled_counter_one_jp', 'stalled_counter_one_animated_jp', False),
     ('counter_one_jp', 'counter_one_animated_jp', False),
     ('counter_one_jp', 'counter_two_jp', True),

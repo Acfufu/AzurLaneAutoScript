@@ -11,7 +11,6 @@ from module.map_detection.view import View
 from module.os.map_operation import OSMapOperation
 from module.os.radar import Radar
 
-
 # Numeral area of the centered fleet's badge in a 1280x720 screenshot.
 WALK_COUNTER_AREA = (574, 253, 594, 270)
 WALK_COUNTER_MAX_MEAN_DIFFERENCE = 20

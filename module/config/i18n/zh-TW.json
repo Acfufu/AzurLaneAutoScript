@@ -566,18 +566,18 @@
       "name": "囤積任務 X 分鐘",
       "help": "能在收穫期間降低操作遊戲的頻率\n任務觸發後，等待 X 分鐘後，一次性執行佇列中的任務"
     },
+    "OcrBackend": {
+      "name": "OCR 推理後端",
+      "help": "裝置端 OCR 的推理後端。ane 將 azur_lane 模型經定寬 CoreML 模型送上 Apple 神經網路引擎（僅 Apple Silicon，滿載約 0.3W），重啟實例後生效；無靜態模型的語種自動回落 CPU。",
+      "cpu": "CPU",
+      "ane": "ANE（Apple 神經網路引擎）"
+    },
     "WhenTaskQueueEmpty": {
       "name": "當任務隊列清空後",
       "help": "無任務時關閉遊戲，能在收菜期間降低 CPU 佔用",
       "stay_there": "停在原處",
       "goto_main": "前往主界面",
       "close_game": "關閉遊戲"
-    },
-    "OcrBackend": {
-      "name": "OCR 推理後端",
-      "help": "裝置端 OCR 的推理後端。ane 將 azur_lane 模型經定寬 CoreML 模型送上 Apple 神經網路引擎（僅 Apple Silicon，滿載約 0.3W），重啟實例後生效；無靜態模型的語種自動回落 CPU。",
-      "cpu": "CPU",
-      "ane": "ANE（Apple 神經網路引擎）"
     }
   },
   "DropRecord": {
@@ -2672,11 +2672,11 @@
     "Season": {
       "name": "開發季",
       "help": "自動使用目前伺服器最新的開發季，所有島嶼任務和生產規劃共用此設定。",
-      "season_20260806_cn": "島嶼開發季I——秋日絮語",
       "season_20261105_cn": "島嶼開發季II——冬日漫行",
-      "season_20260507_cn": "Development Season Ⅲ – Summer Sojourn",
+      "season_20251106_cn": "Development Season I - Lets Get Started!",
       "season_20260205_cn": "Development Season II - Spring Merrymaking",
-      "season_20251106_cn": "Development Season I - Lets Get Started!"
+      "season_20260507_cn": "Development Season Ⅲ – Summer Sojourn",
+      "season_20260806_cn": "島嶼開發季I——秋日絮語"
     }
   },
   "IslandProduction": {
@@ -2746,19 +2746,17 @@
       "name": "有魚餐館服務員1",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Chao_Ho": "肇和",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "KoiWaitress2": {
       "name": "有魚餐館服務員2",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Chao_Ho": "肇和",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "KoiMenu": {
       "name": "有魚餐館菜單",
@@ -2776,19 +2774,17 @@
       "name": "白熊飲品服務員1",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Cheshire": "柴郡",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "BearWaitress2": {
       "name": "白熊飲品服務員2",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Cheshire": "柴郡",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "BearMenu": {
       "name": "白熊飲品菜單",
@@ -2806,21 +2802,19 @@
       "name": "啾啾簡餐服務員1",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Helena": "海倫娜",
       "Prinz_Eugen": "歐根親王",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "EateryWaitress2": {
       "name": "啾啾簡餐服務員2",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Helena": "海倫娜",
       "Prinz_Eugen": "歐根親王",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "EateryMenu": {
       "name": "啾啾簡餐菜單",
@@ -2838,21 +2832,19 @@
       "name": "烏魚烤肉服務員1",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "August_von_Parseval": "奧古斯特·馮·帕塞瓦爾",
       "Prinz_Eugen": "歐根親王",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "GrillWaitress2": {
       "name": "烏魚烤肉服務員2",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "August_von_Parseval": "奧古斯特·馮·帕塞瓦爾",
       "Prinz_Eugen": "歐根親王",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "GrillMenu": {
       "name": "烏魚烤肉菜單",
@@ -2870,21 +2862,19 @@
       "name": "啾咖啡服務員1",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Cheshire": "柴郡",
       "Belfast": "貝爾法斯特",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "CafeWaitress2": {
       "name": "啾咖啡服務員2",
       "help": "兩個服務員槽位沒有順序。無表示空槽位，兩個槽位都是無時停用餐廳。經營等級優先會跨頁尋找經營等級 A 的空閒角色，不足時選擇已辨識的較低等級中等級最高的空閒角色。指定角色必須到位才能開店。",
       "none": "無",
-      "any": "任意",
+      "business_grade": "經營等級優先",
       "Cheshire": "柴郡",
       "Belfast": "貝爾法斯特",
-      "Chang_Feng": "長風",
-      "business_grade": "經營等級優先"
+      "Chang_Feng": "長風"
     },
     "CafeMenu": {
       "name": "啾咖啡菜單",
@@ -3106,16 +3096,16 @@
       "Import": "導入",
       "Export": "匯出",
       "Delete": "删除",
+      "Rename": "重新命名",
+      "RenamePrompt": "請輸入新的配置名稱",
+      "DeleteConfirm": "確定刪除配置 {name} 嗎?",
       "OverrideWarning": "将会覆蓋现有的設定檔案",
       "ImportSuccess": "設定檔案已導入",
       "NewSuccess": "設定檔案已新增",
       "Name": "檔案名",
+      "Modified": "修改時間",
       "Mod": "插件",
       "Actions": "操作",
-      "Rename": "重新命名",
-      "RenamePrompt": "請輸入新的配置名稱",
-      "DeleteConfirm": "確定刪除配置 {name} 嗎?",
-      "Modified": "修改時間",
       "ImportOverwrite": "匯入將覆蓋現有實例 “{name}”，確定繼續？"
     },
     "Update": {

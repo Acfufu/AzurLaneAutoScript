@@ -86,7 +86,7 @@ def test_product_name_cleanup_returns_empty_slot(srv, raw_name, monkeypatch):
     assert shop.item_name_to_recipe_id(name) is None
 
 
-@pytest.mark.parametrize('names, success', [
+@pytest.mark.parametrize(('names', 'success'), [
     ([['玉米种子'], ['小麦种子']], True),
     ([['玉米种子']], False),
 ])
