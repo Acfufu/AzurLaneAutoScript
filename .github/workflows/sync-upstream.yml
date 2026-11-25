@@ -159,13 +159,25 @@ jobs:
           # already-open note: the job stayed green for two weeks while no
           # PR ever existed and upstream sync silently stalled. Distinguish
           # already-open from a genuine failure; only the former is benign.
-          if gh pr create --base master --head "$BRANCH" \
-              --title "$TITLE" \
-              --body "$BODY"; then
+          #
+          # PR creation goes through the REST endpoint, not `gh pr create`:
+          # with GITHUB_TOKEN fully permissioned (pull-requests: write,
+          # allow-create-PRs setting on — reverified 2026-11-25) the GraphQL
+          # createPullRequest mutation still answered "Resource not
+          # accessible by integration" for 12 consecutive runs, while the
+          # branch push and gh pr list with the same token succeeded. REST
+          # POST /pulls runs under the same permission model and is what the
+          # mainstream PR-creating actions use. A 422 "A pull request
+          # already exists" lands in the elif like a failed create.
+          if gh api --method POST "repos/${{ github.repository }}/pulls" \
+              -f title="$TITLE" \
+              -f head="$BRANCH" \
+              -f base=master \
+              -f body="$BODY"; then
             echo "sync PR created"
           elif [ "$(gh pr list --head "$BRANCH" --state open --json number -q 'length')" = "1" ]; then
             echo "PR already open — nothing to do"
           else
-            echo "::error title=Sync PR::gh pr create failed (see log above). Check Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests'."
+            echo "::error title=Sync PR::REST pull create failed (see response above)."
             exit 1
           fi
