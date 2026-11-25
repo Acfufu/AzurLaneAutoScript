@@ -10,7 +10,11 @@ Only names actually used by the UI layer are re-exported here (explicit
 imports, not star). Do not add business logic; this is a pure re-export hub.
 """
 
-from module.coalition.assets import HORROR_COALITION_CHECK
+from module.coalition.assets import (
+    HORROR_COALITION_CHECK,
+    VERITAS_COALITION_CHECK,
+    VERITAS_GOTO_HOME,
+)
 from module.combat.assets import GET_ITEMS_1, GET_ITEMS_2, GET_SHIP
 from module.event_hospital.assets import HOSIPITAL_CHECK
 from module.exercise.assets import EXERCISE_PREPARATION
@@ -87,5 +91,7 @@ __all__ = [
     "RPG_HOME",
     "RPG_LEAVE_CITY",
     "SHOP_CLICK_SAFE_AREA",
+    "VERITAS_COALITION_CHECK",
+    "VERITAS_GOTO_HOME",
     "WITHDRAW",
 ]
